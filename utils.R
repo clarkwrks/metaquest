@@ -1,0 +1,99 @@
+
+# removed `bs_set_data(x, parent = .id(id_accordion))` 
+# and `id_panel <- paste(id_accordion, n_panel, sep = "-")` -> `id_panel <- override_id`
+# attach a radioButtons input with description
+# attach status div
+# title -> span(icon("plus"), title)
+bs_append_noparent_toggle <- function(tag, title, content, override_id, condition = NULL, ...){
+  
+  # characterize the existing accordion
+  n_panel <- length(tag$children)
+  panel_type <- attr(tag, "bsplus.panel_type")
+  use_heading_link <- attr(tag, "bsplus.use_heading_link")
+  
+  # get/set id's for constituent elements
+  id_accordion <- htmltools::tagGetAttribute(tag, "id")
+  # id_panel <- paste(id_accordion, n_panel, sep = "-")  # replace with named panels
+  id_panel <- override_id
+  id_heading <- paste(id_panel, "heading", sep = "-")
+  id_collapse <- paste(id_panel, "collapse", sep = "-")
+  
+  # function to attach target
+  .attach_collapse_local <- function(x){
+    x <- bs_attach_collapse(x, id_collapse)
+    # x <- bs_set_data(x, parent = .id(id_accordion))
+    x <- bs_set_aria(x, expanded = TRUE, controls = id_collapse)
+  }
+  
+  title <- span(icon("plus"), title)
+  
+  heading <-
+    htmltools::tags$div(id = id_heading, class = "panel-heading", role = "tab")
+  
+  if (use_heading_link){
+    
+    # attach the collapse to the heading
+    heading <- .attach_collapse_local(heading)
+    # add some style so that heading appears clickable
+    heading <-
+      htmltools::tagAppendAttributes(heading, style = "cursor: pointer;")
+    panel_title_content <- title
+  } else {
+    # wrap the title in a link, attach the collapse
+    link <- htmltools::tags$a(title)
+    link <- .attach_collapse_local(link)
+    
+    panel_title_content <- link
+  }
+  
+  # compose the panel title
+  panel_title <- htmltools::tags$h4(class = "panel-title", panel_title_content)
+  # put the panel title into the heading
+  heading <- htmltools::tagAppendChild(heading, panel_title)
+  if (length(condition) > 0) {
+    id_toggle <- paste0(id_panel, "Toggle")
+    panel_toggle <- radioButtons(id_toggle, condition, 
+                                 c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE)
+    heading <- htmltools::tagAppendChild(heading, panel_toggle)
+  }
+  
+  id_status <- paste(id_panel, "status", sep = "")
+  panel_status <- div(id = id_status, "Status:", class = "panel-status-text")
+  heading <- htmltools::tagAppendChild(heading, panel_status)
+  # what to do if panel is empty?
+  panel_body_style <-
+    ifelse(
+      identical(length(content), 0L),
+      "padding-top: 0px; padding-bottom: 0px;",
+      ""
+    )
+  
+  collapse <-
+    htmltools::tags$div(
+      id = id_collapse,
+      class = "panel-collapse collapse",
+      role = "tabpanel",
+      htmltools::tags$div(
+        class = "panel-body",
+        style = panel_body_style,
+        content
+      )
+    )
+  
+  collapse <- bs_set_aria(collapse, labelledby = id_heading)
+  
+  # if this is the first panel, set it as open (add option to suppress)
+  if (identical(n_panel, 0L)){
+    collapse <- htmltools::tagAppendAttributes(collapse, class = "in")
+  }
+  
+  # compose the panel
+  panel <-
+    htmltools::tags$div(class = "panel", id = id_panel, heading, collapse)
+  panel <- htmltools::tagAppendAttributes(panel, class = panel_type)
+  
+  # append panel to accordion
+  tag <- htmltools::tagAppendChild(tag, panel)
+  
+  tag
+}
