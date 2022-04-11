@@ -29,6 +29,8 @@
 .panel-heading .panel-title {min-width:10em}
 .panel-status-text {margin-left: auto;}
 
+.fa-info-circle{margin-left:2px}
+
 /*
 
 div class="form-group shiny-input-container" role="presentation"

@@ -6,12 +6,40 @@ library(tidyverse)
 library(bslib)
 library(bsplus)
 library(shinyjs)
-
+library(shinythemes)
+library(listviewer)
+library(shinyFeedback)
+# install.packages("devtools")
+# devtools::install_github('timelyportfolio/reactR')
 source("utils.R")
-
 
 # left area ---------------------------------------------------------------
 
+
+# 
+# modal_equation <-
+#   bs_modal(
+#     id = "modal_equation",
+#     title = "Equations",
+#     body = includeMarkdown(system.file("markdown", "modal.md", package = "bsplus")),
+#     size = "medium"
+#   )
+# input_equation <-
+#   selectInput(
+#     inputId = "equation",
+#     label = "Label with modal help",
+#     choices = c("F = ma", "E = mc^2")
+#   ) %>%
+#   shinyInput_label_embed(
+#     shiny_iconlink() %>%
+#       bs_attach_modal(id_modal = "modal_equation")
+#   )
+#     
+# test_modal <- bs_modal(id = "testmodal", title = "About this thing", body = "I am this thing")
+# 
+# test_panel <- bs_panel(heading = "test area", body = input_equation)
+
+# left_panel <- div(test_panel)
 left_panel <- div("")
 
 # main area ---------------------------------------------------------------
@@ -19,19 +47,34 @@ left_panel <- div("")
 
 ## general panel -----------------------------------------------------------
 
+# prep_name_input <- textInput("prep_name", "Name") %>% shinyInput_label_embed(actionLink("testInfo", icon("info-circle")))
+prep_name_input <- textInputInfo("prep_name", "Name")
+prep_name_info <- "Name of person preparing this form"
+
+prep_affiliation_input <- selectInputInfo("prep_affiliation", 
+                                          "Affiliation", 
+                                          c("-", "Landscape 1", "Landscape 2", "Landscape 3",
+                                                                               "Landscape 4", "Landscape 5", "Lanscape 6",
+                                                                               "Theme 1", "Theme 2", "Theme 3", "Synthesis", "Other"))
+
+prep_date_input <- dateInputInfo("prep_date", "Date")
+
+prep_email_input <- textInputInfo("prep_email", "Email")
+
+prep_title_input <- textInputInfo("proj_title", "Project Title")
+
+proj_abstract_input <- textAreaInputInfo("proj_abstract", "Project Abstract", width = "30em", height = "8em", resize = "both")
 
 preparer_section <- bs_panel(heading = "About the metadata preparer",
                              body = div(class = "inline formGroup",
-                               textInput("prep_name", "Name"),
-                               selectInput("prep_affiliation", "Affiliation", c("Landscape 1", "Landscape 2", "Landscape 3",
-                                                                                "Landscape 4", "Landscape 5", "Lanscape 6",
-                                                                                "Theme 1", "Theme 2", "Theme 3", "Synthesis", "Other")),
-                               textInput("prep_email", "Email"),
-                               dateInput("prep_date", "Date"),
-                               textInput("proj_title", "Project Title")))
+                                        prep_name_input,
+                                        prep_affiliation_input,
+                                        prep_email_input,
+                               prep_date_input,
+                               prep_title_input))
 project_section <- bs_panel(heading = "About the research project",
                                       body = div(class = "inline extra-wide",
-                               textAreaInput("proj_abstract", "Project Abstract", width = "30em", height = "8em", resize = "both")
+                                                 proj_abstract_input
                              ))
                              
 general_panel <- div(preparer_section, project_section)
@@ -63,11 +106,11 @@ sensitive_section <- bs_panel(heading = "Sensitivity",
 sensitive_panel <- div(sensitive_section)
 
 
-# sources panel -----------------------------------------------------------
+## sources panel -----------------------------------------------------------
 
 sources_panel <- div("")
 
-# spatial panel -----------------------------------------------------------
+## spatial panel -----------------------------------------------------------
 
 spatial_panel <- div("")
 
@@ -83,13 +126,16 @@ main_panel <- bs_accordion(id = "mainPanelAccord") %>%
             content = data_panel, override_id = "dataPanel") %>%
   bs_append_noparent_toggle(title = "Sensitive Data", 
             content = sensitive_panel, override_id = "sensitivePanel",
-            condition = "Invloves sensitive data?") %>%
+            condition = "Involves sensitive data?") %>%
   bs_append_noparent_toggle(title = "Data Sources", 
             content = sources_panel, override_id = "sourcePanel",
             condition = "Incorporates external data?") %>%
   bs_append_noparent_toggle(title = "Spatial Data", 
             content = spatial_panel, override_id = "spatialPanel",
             condition = "Contains spatial data?")
+
+
+# right area --------------------------------------------------------------
 
 right_panel <-
   fixedPanel(
@@ -117,10 +163,11 @@ right_panel <-
           icon = shiny::icon("download")
         ),
         verbatimTextOutput("lastModified"),
-        radioButtons("testToggle", "blah", 
-                     c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE)
-      )
-    )
+        radioButtons("testToggle", "Test", 
+                     c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE),
+        actionButton("showInputButton", "Show Input")
+        )
+  )
   )
 
 
@@ -147,11 +194,18 @@ ui <- fluidPage(
             id = "mainTab")
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+# server ------------------------------------------------------------------
+
+server <- function(input, output, session) {
 
   output$lastModified <- renderPrint({ "foo" })
-
+  
+  # observeEvent(input$showInputButton, {
+  #   showModal(modalDialog(
+  #     title = "Input",
+  #     "test"
+  #   ))
+  # })
   # observe({
   #   toggle("sensitivePanel", input$dataConsiderationRadios)
   # })
@@ -160,6 +214,49 @@ server <- function(input, output) {
   #   toggleClass("sensitivePanel", "panel-danger", !input$validCheck)
   # })
   # 
+  
+
+  
+  inputModal <- function(){
+    modalDialog(
+      reactjsonOutput("input_peek"),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("ok", "OK")
+      )
+    )
+  }
+  
+  inputjson <- reactive({inputjson <- reactiveValuesToList(input) %>% reactjson()# %>% jsonlite::toJSON()
+  })
+  
+  observeEvent(input$showInputButton, {
+    showModal(inputModal())
+    
+  })
+  
+  infoModal <- function(infoText) {
+    modalDialog(
+      infoText,
+      easyClose = TRUE,
+      footer = tagList(
+        modalButton("OK")
+        )
+    )
+  }
+  observeEvent(input$prep_nameInfo, {
+    showModal(infoModal(prep_name_info))
+    
+  })
+  
+  
+  output$input_peek <- renderReactjson({
+    inputjson()
+      })
+
+
+  
+  
   observe({
     x <- input$sourcePanelToggle
     toggleClass("sourcePanel", "panel-info", is.null(x))
@@ -180,7 +277,9 @@ server <- function(input, output) {
     toggleClass("spatialPanel", "panel-primary", isTRUE(as.logical(x)))
     toggleClass("spatialPanel", "panel-default", isFALSE(as.logical(x)))
   })
-  
+  # session$onSessionEnded(function() {
+  #   isolate(saveRDS( input, file = 'integer.RDS'))
+  # })
 }
 
 # Run the application 
