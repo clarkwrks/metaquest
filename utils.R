@@ -1,4 +1,6 @@
 
+# input infos -------------------------------------------------------------
+
 .tag_validate <- function(tag, name = NULL, class = NULL, ...){
   
   list_attrib <- list(...)
@@ -42,7 +44,6 @@
   tag
 }
 
-
 # we will be able to get rid of this code
 split_class <- function(x) {
   
@@ -52,19 +53,16 @@ split_class <- function(x) {
   x[[1]]
 }
 
-
-textInputInfo <- function(inputId, label,  ...) {
-  tagx <- textInput(inputId, label)
-  tagx <- .tag_validate(tagx, name = "div", class = "form-group shiny-input-container")
-  infoLink <- actionLink(paste0(inputId, "Info"), icon("info-circle"))
-  infoLink <- htmltools::div(clas = "pull-right", infoLink)
-  tagx$children[[1]] <- tagx$children[[1]] %>% htmltools::tagAppendChild(infoLink)# %>% 
-  # htmltools::tagAppendAttributes(style = "width:100%;")
-  
-  tagx
-}
-
-
+# textInputInfo <- function(inputId, label,  ...) {
+#   tagx <- textInput(inputId, label)
+#   tagx <- .tag_validate(tagx, name = "div", class = "form-group shiny-input-container")
+#   infoLink <- actionLink(paste0(inputId, "Info"), icon("info-circle"))
+#   infoLink <- htmltools::div(clas = "pull-right", infoLink)
+#   tagx$children[[1]] <- tagx$children[[1]] %>% htmltools::tagAppendChild(infoLink)# %>% 
+#   # htmltools::tagAppendAttributes(style = "width:100%;")
+#   
+#   tagx
+# }
 
 shinyInput_label_embed <- function(tag, element){
   
@@ -109,6 +107,7 @@ textAreaInputInfo <- function(inputId, label, width, height, resize, ...) {
   textAreaInput(inputId, label, width=width, height=height, resize=resize) %>% shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
 }
 
+# accordion ---------------------------------------------------------------
 
 # removed `bs_set_data(x, parent = .id(id_accordion))` 
 # and `id_panel <- paste(id_accordion, n_panel, sep = "-")` -> `id_panel <- override_id`
@@ -209,4 +208,72 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id, conditio
   tag <- htmltools::tagAppendChild(tag, panel)
   
   tag
+}
+
+
+textInput_ui <- function(id, label, ...) {
+  textInput(NS(id, "TextInput"), label) %>% 
+    shinyInput_label_embed(actionLink(NS(id, "Info"), icon("info-circle")))
+}
+
+
+
+textInput_server <- function(id, info, ...){
+  moduleServer(id, function(input, output, session) {
+    infoModal <- function(content){
+      modalDialog(
+        content,
+        easyClose = TRUE,
+        footer = tagList(
+          modalButton("OK")
+        )
+      )
+    }
+    observeEvent(input$Info, {
+      showModal(infoModal(info))
+      
+    })
+  })
+}
+
+
+
+infoInput_ui <- function(id, label, type, choices, info, ...) {
+  input_id <- NS(id, "Input")
+  x <- switch(type,
+              textIn = textInput(input_id, label),
+              selectIn = selectInput(input_id, label, choices),
+              dateIn = dateInput(input_id, label),
+              textareaIn = textAreaInput(input_id, label, width = "30em", height = "8em", resize = "both")
+              )
+  if(!is.na(info)) {
+    x %>% 
+      shinyInput_label_embed(actionLink(NS(id, "Info"), icon("info-circle")))
+  } else {
+    x
+  }
+
+}
+
+
+
+infoInput_server <- function(id, info, ...){
+  if(!is.na(info)) {
+    
+  moduleServer(id, function(input, output, session) {
+    infoModal <- function(content){
+      modalDialog(
+        content,
+        easyClose = TRUE,
+        footer = tagList(
+          modalButton("OK")
+        )
+      )
+    }
+    observeEvent(input$Info, {
+      showModal(infoModal(info))
+      
+    })
+  })
+  }
 }

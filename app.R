@@ -1,6 +1,7 @@
 
 # load libs ---------------------------------------------------------------
 
+library(jsonlite)
 library(shiny)
 library(tidyverse)
 library(bslib)
@@ -8,46 +9,42 @@ library(bsplus)
 library(shinyjs)
 library(shinythemes)
 library(listviewer)
-library(shinyFeedback)
+# library(shinyFeedback)
 # install.packages("devtools")
 # devtools::install_github('timelyportfolio/reactR')
+
+source("quests.R")
 source("utils.R")
+source("mods.R")
 
 # left area ---------------------------------------------------------------
 
 
-# 
-# modal_equation <-
-#   bs_modal(
-#     id = "modal_equation",
-#     title = "Equations",
-#     body = includeMarkdown(system.file("markdown", "modal.md", package = "bsplus")),
-#     size = "medium"
-#   )
-# input_equation <-
-#   selectInput(
-#     inputId = "equation",
-#     label = "Label with modal help",
-#     choices = c("F = ma", "E = mc^2")
-#   ) %>%
-#   shinyInput_label_embed(
-#     shiny_iconlink() %>%
-#       bs_attach_modal(id_modal = "modal_equation")
-#   )
-#     
-# test_modal <- bs_modal(id = "testmodal", title = "About this thing", body = "I am this thing")
-# 
-# test_panel <- bs_panel(heading = "test area", body = input_equation)
+gen_info_quests <- tribble(
+  ~id, ~type, ~label, ~info, ~choices,
+  "prep_name1", "textIn", "Name", "Your Name", NA,
+  "no_info", "textIn", "Infotest", NA, NA
+)
 
-# left_panel <- div(test_panel)
-left_panel <- div("")
+questions <- tribble(
+  ~id, ~label, ~info, ~type, ~choices,
+  "test1_id", "test1_label", "test1_info", "textIn", NA,
+  "test2_id", "test2_label", "test2_info", "textIn", NA,
+  "test3_id", "test3_label", "test3_info", "dateIn", NA,
+  "test4_id", "test4_label", "test4_info", "selectIn", c("1", "2"),
+  "test5_id", "test5_label", "test5_info", "textareaIn", NA,
+  "test6_id", "test6_label", "test6_info", "textIn", NA
+)
+
+left_panel <- div(textInput_ui("testTextInput", "testing"), gen_info_quests %>% pmap(infoInput_ui))
+
 
 # main area ---------------------------------------------------------------
 
-
 ## general panel -----------------------------------------------------------
 
-# prep_name_input <- textInput("prep_name", "Name") %>% shinyInput_label_embed(actionLink("testInfo", icon("info-circle")))
+
+
 prep_name_input <- textInputInfo("prep_name", "Name")
 prep_name_info <- "Name of person preparing this form"
 
@@ -148,14 +145,16 @@ right_panel <-
       panel_type = "info",
       body = div(
         fileInput(
-          "importMetaQuest",
-          "Import MetaQuest File",
+          "uploadMetaQuest",
+          "Upload MetaQuest File",
           multiple = FALSE,
-          accept = ".csv",
+          accept = ".json",
           width = NULL,
           buttonLabel = "Browse...",
           placeholder = "No file selected"
         ),
+        actionButton("importMetaQuest", "Import"),
+        actionButton("viewMetaQuest", "View"),
         downloadButton(
           "exportMetaQuest",
           label = "Export MetaQuest File",
@@ -179,6 +178,7 @@ right_panel <-
 ui <- fluidPage(
     bs_theme = "flatly",
     useShinyjs(),
+    # useShinyFeedback(),
   # theme = bs_theme("flatly", version = 5),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     # titlePanel(fluidRow(
@@ -215,7 +215,34 @@ server <- function(input, output, session) {
   # })
   # 
   
-
+  textInput_server("testTextInput", "testing away")
+  
+  questions %>% pmap(infoInput_server)
+  
+  infoModal <- function(infoText) {
+    modalDialog(
+      infoText,
+      easyClose = TRUE,
+      footer = tagList(
+        modalButton("OK")
+      )
+    )
+  }
+  observeEvent(input$prep_nameInfo, {
+    showModal(infoModal(prep_name_info))
+    
+  })
+  # 
+  # observeEvent(input$prep_name, {
+  #   if(nchar(input$prep_name) < 4){
+  #     showFeedbackWarning(
+  #       "prep_name", 
+  #       text = "Please enter your name."
+  #     )
+  #   } else {
+  #     hideFeedback("prep_name")
+  #   }
+  # })
   
   inputModal <- function(){
     modalDialog(
@@ -227,33 +254,61 @@ server <- function(input, output, session) {
     )
   }
   
-  inputjson <- reactive({inputjson <- reactiveValuesToList(input) %>% reactjson()# %>% jsonlite::toJSON()
-  })
-  
   observeEvent(input$showInputButton, {
     showModal(inputModal())
-    
   })
   
-  infoModal <- function(infoText) {
-    modalDialog(
-      infoText,
-      easyClose = TRUE,
-      footer = tagList(
-        modalButton("OK")
-        )
-    )
-  }
-  observeEvent(input$prep_nameInfo, {
-    showModal(infoModal(prep_name_info))
-    
+  inputjson <- reactive({inputjson <- reactiveValuesToList(input) %>% reactjson()# %>% jsonlite::toJSON()
   })
-  
   
   output$input_peek <- renderReactjson({
     inputjson()
       })
 
+  # viewMetaQuest
+  # importMetaQuest
+  # uploadMetaquest
+  
+  viewMetaQuestModal <- function(){
+    modalDialog(
+      reactjsonOutput("view_upload_json"),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("ok", "OK")
+      )
+    )
+  }
+  
+  observeEvent(input$viewMetaQuest, {
+    showModal(viewMetaQuestModal())
+  })
+  
+  uploadjson <- reactive({
+    file <- input$uploadMetaQuest
+    ext <- tools::file_ext(file$datapath)
+    
+    req(file)
+    validate(need(ext == "json", "Please upload a json file"))
+    
+    
+    
+    uploadjson <- read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
+  })
+  
+  output$view_upload_json <- renderReactjson({
+    uploadjson()
+  })
+  
+  session_data <- reactive({
+    
+  })
+  
+  output$exportMetaQuest <- downloadHandler(
+    filename = "test.json",
+    content = function(file) {
+      reactiveValuesToList(input) %>% jsonlite::toJSON(., pretty = TRUE) %>% write_json(., file)}
+  )
+  
 
   
   
