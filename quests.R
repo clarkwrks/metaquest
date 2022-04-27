@@ -19,13 +19,13 @@ choices_affiliation <- c("-",
 
 
 metaquests <- tibble::tribble(
-                 ~id,        ~type,         ~label,  ~section,     ~panel,              ~choices,                                                  ~info,
-         "prep_name",     "textIn",         "Name", "general", "preparer",                    NA,                                            "Your name",
-  "prep_affiliation",   "selectIn", "Affliliation", "general", "preparer",   choices_affiliation,                    "Your research group within ResNet",
-        "prep_email",     "textIn",        "Email", "general", "preparer",                    NA,               "Email you use for ResNet communication",
-         "prep_date",     "dateIn",         "Date", "general", "preparer",                    NA,                                         "Today's date",
-        "proj_title",     "textIn",        "Title", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
-     "proj_abstract", "textareaIn",     "Abstract", "general",  "project",                    NA,               "A brief abstract desribing the project"
+                 ~id,        ~type,        ~label,    ~panel,   ~section,              ~choices,                                                  ~info,
+         "prep_name",     "textIn",        "Name", "general", "preparer",                    NA,                                            "Your name",
+  "prep_affiliation",   "selectIn", "Affiliation", "general", "preparer",   choices_affiliation,                    "Your research group within ResNet",
+        "prep_email",     "textIn",       "Email", "general", "preparer",                    NA,               "Email you use for ResNet communication",
+         "prep_date",     "dateIn",        "Date", "general", "preparer",                    NA,                                         "Today's date",
+        "proj_title",     "textIn",       "Title", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
+     "proj_abstract", "textareaIn",    "Abstract", "general",  "project",                    NA,               "A brief abstract desribing the project"
   )
 
 

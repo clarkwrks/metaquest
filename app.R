@@ -1,7 +1,7 @@
 
 # load libs ---------------------------------------------------------------
 
-library(jsonlite)
+# library(jsonlite)
 library(shiny)
 library(tidyverse)
 library(bslib)
@@ -19,62 +19,39 @@ source("mods.R")
 
 # left area ---------------------------------------------------------------
 
-
-gen_info_quests <- tribble(
-  ~id, ~type, ~label, ~info, ~choices,
-  "prep_name1", "textIn", "Name", "Your Name", NA,
-  "no_info", "textIn", "Infotest", NA, NA
-)
-
-questions <- tribble(
-  ~id, ~label, ~info, ~type, ~choices,
-  "test1_id", "test1_label", "test1_info", "textIn", NA,
-  "test2_id", "test2_label", "test2_info", "textIn", NA,
-  "test3_id", "test3_label", "test3_info", "dateIn", NA,
-  "test4_id", "test4_label", "test4_info", "selectIn", c("1", "2"),
-  "test5_id", "test5_label", "test5_info", "textareaIn", NA,
-  "test6_id", "test6_label", "test6_info", "textIn", NA
-)
-
-left_panel <- div(textInput_ui("testTextInput", "testing"), gen_info_quests %>% pmap(infoInput_ui))
-
+left_area <- div() 
 
 # main area ---------------------------------------------------------------
 
 ## general panel -----------------------------------------------------------
 
+# project_section <- bs_panel(heading = "About the research project",
+#                                       body = div(class = "inline extra-wide",
+#                                                  proj_abstract_input
+#                              ))
+#                              
+# general_panel <- div(preparer_section, project_section)
 
+preparer_section <- bs_panel(heading = "About the metadata preparer", 
+                           body = div(class = "inline formGroup",
+                                      metaquests %>% 
+                                        filter(panel == "general" & section == "preparer") %>%
+                                        pmap(infoInput_ui)))
 
-prep_name_input <- textInputInfo("prep_name", "Name")
-prep_name_info <- "Name of person preparing this form"
+project_section <- bs_panel(heading = "About the research project", 
+                          body = div(class = "inline formGroup",
+                                     metaquests %>% 
+                                       filter(panel == "general" & section == "project") %>%
+                                       pmap(infoInput_ui),
+                                     contribList_ui("contribList", "Project Contributors"))
+                          )
 
-prep_affiliation_input <- selectInputInfo("prep_affiliation", 
-                                          "Affiliation", 
-                                          c("-", "Landscape 1", "Landscape 2", "Landscape 3",
-                                                                               "Landscape 4", "Landscape 5", "Lanscape 6",
-                                                                               "Theme 1", "Theme 2", "Theme 3", "Synthesis", "Other"))
+# contributor_section <- bs_panel(heading = "Project Contributors", 
+#                             body = div(class = "inline formGroup",
+#                                        contribList_ui("contribList"))
+# )
 
-prep_date_input <- dateInputInfo("prep_date", "Date")
-
-prep_email_input <- textInputInfo("prep_email", "Email")
-
-prep_title_input <- textInputInfo("proj_title", "Project Title")
-
-proj_abstract_input <- textAreaInputInfo("proj_abstract", "Project Abstract", width = "30em", height = "8em", resize = "both")
-
-preparer_section <- bs_panel(heading = "About the metadata preparer",
-                             body = div(class = "inline formGroup",
-                                        prep_name_input,
-                                        prep_affiliation_input,
-                                        prep_email_input,
-                               prep_date_input,
-                               prep_title_input))
-project_section <- bs_panel(heading = "About the research project",
-                                      body = div(class = "inline extra-wide",
-                                                 proj_abstract_input
-                             ))
-                             
-general_panel <- div(preparer_section, project_section)
+general_panel <- div(preparer_section, project_section, contribRow_ui("testrow"))
 
 ## data panel --------------------------------------------------------------
 
@@ -114,7 +91,7 @@ spatial_panel <- div("")
 
 ## build accordion --------------------------------------------------------
 
-main_panel <- bs_accordion(id = "mainPanelAccord") %>% 
+main_area <- bs_accordion(id = "mainPanelAccord") %>% 
   bs_set_opts(panel_type = "primary", use_heading_link = FALSE
               ) %>%
   bs_append_noparent_toggle(title = "General Information", 
@@ -134,7 +111,7 @@ main_panel <- bs_accordion(id = "mainPanelAccord") %>%
 
 # right area --------------------------------------------------------------
 
-right_panel <-
+right_area <-
   fixedPanel(
     top = "63px",
     height = "50%",
@@ -188,9 +165,9 @@ ui <- fluidPage(
     titlePanel(h1("Metadata Questionnaire", align = "center"), 
       "Metadata Questionnaire"),
     fillRow(flex = c(1,4,1),
-            left_panel,
-            main_panel,
-            right_panel,
+            left_area,
+            main_area,
+            right_area,
             id = "mainTab")
 )
 
@@ -198,52 +175,27 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
-  output$lastModified <- renderPrint({ "foo" })
+  # output$lastModified <- renderPrint({input$`prep_name-Input`})
   
-  # observeEvent(input$showInputButton, {
-  #   showModal(modalDialog(
-  #     title = "Input",
-  #     "test"
-  #   ))
-  # })
-  # observe({
-  #   toggle("sensitivePanel", input$dataConsiderationRadios)
-  # })
-  # 
-  # observe({
-  #   toggleClass("sensitivePanel", "panel-danger", !input$validCheck)
-  # })
-  # 
+
+# build question hooks ----------------------------------------------------
+  contribRow_server("testrow")
+  metaquests %>% pmap(infoInput_server)
   
-  textInput_server("testTextInput", "testing away")
+  contribList_server("contribList")
   
-  questions %>% pmap(infoInput_server)
-  
-  infoModal <- function(infoText) {
-    modalDialog(
-      infoText,
-      easyClose = TRUE,
-      footer = tagList(
-        modalButton("OK")
-      )
-    )
-  }
-  observeEvent(input$prep_nameInfo, {
-    showModal(infoModal(prep_name_info))
-    
-  })
-  # 
-  # observeEvent(input$prep_name, {
-  #   if(nchar(input$prep_name) < 4){
-  #     showFeedbackWarning(
-  #       "prep_name", 
-  #       text = "Please enter your name."
+  # infoModal <- function(infoText) {
+  #   modalDialog(
+  #     infoText,
+  #     easyClose = TRUE,
+  #     footer = tagList(
+  #       modalButton("OK")
   #     )
-  #   } else {
-  #     hideFeedback("prep_name")
-  #   }
-  # })
-  
+  #   )
+  # }
+
+# input env peek ----------------------------------------------------------
+
   inputModal <- function(){
     modalDialog(
       reactjsonOutput("input_peek"),
@@ -258,17 +210,46 @@ server <- function(input, output, session) {
     showModal(inputModal())
   })
   
-  inputjson <- reactive({inputjson <- reactiveValuesToList(input) %>% reactjson()# %>% jsonlite::toJSON()
+  inputjson <- reactive({
+    inputjson <- reactiveValuesToList(input) %>% reactjson()# %>% jsonlite::toJSON()
   })
   
   output$input_peek <- renderReactjson({
     inputjson()
-      })
+  })
 
   # viewMetaQuest
   # importMetaQuest
   # uploadMetaquest
+
+#  json io ----------------------------------------------------------------
   
+
+
+## export ------------------------------------------------------------------
+
+
+  current_data <- reactive({
+      list(
+        prep_name = input$`prep_name-Input`,
+        prep_affiliation = input$`prep_affiliation-Input`,
+        prep_email = input$`prep_email-Input`,
+        prep_date = input$`prep_date-Input`,
+        proj_title = input$`proj_title-Input`,
+        proj_abstract = input$`proj_abstract-Input`
+      )
+  })
+  
+  output$exportMetaQuest <- downloadHandler(
+    filename = "test.json",
+    content = function(file) {
+      # reactiveValuesToList(input) %>% jsonlite::toJSON(., pretty = TRUE) %>% write_json(., file)
+      current_data() %>% jsonlite::write_json(., file, pretty = TRUE)
+    }
+  )
+
+## import ------------------------------------------------------------------
+
   viewMetaQuestModal <- function(){
     modalDialog(
       reactjsonOutput("view_upload_json"),
@@ -288,27 +269,36 @@ server <- function(input, output, session) {
     ext <- tools::file_ext(file$datapath)
     
     req(file)
-    validate(need(ext == "json", "Please upload a json file"))
+    # validate(need(ext == "json", "Please upload a json file"))
     
     
     
-    uploadjson <- read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
+    uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
   })
   
   output$view_upload_json <- renderReactjson({
     uploadjson()
   })
   
-  session_data <- reactive({
-    
+  observeEvent(input$importMetaQuest, {
+    file <- input$uploadMetaQuest
+    import_json <- jsonlite::read_json(file$datapath)
+    updateTextInput(session, "prep_name-Input", value = import_json$prep_name)
+    updateSelectInput(session, "prep_affiliation-Input", selected = import_json$prep_affiliation)
+    updateTextInput(session, "prep_email-Input", value = import_json$prep_email)
+    updateDateInput(session, "prep_date-Input", value = import_json$prep_date %>% unlist)
+    updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
+    updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
   })
-  
-  output$exportMetaQuest <- downloadHandler(
-    filename = "test.json",
-    content = function(file) {
-      reactiveValuesToList(input) %>% jsonlite::toJSON(., pretty = TRUE) %>% write_json(., file)}
-  )
-  
+# 
+#   prep_name = input$`prep_name-Input`,
+#   prep_affiliation = input$`prep_affiliation-Input`,
+#   prep_email = input$`prep_email-Input`,
+#   prep_date = input$`prep_date-Input`,
+#   proj_title = input$`proj_title-Input`,
+#   proj_abstract = input$`proj_abstract-Input`
+#   
+# panel modals ------------------------------------------------------------
 
   
   
