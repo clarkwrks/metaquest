@@ -1,4 +1,3 @@
-
 # infoInput ---------------------------------------------------------------
 
 infoInput_ui <- function(id, label, type, choices, info, ...) {
@@ -43,23 +42,31 @@ infoInput_server <- function(id, info, ...){
 
 
 contribRow_ui <- function(id, ...){
-  nameIn <- textInput(NS(id, "Name"), "Name")
-  instIn <- textInput(NS(id, "Institution"), "Institution")
-  deleteButton <- actionButton(NS(id, "DeleteContrib"), "Delete", icon("trash"))
-  div(class = "inline formGroup", id = id,
-      nameIn, instIn, deleteButton)
+  ns <- NS(id)
+  nameIn <- textInput(ns("Name"), "Name")
+  instIn <- textInput(ns("Institution"), "Institution")
+  emailIn <- textInput(ns("Email"), "Email")
+  deleteButton <- actionButton(ns("DeleteContrib"), "Delete", icon("trash"))
+  div(class = "inline formGroup", 
+      # id = id,
+      id = ns("div"),
+      nameIn, instIn, emailIn, deleteButton)
 }
 
 # something still off with NS, end up with contribList-contribList-test 
 contribRow_server <- function(id, ...){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+    # cat(ns("DeleteContrib"))
+    # cat(input$DeleteContrib())
     observeEvent(input$DeleteContrib, {
-      insertSelector = paste0("#", id)
+      # insertSelector = paste0("#", id)
+      insertSelector = paste0("#", ns("div"))
       # 
+      # cat(input[[id]])
+      
       removeUI(
-        selector = insertSelector,
+        selector = insertSelector#, session = session
       )
       cat(insertSelector)
       # cat(ns())
@@ -68,33 +75,53 @@ contribRow_server <- function(id, ...){
 }
 
 contribList_ui <- function(id,  label, ...){
-  nameIn <- textInput(NS(id, "Name"), "Name")
-  instIn <- textInput(NS(id, "Institution"), "Institution")
-  addContrib <- actionButton(NS(id, "addContrib"), "Add Contributor", icon("plus"), class = "fillWidth")
+  ns <- NS(id)
+  
+  nameIn <- textInput(ns("Name"), "Name")
+  instIn <- textInput(ns("Institution"), "Institution")
+  emailIn <- textInput(ns("Email"), "Email")
+  addContrib <- actionButton(ns("addContrib"), "Add Contributor", icon("plus"), class = "fillWidth")
   div(class = "margin-panel", bs_panel(heading = label, 
            body = div(
              div(class = "inline formGroup",
-                 nameIn, instIn),
+                 nameIn, instIn, emailIn),
              addContrib))
   )
 }
 
 contribList_server <- function(id, ...){
   moduleServer(id, function(input, output, session) {
-    insertSelector = paste0("#", NS(id, "addContrib"))
-    nsid <- NS(id, "test")
     ns <- session$ns
+    
+    insertSelector = paste0("#", ns("addContrib"))
+    # nsid <- ns("test")
+    # ns <- session$ns
+    counter <- reactiveVal(0)
+    
     observeEvent(input$addContrib, {
+      counter(counter() + 1)
+      # cat(ns(counter()))
       insertUI(
         selector = insertSelector,
         where = "beforeBegin",
-        ui = contribRow_ui(nsid)
+        ui = contribRow_ui(ns(counter()))
       )
-      contribRow_server(nsid)
+      # contribRow_server(ns(counter()))
+      contribRow_server(counter())
     })
   })
   
 }
 
+contribList_demo <- function() {
+  ui <- fluidPage(
+    contribRow_ui("contribRowTest"),
+    contribList_ui("contribListTest", "contribListTest"))
+  server <- function(input, output, session) {
+    contribRow_server("contribRowTest")
+    contribList_server("contribListTest")
+  }
+  shinyApp(ui, server)
+}
 
 
