@@ -6,6 +6,11 @@
 .fillWidth { width: 100%}
 
 .margin-panel {margin: 5px}
+
+.y-overflow-scroll{
+  max-height:10em;
+  overflow-y:auto;
+}
 /*
 .formGroup {
   display: flex;

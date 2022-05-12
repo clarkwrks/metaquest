@@ -13,3 +13,6 @@ write_json(test_list, tmp)
 read_json(tmp)
 
 read_json("/home/jclark/Downloads/test.json")
+
+
+list("test", "blah", "blahtest", c("blaha", "testnest", "contribList-1-Name")) %>% flatten %>% str_subset(., "contribList-\\d")

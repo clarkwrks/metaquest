@@ -1,6 +1,6 @@
 # infoInput ---------------------------------------------------------------
 
-infoInput_ui <- function(id, label, type, choices, info, ...) {
+infoInput_ui <- function(id, label, type, choices, info=NA, ...) {
   input_id <- NS(id, "Input")
   x <- switch(type,
               textIn = textInput(input_id, label),
@@ -17,7 +17,7 @@ infoInput_ui <- function(id, label, type, choices, info, ...) {
   
 }
 
-infoInput_server <- function(id, info, ...){
+infoInput_server <- function(id, info=NA, formData = formData, ...){
   if(!is.na(info)) {
     
     moduleServer(id, function(input, output, session) {
@@ -34,8 +34,38 @@ infoInput_server <- function(id, info, ...){
         showModal(infoModal(info))
         
       })
+      # observeEvent()
+      # print(formInput())
+      observeEvent(input$Input, {
+        # print(input$Input)
+        # formInput(input$Input)
+        formData[[paste0(id, "-Input")]] <- input$Input
+        # formInput[["test2"]] <- input$Input
+        # print(formInput)
+        # print(formInput %>% reactiveValuesToList())
+      })
     })
   }
+}
+
+infoInput_demo <- function() {
+  ui <- fluidPage(
+    infoInput_ui(id = "testText", label = "testText", info = "info", type = "textIn"),
+    actionButton("testButton", "testButton")
+    )
+  server <- function(input, output, session) {
+    formData <- reactiveValues("test" = "test")
+    infoInput_server(id = "testText", info = "info", formData = formData)
+    observeEvent(formData, {
+      # print(names(formData))
+      # print(formData %>% reactiveValuesToList())
+    })
+    observeEvent(input$testButton, {
+      # print(names(formData))
+      # print(formData %>% reactiveValuesToList())
+    })
+  }
+  shinyApp(ui, server)
 }
 
 # authorForm ------------------------------------------------------------
@@ -68,8 +98,6 @@ contribRow_server <- function(id, ...){
       removeUI(
         selector = insertSelector#, session = session
       )
-      cat(insertSelector)
-      # cat(ns())
   })
   })
 }
@@ -82,7 +110,7 @@ contribList_ui <- function(id,  label, ...){
   emailIn <- textInput(ns("Email"), "Email")
   addContrib <- actionButton(ns("addContrib"), "Add Contributor", icon("plus"), class = "fillWidth")
   div(class = "margin-panel", bs_panel(heading = label, 
-           body = div(
+           body = div(class = "y-overflow-scroll",
              div(class = "inline formGroup",
                  nameIn, instIn, emailIn),
              addContrib))

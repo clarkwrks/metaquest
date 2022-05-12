@@ -25,13 +25,6 @@ left_area <- div()
 
 ## general panel -----------------------------------------------------------
 
-# project_section <- bs_panel(heading = "About the research project",
-#                                       body = div(class = "inline extra-wide",
-#                                                  proj_abstract_input
-#                              ))
-#                              
-# general_panel <- div(preparer_section, project_section)
-
 preparer_section <- bs_panel(heading = "About the metadata preparer", 
                            body = div(class = "inline formGroup",
                                       metaquests %>% 
@@ -42,42 +35,24 @@ project_section <- bs_panel(heading = "About the research project",
                           body = div(class = "inline formGroup",
                                      metaquests %>% 
                                        filter(panel == "general" & section == "project") %>%
-                                       pmap(infoInput_ui),
-                                     contribList_ui("contribList", "Project Contributors"))
+                                       pmap(infoInput_ui)
+                                     )
                           )
 
-# contributor_section <- bs_panel(heading = "Project Contributors", 
-#                             body = div(class = "inline formGroup",
-#                                        contribList_ui("contribList"))
+contributor_section <- contribList_ui("contribList", "Project Contributors")
 # )
 
-general_panel <- div(preparer_section, project_section, contribRow_ui("testrow"))
+general_panel <- div(preparer_section, project_section, contributor_section)
 
 ## data panel --------------------------------------------------------------
 
 
-data_desc_section <- div(
-  bs_panel(heading = "Location", body =
-             ""),
-  bs_panel(heading = "Data Considerations", body =
-           div(class = "inline",
-             checkboxInput("showTestPanel", "Research product contains sensitive data", TRUE),
-             checkboxInput("validTestPanel", "Toggle test panel status", FALSE),
-             radioButtons("dataConsiderationRadios", "Data Considerations", c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE)
-           ))
-)
-
-data_panel <- div(data_desc_section)
+data_panel <- div()
 
 ## sensitive panel ---------------------------------------------------------
 
-sensitive_section <- bs_panel(heading = "Sensitivity", 
-                            body = div(
-                              checkboxInput("validCheck", "Am I valid?", FALSE),
-                            )
-                              )
 
-sensitive_panel <- div(sensitive_section)
+sensitive_panel <- div()
 
 
 ## sources panel -----------------------------------------------------------
@@ -113,7 +88,7 @@ main_area <- bs_accordion(id = "mainPanelAccord") %>%
 
 right_area <-
   fixedPanel(
-    top = "63px",
+    top = "8em",
     height = "50%",
     right = "10px",
     width = "15%",
@@ -121,29 +96,38 @@ right_area <-
       heading = "Manage File",
       panel_type = "info",
       body = div(
-        fileInput(
-          "uploadMetaQuest",
-          "Upload MetaQuest File",
-          multiple = FALSE,
-          accept = ".json",
-          width = NULL,
-          buttonLabel = "Browse...",
-          placeholder = "No file selected"
-        ),
-        actionButton("importMetaQuest", "Import"),
-        actionButton("viewMetaQuest", "View"),
         downloadButton(
           "exportMetaQuest",
           label = "Export MetaQuest File",
           class = "fillWidth",
           icon = shiny::icon("download")
         ),
-        verbatimTextOutput("lastModified"),
-        radioButtons("testToggle", "Test", 
-                     c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE),
-        actionButton("showInputButton", "Show Input")
-        )
-  )
+        fileInput(
+          "uploadMetaQuest",
+          label = NULL,
+          multiple = FALSE,
+          accept = ".json",
+          width = NULL,
+          buttonLabel = "Browse...",
+          placeholder = "No file selected"
+        ),
+        actionButton("viewMetaQuest", "View",
+                     class = "fillWidth",
+                     icon = shiny::icon("edit")),
+        actionButton("importMetaQuest", "Import",
+                     class = "fillWidth",
+                     icon = shiny::icon("file-import"))
+  )),
+  bs_panel(
+    heading = "Dev",
+    panel_type = "info",
+    body = div(
+      actionButton("showInputButton", "Show Input", class ="fillWidth"),
+      actionButton("testButton", "Test", class ="fillWidth"),
+      numericInput("testNumeric", "Numeric", value = 1),
+      radioButtons("testToggle", NULL, list("false", "true"), "false", inline = TRUE, width = "100%")
+    )
+    )
   )
 
 
@@ -175,25 +159,17 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
-  # output$lastModified <- renderPrint({input$`prep_name-Input`})
-  
 
 # build question hooks ----------------------------------------------------
-  contribRow_server("testrow")
-  metaquests %>% pmap(infoInput_server)
+  formData <- reactiveValues("test" = "test")
+  
+  metaquests %>% pmap(infoInput_server, formData=formData)
   
   contribList_server("contribList")
+  observeEvent(input$testButton, {
+    formData %>% reactiveValuesToList %>% print
+  })
   
-  # infoModal <- function(infoText) {
-  #   modalDialog(
-  #     infoText,
-  #     easyClose = TRUE,
-  #     footer = tagList(
-  #       modalButton("OK")
-  #     )
-  #   )
-  # }
-
 # input env peek ----------------------------------------------------------
 
   inputModal <- function(){
@@ -211,7 +187,7 @@ server <- function(input, output, session) {
   })
   
   inputjson <- reactive({
-    inputjson <- reactiveValuesToList(input) %>% reactjson()# %>% jsonlite::toJSON()
+    inputjson <- reactiveValuesToList(input) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
   })
   
   output$input_peek <- renderReactjson({
@@ -224,8 +200,6 @@ server <- function(input, output, session) {
 
 #  json io ----------------------------------------------------------------
   
-
-
 ## export ------------------------------------------------------------------
 
 
@@ -322,9 +296,124 @@ server <- function(input, output, session) {
     toggleClass("spatialPanel", "panel-primary", isTRUE(as.logical(x)))
     toggleClass("spatialPanel", "panel-default", isFALSE(as.logical(x)))
   })
+  
+  
   # session$onSessionEnded(function() {
   #   isolate(saveRDS( input, file = 'integer.RDS'))
   # })
+  
+
+# scratch -----------------------------------------------------------------
+  
+  contribRows <- reactive({
+    x <- reactiveValuesToList(input) 
+    x_all_rows <- x %>% names %>% str_subset(., "contribList-\\d+-DeleteContrib")
+    x1 <- x[x_all_rows]
+    x2 <- x1 %>% keep(~ .x == 0)
+    x2 %>% names %>% str_extract("contribList-\\d+")
+  })
+  
+# 
+#   observeEvent(input$testButton, {
+#     # # reactiveValuesToList(input) %>% str_extract(., ))
+#     # x <- reactiveValuesToList(input) 
+#     # x_all_rows <- x %>% names %>% str_subset(., "contribList-\\d+-DeleteContrib")
+#     # # x_all_rows %>% print
+#     # # x %>% pluck(!!!x_all_rows) %>% print
+#     # # x %>% map(x_all_rows) %>% print
+#     # x1 <- x[x_all_rows]
+#     # # x1 %>% print
+#     # x2 <- x1 %>% keep(~ .x == 0)
+#     contribRows() %>% print
+#     current_rows <- length(contribRows()) + 1
+#     import_rows <- input$testNumeric
+#     if(current_rows < import_rows) {
+#       add_rows <- import_rows - current_rows
+#       print(add_rows)
+#       for(i in 1:add_rows) {
+#         delay(6000, shinyjs::click("contribList-addContrib"))
+#       }
+#     }
+#     # while(current_rows < import_rows) {
+#     #     shinyjs::click("contribList-addContrib")
+#     # }
+#   })
+  # rowDif <- reactive({
+  #   current_rows <- length(contribRows()) + 1
+  #   import_rows <- input$testNumeric
+  #   import_rows - current_rows
+  # })
+  
+  
+  rowDif <- reactiveVal(0)
+  
+  observeEvent(input$testNumeric, {
+    current_rows <- isolate(contribRows()) %>% length + 1
+      import_rows <- input$testNumeric
+    rowDif(import_rows - current_rows)
+  })
+  
+  observeEvent(rowDif(), {
+    req(input$testToggle == "true")
+    # shinyjs::click("contribList-addContrib")
+    # invalidateLater(2500)
+    # Sys.sleep(1)
+    if(isolate(rowDif()) > 0){
+      rowDif(rowDif() - 1)
+      shinyjs::click("contribList-addContrib")
+      print(rowDif())
+    }
+  })
+  
+  # testObserve <- observeEvent(rowDif(), {
+  #   req(input$testToggle == "true")
+  #   # shinyjs::click("contribList-addContrib")
+  #   # 
+  #   # invalidateLater(2500)
+  #   # Sys.sleep(1)
+  #   if(isolate(rowDif()) > 0){
+  #     # shinyjs::click("contribList-addContrib")
+  #     print(rowDif())
+  #   }
+  # })
+# 
+#   testObserve <- observe({
+#     req(input$testToggle == "true")
+#     if(isolate(rowDif()) > 0){
+#       shinyjs::click("contribList-addContrib")
+#       print(rowDif())
+#       invalidateLater(2500)
+#     }
+#     # 
+#     # current_rows <- length(contribRows()) + 1
+#     # import_rows <- input$testNumeric
+#     # # if(current_rows < import_rows){
+#     # #   delay(1000, shinyjs::click("contribList-addContrib"))
+#     # # }    
+#     # contribRows()
+#     # 
+#     # if(current_rows < import_rows){
+#     #   shinyjs::click("contribList-addContrib")
+#     #   contribRows()
+#     # }
+#     # 
+#     # print(xincrementer())
+#     # Sys.sleep(5)
+#     # xincrementer(xincrementer() + 1)
+#     
+#     # debounce invalidateLater isolate reactivePoll throttle
+#   })
+#   
+  
+  # https://appsilon.com/how-to-safely-remove-a-dynamic-shiny-module/
+  # https://github.com/rstudio/shiny/issues/2374
+  # https://stackoverflow.com/questions/51515641/delete-corresponding-input-element-when-using-removeui
+  # https://stackoverflow.com/questions/60259473/shiny-reactive-input-add-and-delete
+  # https://gist.github.com/zappingseb/440691f109192be43eee239c5b2cee76
+  # https://community.rstudio.com/t/nested-server-modules-how-to-use-global-instead-of-local-namespace-inside-inner-module/103815/5
+  # https://stackoverflow.com/questions/63060605/r-shiny-insertui-and-observeevent-in-module
+  # https://github.com/rstudio/shiny/issues/2439
+  # https://www.r-bloggers.com/2020/02/shiny-add-removing-modules-dynamically/
 }
 
 # Run the application 
