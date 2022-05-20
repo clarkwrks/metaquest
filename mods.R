@@ -18,9 +18,32 @@ infoInput_ui <- function(id, label, type, choices, info=NA, ...) {
 }
 
 infoInput_server <- function(id, info=NA, formData = formData, ...){
-  if(!is.na(info)) {
+  
+  moduleServer(id, function(input, output, session) {
+    id
+    ns <- session$ns
+    # print(input())
+    # print(id)
+    # print(ns(id))
+    # print(input$Input)
+    # observeEvent(input, {print(input)})
+    # ns_id <- paste0(id, "-Input")
+    # observeEvent(input[ns_id], {
+    #   print(paste0(id, "-Input"))
+    #   
+    # })
+    observeEvent(input$Input, {
+      print(input$Input)
+      # paste0(id, "-Input") %>% print
+      # ns("Input") %>% print
+      # formInput(input$Input)
+      formData[[ns("Input")]] <- input$Input
+      # formInput[["test2"]] <- input$Input
+      # print(formInput)
+      # print(formInput %>% reactiveValuesToList())
+    })
     
-    moduleServer(id, function(input, output, session) {
+    if(!is.na(info)) {
       infoModal <- function(content){
         modalDialog(
           content,
@@ -32,20 +55,10 @@ infoInput_server <- function(id, info=NA, formData = formData, ...){
       }
       observeEvent(input$Info, {
         showModal(infoModal(info))
-        
       })
-      # observeEvent()
-      # print(formInput())
-      observeEvent(input$Input, {
-        # print(input$Input)
-        # formInput(input$Input)
-        formData[[paste0(id, "-Input")]] <- input$Input
-        # formInput[["test2"]] <- input$Input
-        # print(formInput)
-        # print(formInput %>% reactiveValuesToList())
-      })
-    })
-  }
+    }
+    
+  })
 }
 
 infoInput_demo <- function() {
@@ -70,26 +83,45 @@ infoInput_demo <- function() {
 
 # authorForm ------------------------------------------------------------
 
+contrib_row <- tibble::tribble(
+            ~id,    ~type,        ~label,
+         "name", "textIn",        "Name",
+  "institution", "textIn", "Institution",
+        "email", "textIn",       "Email"
+  )
 
-contribRow_ui <- function(id, ...){
+formListRow_ui <- function(id, ...){
   ns <- NS(id)
-  nameIn <- textInput(ns("Name"), "Name")
-  instIn <- textInput(ns("Institution"), "Institution")
-  emailIn <- textInput(ns("Email"), "Email")
-  deleteButton <- actionButton(ns("DeleteContrib"), "Delete", icon("trash"))
+  # nameIn <- textInput(ns("Name"), "Name")
+  # instIn <- textInput(ns("Institution"), "Institution")
+  # emailIn <- textInput(ns("Email"), "Email")
+  contrib_row_ns <- contrib_row %>% mutate(id = ns(id))
+  
+  deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"))
+  # print(contrib_row_ns)
   div(class = "inline formGroup", 
       # id = id,
       id = ns("div"),
-      nameIn, instIn, emailIn, deleteButton)
+      contrib_row_ns %>% pmap(infoInput_ui), deleteButton)
 }
 
-# something still off with NS, end up with contribList-contribList-test 
-contribRow_server <- function(id, ...){
+# something still off with NS, end up with formList-formList-test 
+formListRow_server <- function(id, formData=formData, ...){
   moduleServer(id, function(input, output, session) {
+    id
     ns <- session$ns
     # cat(ns("DeleteContrib"))
     # cat(input$DeleteContrib())
-    observeEvent(input$DeleteContrib, {
+    # print(contrib_row)
+    # print(id)
+    # print(ns(id))
+    # contrib_row_ns <- contrib_row %>% mutate(id = ns(id))
+    contrib_row_ns <- contrib_row
+    # contrib_row_ns <- contrib_row %>% mutate(id = paste0(id))
+    # print(contrib_row_ns)
+    contrib_row_ns %>% pmap(infoInput_server, formData=formData)
+    
+    observeEvent(input$DeleteRow, {
       # insertSelector = paste0("#", id)
       insertSelector = paste0("#", ns("div"))
       # 
@@ -102,52 +134,62 @@ contribRow_server <- function(id, ...){
   })
 }
 
-contribList_ui <- function(id,  label, ...){
+formList_ui <- function(id,  label, ...){
   ns <- NS(id)
   
-  nameIn <- textInput(ns("Name"), "Name")
-  instIn <- textInput(ns("Institution"), "Institution")
-  emailIn <- textInput(ns("Email"), "Email")
-  addContrib <- actionButton(ns("addContrib"), "Add Contributor", icon("plus"), class = "fillWidth")
+  # nameIn <- textInput(ns("Name"), "Name")
+  # instIn <- textInput(ns("Institution"), "Institution")
+  # emailIn <- textInput(ns("Email"), "Email")
+  # nameIn <- infoInput_ui(ns("name"), "textIn", "Name")
+  # instIn <- infoInput_ui(ns("institution"), "textIn", "Institution")
+  # emailIn <- infoInput_ui(ns("email"), "textIn", "Email")
+  
+  addRow <- actionButton(ns("addRow"), "Add Row", icon("plus"), class = "fillWidth")
   div(class = "margin-panel", bs_panel(heading = label, 
            body = div(class = "y-overflow-scroll",
-             div(class = "inline formGroup",
-                 nameIn, instIn, emailIn),
-             addContrib))
+             # div(class = "inline formGroup",
+             #     nameIn, instIn, emailIn),
+             addRow))
   )
 }
 
-contribList_server <- function(id, ...){
+formList_server <- function(id, formData=formData, ...){
   moduleServer(id, function(input, output, session) {
+    id
     ns <- session$ns
-    
-    insertSelector = paste0("#", ns("addContrib"))
+    # 
+    # infoInput_server("name", "textIn", "Name", formData)
+    # infoInput_server("institution", "textIn", "Institution", formData)
+    # infoInput_server("email", "textIn", "Email", formData)
+    # 
+    insertSelector = paste0("#", ns("addRow"))
     # nsid <- ns("test")
-    # ns <- session$ns
     counter <- reactiveVal(0)
     
-    observeEvent(input$addContrib, {
+    observeEvent(input$addRow, {
       counter(counter() + 1)
       # cat(ns(counter()))
+      # print(id)
+      
       insertUI(
         selector = insertSelector,
         where = "beforeBegin",
-        ui = contribRow_ui(ns(counter()))
+        ui = formListRow_ui(ns(counter()))
       )
-      # contribRow_server(ns(counter()))
-      contribRow_server(counter())
+      # formListRow_server(ns(counter()))
+      formListRow_server(counter(), formData)
     })
   })
   
 }
 
-contribList_demo <- function() {
+formList_demo <- function() {
   ui <- fluidPage(
-    contribRow_ui("contribRowTest"),
-    contribList_ui("contribListTest", "contribListTest"))
+    formListRow_ui("formListRowTest"),
+    formList_ui("formListTest", "formListTest"))
   server <- function(input, output, session) {
-    contribRow_server("contribRowTest")
-    contribList_server("contribListTest")
+    formListRow_server("formListRowTest")
+    formList_server("formListTest")
   }
   shinyApp(ui, server)
 }

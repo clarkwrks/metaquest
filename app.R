@@ -39,7 +39,7 @@ project_section <- bs_panel(heading = "About the research project",
                                      )
                           )
 
-contributor_section <- contribList_ui("contribList", "Project Contributors")
+contributor_section <- formList_ui("contribList", "Project Contributors")
 # )
 
 general_panel <- div(preparer_section, project_section, contributor_section)
@@ -165,7 +165,8 @@ server <- function(input, output, session) {
   
   metaquests %>% pmap(infoInput_server, formData=formData)
   
-  contribList_server("contribList")
+  formList_server("contribList", formData=formData
+                     )
   observeEvent(input$testButton, {
     formData %>% reactiveValuesToList %>% print
   })
@@ -365,46 +366,6 @@ server <- function(input, output, session) {
     }
   })
   
-  # testObserve <- observeEvent(rowDif(), {
-  #   req(input$testToggle == "true")
-  #   # shinyjs::click("contribList-addContrib")
-  #   # 
-  #   # invalidateLater(2500)
-  #   # Sys.sleep(1)
-  #   if(isolate(rowDif()) > 0){
-  #     # shinyjs::click("contribList-addContrib")
-  #     print(rowDif())
-  #   }
-  # })
-# 
-#   testObserve <- observe({
-#     req(input$testToggle == "true")
-#     if(isolate(rowDif()) > 0){
-#       shinyjs::click("contribList-addContrib")
-#       print(rowDif())
-#       invalidateLater(2500)
-#     }
-#     # 
-#     # current_rows <- length(contribRows()) + 1
-#     # import_rows <- input$testNumeric
-#     # # if(current_rows < import_rows){
-#     # #   delay(1000, shinyjs::click("contribList-addContrib"))
-#     # # }    
-#     # contribRows()
-#     # 
-#     # if(current_rows < import_rows){
-#     #   shinyjs::click("contribList-addContrib")
-#     #   contribRows()
-#     # }
-#     # 
-#     # print(xincrementer())
-#     # Sys.sleep(5)
-#     # xincrementer(xincrementer() + 1)
-#     
-#     # debounce invalidateLater isolate reactivePoll throttle
-#   })
-#   
-  
   # https://appsilon.com/how-to-safely-remove-a-dynamic-shiny-module/
   # https://github.com/rstudio/shiny/issues/2374
   # https://stackoverflow.com/questions/51515641/delete-corresponding-input-element-when-using-removeui
@@ -416,5 +377,5 @@ server <- function(input, output, session) {
   # https://www.r-bloggers.com/2020/02/shiny-add-removing-modules-dynamically/
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
