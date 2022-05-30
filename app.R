@@ -7,10 +7,7 @@ library(tidyverse)
 library(bslib)
 library(bsplus)
 library(shinyjs)
-library(shinythemes)
 library(listviewer)
-# library(shinyFeedback)
-# install.packages("devtools")
 # devtools::install_github('timelyportfolio/reactR')
 
 source("quests.R")
@@ -46,14 +43,11 @@ general_panel <- div(preparer_section, project_section, contributor_section)
 
 ## data panel --------------------------------------------------------------
 
-
 data_panel <- div()
 
 ## sensitive panel ---------------------------------------------------------
 
-
 sensitive_panel <- div()
-
 
 ## sources panel -----------------------------------------------------------
 
@@ -62,7 +56,6 @@ sources_panel <- div("")
 ## spatial panel -----------------------------------------------------------
 
 spatial_panel <- div("")
-
 
 ## build accordion --------------------------------------------------------
 
@@ -86,13 +79,9 @@ main_area <- bs_accordion(id = "mainPanelAccord") %>%
 
 # right area --------------------------------------------------------------
 
-right_area <-
-  fixedPanel(
-    top = "8em",
-    height = "50%",
-    right = "10px",
-    width = "15%",
-    bs_panel(
+## mgmt panel ----
+
+mgmt_panel <-    bs_panel(
       heading = "Manage File",
       panel_type = "info",
       body = div(
@@ -117,24 +106,32 @@ right_area <-
         actionButton("importMetaQuest", "Import",
                      class = "fillWidth",
                      icon = shiny::icon("file-import"))
-  )),
-  bs_panel(
+  ))
+
+## dev panel ----
+
+dev_panel <-  bs_panel(
     heading = "Dev",
     panel_type = "info",
     body = div(
       actionButton("showInputButton", "Show Input", class ="fillWidth"),
+      actionButton("showFormDataButton", "Show Form Data", class = "fillWidth"),
       actionButton("testButton", "Test", class ="fillWidth"),
       numericInput("testNumeric", "Numeric", value = 1),
       radioButtons("testToggle", NULL, list("false", "true"), "false", inline = TRUE, width = "100%")
     )
     )
-  )
 
-
-
-
+right_area <-
+  fixedPanel(
+    top = "8em",
+    height = "50%",
+    right = "10px",
+    width = "15%",
+    mgmt_panel,
+    dev_panel)
+    
 # ui ----------------------------------------------------------------------
-
 
 ui <- fluidPage(
     bs_theme = "flatly",
@@ -161,7 +158,10 @@ server <- function(input, output, session) {
 
 
 # build question hooks ----------------------------------------------------
-  formData <- reactiveValues("test" = "test")
+  
+  ## formData rvs -----------------------------------------------------------
+
+  formData <- reactiveValues(version = 0.01)
   
   metaquests %>% pmap(infoInput_server, formData=formData)
   
@@ -188,38 +188,48 @@ server <- function(input, output, session) {
   })
   
   inputjson <- reactive({
-    inputjson <- reactiveValuesToList(input) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
+    reactiveValuesToList(input) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
   })
   
   output$input_peek <- renderReactjson({
     inputjson()
   })
 
-  # viewMetaQuest
-  # importMetaQuest
-  # uploadMetaquest
+# form data peek ----------------------------------------------------------
+
+  
+  formDataModal <- function(){
+    modalDialog(
+      reactjsonOutput("form_peek"),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("ok", "OK")
+      )
+    )
+  }
+  
+  observeEvent(input$showFormDataButton, {
+    showModal(formDataModal())
+  })
+  
+  formjson <- reactive({
+    reactiveValuesToList(formData) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
+  })
+  
+  output$form_peek <- renderReactjson({
+    formjson()
+  })
+ 
 
 #  json io ----------------------------------------------------------------
   
 ## export ------------------------------------------------------------------
 
-
-  current_data <- reactive({
-      list(
-        prep_name = input$`prep_name-Input`,
-        prep_affiliation = input$`prep_affiliation-Input`,
-        prep_email = input$`prep_email-Input`,
-        prep_date = input$`prep_date-Input`,
-        proj_title = input$`proj_title-Input`,
-        proj_abstract = input$`proj_abstract-Input`
-      )
-  })
-  
   output$exportMetaQuest <- downloadHandler(
     filename = "test.json",
     content = function(file) {
       # reactiveValuesToList(input) %>% jsonlite::toJSON(., pretty = TRUE) %>% write_json(., file)
-      current_data() %>% jsonlite::write_json(., file, pretty = TRUE)
+      formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
     }
   )
 
@@ -246,8 +256,6 @@ server <- function(input, output, session) {
     req(file)
     # validate(need(ext == "json", "Please upload a json file"))
     
-    
-    
     uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
   })
   
@@ -265,18 +273,9 @@ server <- function(input, output, session) {
     updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
     updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
   })
-# 
-#   prep_name = input$`prep_name-Input`,
-#   prep_affiliation = input$`prep_affiliation-Input`,
-#   prep_email = input$`prep_email-Input`,
-#   prep_date = input$`prep_date-Input`,
-#   proj_title = input$`proj_title-Input`,
-#   proj_abstract = input$`proj_abstract-Input`
-#   
+  
 # panel modals ------------------------------------------------------------
 
-  
-  
   observe({
     x <- input$sourcePanelToggle
     toggleClass("sourcePanel", "panel-info", is.null(x))
@@ -305,66 +304,34 @@ server <- function(input, output, session) {
   
 
 # scratch -----------------------------------------------------------------
-  
-  contribRows <- reactive({
-    x <- reactiveValuesToList(input) 
-    x_all_rows <- x %>% names %>% str_subset(., "contribList-\\d+-DeleteContrib")
-    x1 <- x[x_all_rows]
-    x2 <- x1 %>% keep(~ .x == 0)
-    x2 %>% names %>% str_extract("contribList-\\d+")
-  })
-  
-# 
-#   observeEvent(input$testButton, {
-#     # # reactiveValuesToList(input) %>% str_extract(., ))
-#     # x <- reactiveValuesToList(input) 
-#     # x_all_rows <- x %>% names %>% str_subset(., "contribList-\\d+-DeleteContrib")
-#     # # x_all_rows %>% print
-#     # # x %>% pluck(!!!x_all_rows) %>% print
-#     # # x %>% map(x_all_rows) %>% print
-#     # x1 <- x[x_all_rows]
-#     # # x1 %>% print
-#     # x2 <- x1 %>% keep(~ .x == 0)
-#     contribRows() %>% print
-#     current_rows <- length(contribRows()) + 1
-#     import_rows <- input$testNumeric
-#     if(current_rows < import_rows) {
-#       add_rows <- import_rows - current_rows
-#       print(add_rows)
-#       for(i in 1:add_rows) {
-#         delay(6000, shinyjs::click("contribList-addContrib"))
-#       }
-#     }
-#     # while(current_rows < import_rows) {
-#     #     shinyjs::click("contribList-addContrib")
-#     # }
-#   })
-  # rowDif <- reactive({
-  #   current_rows <- length(contribRows()) + 1
-  #   import_rows <- input$testNumeric
-  #   import_rows - current_rows
+  # 
+  # contribRows <- reactive({
+  #   x <- reactiveValuesToList(input) 
+  #   x_all_rows <- x %>% names %>% str_subset(., "contribList-\\d+-DeleteContrib")
+  #   x1 <- x[x_all_rows]
+  #   x2 <- x1 %>% keep(~ .x == 0)
+  #   x2 %>% names %>% str_extract("contribList-\\d+")
   # })
-  
-  
-  rowDif <- reactiveVal(0)
-  
-  observeEvent(input$testNumeric, {
-    current_rows <- isolate(contribRows()) %>% length + 1
-      import_rows <- input$testNumeric
-    rowDif(import_rows - current_rows)
-  })
-  
-  observeEvent(rowDif(), {
-    req(input$testToggle == "true")
-    # shinyjs::click("contribList-addContrib")
-    # invalidateLater(2500)
-    # Sys.sleep(1)
-    if(isolate(rowDif()) > 0){
-      rowDif(rowDif() - 1)
-      shinyjs::click("contribList-addContrib")
-      print(rowDif())
-    }
-  })
+  # 
+  # rowDif <- reactiveVal(0)
+  # 
+  # observeEvent(input$testNumeric, {
+  #   current_rows <- isolate(contribRows()) %>% length + 1
+  #     import_rows <- input$testNumeric
+  #   rowDif(import_rows - current_rows)
+  # })
+  # 
+  # observeEvent(rowDif(), {
+  #   req(input$testToggle == "true")
+  #   # shinyjs::click("contribList-addContrib")
+  #   # invalidateLater(2500)
+  #   # Sys.sleep(1)
+  #   if(isolate(rowDif()) > 0){
+  #     rowDif(rowDif() - 1)
+  #     shinyjs::click("contribList-addRow")
+  #     print(rowDif())
+  #   }
+  # })
   
   # https://appsilon.com/how-to-safely-remove-a-dynamic-shiny-module/
   # https://github.com/rstudio/shiny/issues/2374
