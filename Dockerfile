@@ -25,18 +25,24 @@ RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
 # install dependencies of the euler app
 RUN R -q -e "install.packages(c('tidyverse', 'bslib', 'bsplus', 'shinyjs', 'listviewer'))"
+RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
+
 
 # copy the app to the image
 RUN mkdir /root/metaquest
 RUN mkdir /root/metaquest/www
 COPY www /root/metaquest/www
-COPY app.R /root/metaquest/
-COPY mods.R /root/metaquest/
-COPY utils.R /root/metaquest/
-COPY quests.R /root/metaquest/
+COPY app.R /root/metaquest
+COPY mods.R /root/metaquest
+COPY utils.R /root/metaquest
+COPY quests.R /root/metaquest
 
 COPY Rprofile.site /usr/local/lib/R/etc/
 
 EXPOSE 3838
 
-CMD ["R", "-q", "-e", "shiny::runApp('/root/metaquest',host='0.0.0.0', port=3838)"]
+# works local but not in shinyproxy docker
+CMD ["R", "-e", "shiny::runApp('/root/metaquest', host='0.0.0.0', port=3838)"]
+# does not work locally or in shinyproxy docker
+# CMD ["R", "-e", "shiny::runApp('/root/metaquest')"]
+# CMD ["R", "-q", "-e", "shiny::runApp('/root/metaquest')"]

@@ -7,6 +7,7 @@ library(tidyverse)
 library(bslib)
 library(bsplus)
 library(shinyjs)
+library(reactR)
 library(listviewer)
 # devtools::install_github('timelyportfolio/reactR')
 
