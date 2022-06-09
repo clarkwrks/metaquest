@@ -81,33 +81,45 @@ main_area <- bs_accordion(id = "mainPanelAccord") %>%
 # right area --------------------------------------------------------------
 
 ## mgmt panel ----
+# 
+# mgmt_panel <-    bs_panel(
+#       heading = "Manage File",
+#       panel_type = "info",
+#       body = div(
+#         downloadButton(
+#           "exportMetaQuest",
+#           label = "Export MetaQuest File",
+#           class = "fillWidth",
+#           icon = shiny::icon("download")
+#         ),
+#         fileInput(
+#           "uploadMetaQuest",
+#           label = NULL,
+#           multiple = FALSE,
+#           accept = ".json",
+#           width = NULL,
+#           buttonLabel = "Browse...",
+#           placeholder = "No file selected"
+#         ),
+#         actionButton("viewMetaQuest", "View",
+#                      class = "fillWidth",
+#                      icon = shiny::icon("edit")),
+#         actionButton("importMetaQuest", "Import",
+#                      class = "fillWidth",
+#                      icon = shiny::icon("file-import"))
+#   ))
 
-mgmt_panel <-    bs_panel(
-      heading = "Manage File",
-      panel_type = "info",
-      body = div(
-        downloadButton(
-          "exportMetaQuest",
-          label = "Export MetaQuest File",
-          class = "fillWidth",
-          icon = shiny::icon("download")
-        ),
-        fileInput(
-          "uploadMetaQuest",
-          label = NULL,
-          multiple = FALSE,
-          accept = ".json",
-          width = NULL,
-          buttonLabel = "Browse...",
-          placeholder = "No file selected"
-        ),
-        actionButton("viewMetaQuest", "View",
-                     class = "fillWidth",
-                     icon = shiny::icon("edit")),
-        actionButton("importMetaQuest", "Import",
-                     class = "fillWidth",
-                     icon = shiny::icon("file-import"))
-  ))
+mgmt_panel <-    div(
+    downloadButton(
+      "exportMetaQuest",
+      label = "Export",
+      class = "fillWidth",
+      icon = shiny::icon("download")
+    ),
+    actionButton("importMetaQuest", "Import",
+                 class = "fillWidth",
+                 icon = shiny::icon("upload"))
+)
 
 ## dev panel ----
 
@@ -123,14 +135,23 @@ dev_panel <-  bs_panel(
     )
     )
 
+right_area_accord <- bs_accordion(id = "rightPanelAccord") %>% 
+  bs_set_opts(panel_type = "default", use_heading_link = FALSE
+  ) %>%
+  bs_append_noparent_toggle(title = "Manage File", 
+                            content = mgmt_panel, override_id = "mgmtPanel", 
+                            status = FALSE) %>%
+  bs_append_noparent_toggle(title = "Developer", 
+                            content = dev_panel, override_id = "devPanel", 
+                            status = FALSE)
+
 right_area <-
   fixedPanel(
     top = "8em",
     height = "50%",
     right = "10px",
     width = "15%",
-    mgmt_panel,
-    dev_panel)
+    right_area_accord)
     
 # ui ----------------------------------------------------------------------
 
@@ -151,6 +172,10 @@ ui <- fluidPage(
             main_area,
             right_area,
             id = "mainTab")
+  # fillRow(flex = c(4,2),
+  #         main_area,
+  #         right_area,
+  #         id = "mainTab")
 )
 
 # server ------------------------------------------------------------------
@@ -162,7 +187,7 @@ server <- function(input, output, session) {
   
   ## formData rvs -----------------------------------------------------------
 
-  formData <- reactiveValues(version = 0.01)
+  formData <- reactiveValues(version = "0.0.1")
   
   metaquests %>% pmap(infoInput_server, formData=formData)
   
@@ -236,18 +261,40 @@ server <- function(input, output, session) {
 
 ## import ------------------------------------------------------------------
 
-  viewMetaQuestModal <- function(){
+  
+  importModal <- function(){
     modalDialog(
-      reactjsonOutput("view_upload_json"),
+      div(style = "min-height:60vh;overflow-y:auto",
+          fileInput(
+            "uploadMetaQuest",
+            label = NULL,
+            multiple = FALSE,
+            accept = ".json",
+            width = NULL,
+            buttonLabel = "Browse...",
+            placeholder = "No file selected"
+          ),
+      fillRow(flex = 1, 
+              bs_panel(title = "Current", 
+                       body=reactjsonOutput("current_file_json")),
+              bs_panel(title = "Import", 
+                       body=reactjsonOutput("view_upload_json"))
+              )
+      ),
+      title = "Import File",
+      size = "xl",
       footer = tagList(
         modalButton("Cancel"),
-        actionButton("ok", "OK")
-      )
+        actionButton("importConfirmButton", "Confirm")
+    )
     )
   }
+  observeEvent(input$importMetaQuest, {
+    showModal(importModal())
+  })
   
-  observeEvent(input$viewMetaQuest, {
-    showModal(viewMetaQuestModal())
+  output$view_upload_json <- renderReactjson({
+    uploadjson()
   })
   
   uploadjson <- reactive({
@@ -257,14 +304,15 @@ server <- function(input, output, session) {
     req(file)
     # validate(need(ext == "json", "Please upload a json file"))
     
-    uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
+    uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson()# %>% jsonlite::toJSON()
   })
   
-  output$view_upload_json <- renderReactjson({
-    uploadjson()
+  
+  output$current_file_json <- renderReactjson({
+    formjson()
   })
   
-  observeEvent(input$importMetaQuest, {
+  observeEvent(input$importConfirmButton, {
     file <- input$uploadMetaQuest
     import_json <- jsonlite::read_json(file$datapath)
     updateTextInput(session, "prep_name-Input", value = import_json$prep_name)
@@ -273,7 +321,48 @@ server <- function(input, output, session) {
     updateDateInput(session, "prep_date-Input", value = import_json$prep_date %>% unlist)
     updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
     updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
+    removeModal()
   })
+  
+  # 
+  # viewMetaQuestModal <- function(){
+  #   modalDialog(
+  #     reactjsonOutput("view_upload_json"),
+  #     footer = tagList(
+  #       modalButton("Cancel"),
+  #       actionButton("ok", "OK")
+  #     )
+  #   )
+  # }
+  # 
+  # observeEvent(input$viewMetaQuest, {
+  #   showModal(viewMetaQuestModal())
+  # })
+  # 
+  # uploadjson <- reactive({
+  #   file <- input$uploadMetaQuest
+  #   ext <- tools::file_ext(file$datapath)
+  #   
+  #   req(file)
+  #   # validate(need(ext == "json", "Please upload a json file"))
+  #   
+  #   uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
+  # })
+  # 
+  # output$view_upload_json <- renderReactjson({
+  #   uploadjson()
+  # })
+  # 
+  # observeEvent(input$importMetaQuest, {
+  #   file <- input$uploadMetaQuest
+  #   import_json <- jsonlite::read_json(file$datapath)
+  #   updateTextInput(session, "prep_name-Input", value = import_json$prep_name)
+  #   updateSelectInput(session, "prep_affiliation-Input", selected = import_json$prep_affiliation)
+  #   updateTextInput(session, "prep_email-Input", value = import_json$prep_email)
+  #   updateDateInput(session, "prep_date-Input", value = import_json$prep_date %>% unlist)
+  #   updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
+  #   updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
+  # })
   
 # panel modals ------------------------------------------------------------
 

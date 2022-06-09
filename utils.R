@@ -114,7 +114,8 @@ textAreaInputInfo <- function(inputId, label, width, height, resize, ...) {
 # attach a radioButtons input with description
 # attach status div
 # title -> span(icon("plus"), title)
-bs_append_noparent_toggle <- function(tag, title, content, override_id, condition = NULL, ...){
+bs_append_noparent_toggle <- function(tag, title, content, override_id, 
+                                      condition = NULL, status = TRUE, ...){
   
   # characterize the existing accordion
   n_panel <- length(tag$children)
@@ -168,10 +169,12 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id, conditio
       shinyInput_label_embed(actionLink(id_info, icon("info-circle")))
     heading <- htmltools::tagAppendChild(heading, panel_toggle)
   }
-  
-  id_status <- paste(id_panel, "status", sep = "")
-  panel_status <- div(id = id_status, "Status:", class = "panel-status-text")
-  heading <- htmltools::tagAppendChild(heading, panel_status)
+  if (status == TRUE) {
+    id_status <- paste(id_panel, "status", sep = "")
+    panel_status <- div(id = id_status, "Status:", class = "panel-status-text")
+    heading <- htmltools::tagAppendChild(heading, panel_status)
+  }
+
   # what to do if panel is empty?
   panel_body_style <-
     ifelse(
