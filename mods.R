@@ -17,7 +17,7 @@ infoInput_ui <- function(id, label, type, choices, info=NA, ...) {
   
 }
 
-infoInput_server <- function(id, info=NA, formData = formData, ...){
+infoInput_server <- function(id, info=NA, formData = formData, type, ...){
   
   moduleServer(id, function(input, output, session) {
     id
@@ -26,6 +26,35 @@ infoInput_server <- function(id, info=NA, formData = formData, ...){
     observeEvent(input$Input, {
       formData[[ns("Input")]] <- input$Input
     })
+    
+    observeEvent(formData[[ns("Input")]], {
+      print(paste0(
+        "Updating ", type, " field: ",
+        ns("Input"), " = ", formData[[ns("Input")]]
+        ))
+      switch(type,
+             textIn =
+               updateTextInput(session, "Input",
+                               value = formData[[ns("Input")]]),
+            selectIn =
+               updateSelectInput(session, "Input",
+                                 selected = formData[[ns("Input")]]),
+             dateIn =
+               updateDateInput(session, "Input",
+                               value = formData[[ns("Input")]]),
+             textareaIn =
+               updateTextAreaInput(session, "Input",
+                                   value = formData[[ns("Input")]])
+      )
+      # if(type == "textIn"){
+      # #   print("sure")
+      # #   xyz <- ns("Input") %>% as.character
+      # #   print(xyz)
+      # #   # updateTextInput(session, "Input", value = formData[[ns("Input")]])
+      #   updateTextInput(session, inputId = "Input", value = "wtf")
+      # }
+    }
+    )
     
     if(!is.na(info)) {
       infoModal <- function(content){
@@ -108,6 +137,9 @@ formListRow_server <- function(id, formData=formData, parent_id, ...){
       }
       list_nrow <- paste0(parent_id, "-Nrow")
       contrib_row_ns %>% pmap(deleteRowFormData, rv=formData)
+      .subset2(formData, "impl")$.values$remove(paste0(ns(id), "-DeleteRow"))
+      contrib_row_ns %>% pmap(deleteRowFormData, rv=input)
+      .subset2(input, "impl")$.values$remove(paste0(ns(id), "-DeleteRow"))
       formData[[list_nrow]] <- formData[[list_nrow]] -1
 
   })

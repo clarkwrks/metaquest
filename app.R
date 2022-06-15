@@ -193,8 +193,12 @@ server <- function(input, output, session) {
   
   formList_server("contribList", formData=formData
                      )
+  # observeEvent(input$testButton, {
+  #   formData %>% reactiveValuesToList %>% print
+  # })
+  
   observeEvent(input$testButton, {
-    formData %>% reactiveValuesToList %>% print
+    formData[["contribList-Nrow"]] <- input$testNumeric
   })
   
 # input env peek ----------------------------------------------------------
@@ -305,7 +309,7 @@ server <- function(input, output, session) {
     req(file)
     # validate(need(ext == "json", "Please upload a json file"))
     
-    uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson()# %>% jsonlite::toJSON()
+    uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
   })
   
   
@@ -315,13 +319,66 @@ server <- function(input, output, session) {
   
   observeEvent(input$importConfirmButton, {
     file <- input$uploadMetaQuest
-    import_json <- jsonlite::read_json(file$datapath)
-    updateTextInput(session, "prep_name-Input", value = import_json$prep_name)
-    updateSelectInput(session, "prep_affiliation-Input", selected = import_json$prep_affiliation)
-    updateTextInput(session, "prep_email-Input", value = import_json$prep_email)
-    updateDateInput(session, "prep_date-Input", value = import_json$prep_date %>% unlist)
-    updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
-    updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
+    import_json <- jsonlite::read_json(file$datapath) %>% unlist
+    
+
+    # for(x in 1:length(import_json)){
+      # input_name <- names(import_json)[[x]]
+      # try filtering here on individual names to figure out the
+      # " Error in -: non-numeric argument to binary operator" shitshow
+    #   if(input_name %in% names(formData)) {
+    #     if(input_name != "prep_affiliation-Input"){
+    #     # print(
+    #       # paste0(input_name, "=", import_json[[x]])
+    #     # )
+    #     import_val <- import_json[[x]]
+    #     # import_val %>% as.character %>% print
+    #     # print(import_val %>% class)
+    #     # print(formData[[input_name]] %>% class)
+    #     formData[[input_name]] <- import_val
+    #     }
+    #   } else {
+    #     print(
+    #       paste0(input_name, " not in form")
+    #     )
+    # }
+    # if(input_name == "prep_name-Input") {
+    #   formData[[input_name]] <- import_json[[x]]
+    # }
+      # test_fields <- c(
+      #   "prep_date-Input",
+      #   "prep_name-Input",
+      #   "prep_affiliation-Input"
+      #   )
+      # if(input_name %in% test_fields) {
+      #   formData[[input_name]] <- import_json[[x]]
+    # }
+    
+    # maybe pass list inputs as nested list?
+    # or setup module_server observer for list items in `formData` but not `input`
+    # delete all listForm items on import, then create rows as needed?
+      list_inputs <- import_json[str_detect(names(import_json), "-Nrow")]
+      for(x in 1:length(list_inputs)){
+        list_nrow <- as.numeric(list_inputs[[x]])
+        list_name <- names(list_inputs)[x]
+        
+        if(formData[[list_name]] < list_nrow){
+          formData[[list_name]] <- list_nrow
+        }
+      }
+      
+      valid_inputs <- import_json[str_detect(names(import_json), "-Input")]
+      for(x in 1:length(valid_inputs)){
+        input_name <- names(valid_inputs)[[x]]
+        
+          formData[[input_name]] <- valid_inputs[[x]]
+        }
+    # updateTextInput(session, "prep_name-Input", value = import_json$prep_name)
+    # updateSelectInput(session, "prep_affiliation-Input", selected = import_json$prep_affiliation)
+    # updateTextInput(session, "prep_email-Input", value = import_json$prep_email)
+    # updateDateInput(session, "prep_date-Input", value = import_json$prep_date %>% unlist)
+    # updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
+    # updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
     removeModal()
   })
   
