@@ -25,7 +25,12 @@ metaquests <- tibble::tribble(
         "prep_email",     "textIn",       "Email", "general", "preparer",                    NA,               "Email you use for ResNet communication",
          "prep_date",     "dateIn",        "Date", "general", "preparer",                    NA,                                         "Today's date",
         "proj_title",     "textIn",       "Title", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
-     "proj_abstract", "textareaIn",    "Abstract", "general",  "project",                    NA,               "A brief abstract desribing the project"
+     "proj_abstract", "textareaIn",    "Abstract", "general",  "project",                    NA,               "A brief abstract desribing the project",
+     "proj_location",     "textIn",       "Location", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
+     "proj_start",     "dateIn",       "Start Date", "general",  "project",                    NA, "The date work began on this project",
+      "proj_end",     "dateIn",       "End Date", "general",  "project",                    NA, "The date the project was completed. Leave blank if the project is ongoing."
+  
+  
   )
 
 

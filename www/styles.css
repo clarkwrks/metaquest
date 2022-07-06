@@ -4,13 +4,23 @@
 .showPanel { display: block !important; }
 
 .fillWidth { width: 100%; }
+.eightyWidth {
+  width: 80%;
+  margin-left:10%;
+}
 
-.margin-panel {
-  margin-top: 5px;
-  margin-bottom: 5px
+
+.panel-section {
+  padding:5px;
 }
 
 .selectize-input{ z-index: 0; }
+
+.topmenu{
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
+  display: -webkit-box;
+}
 
 .modal-dialog{
   margin-top:8em
@@ -78,27 +88,20 @@
 .inline label.control-label + div[role=presentation] {width: 100%;}
 */
 
+.fa-info-circle{margin-top:2px;}
+.fa-info-circle{margin-left:2px}
+
+
 .extra-wide textarea {flex-shrink:0; width:100%}
 
 .panel-heading {display: flex}
 .panel-heading .shiny-input-radiogroup {display: inline-flex; height:0; padding-right: 3em}
-.panel-heading .shiny-input-radiogroup .control-label {font-weight:500; padding-right: 1em; padding-left: 3em; min-width: 17em;}
-.panel-heading .shiny-input-radiogroup .radio-inline input[type="radio"]  {margin-top:0px}
+.panel-heading .shiny-input-radiogroup .control-label {font-weight:500; padding-right: .5em; padding-left: 3em; min-width: 17em;}
+.panel-heading .shiny-input-radiogroup .radio-inline input[type="radio"]  {padding-left:5em; margin-top:3px}
 .panel-heading .panel-title {min-width:10em}
 .panel-status-text {margin-left: auto;}
 
-.fa-info-circle{margin-left:2px}
-
-/*
-
-div class="form-group shiny-input-container" role="presentation"
-  label class =control-label
-  div role= presentation
-
-label.control-label + div[role=presentation]
-.inline label{ display: table-cell; text-align: left; vertical-align: middle; } 
-.inline .form-group{display: table-row;}
-
-label.control-label, .selectize-control.single{ display: table-cell; text-align: center; vertical-align: middle; } 
-.form-group { display: table-row;}
-*/
+.btn.button-secondary{
+	background-color:lightgrey;
+	border-color: grey;
+}

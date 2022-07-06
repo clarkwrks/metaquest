@@ -24,21 +24,23 @@ left_area <- div()
 
 ## general panel -----------------------------------------------------------
 
-preparer_section <- bs_panel(heading = "About the metadata preparer", 
-                           body = div(class = "inline formGroup",
+preparer_section <- bs_panel(heading = "About the metadata preparer", class="panel-section",
+                           body = div(class = "inline form-group",
                                       metaquests %>% 
                                         filter(panel == "general" & section == "preparer") %>%
                                         pmap(infoInput_ui)))
 
-project_section <- bs_panel(heading = "About the research project", 
-                          body = div(class = "inline formGroup",
+project_section <- bs_panel(heading = "About the research project", class="panel-section",
+                          body = div(class = "inline form-group",
                                      metaquests %>% 
                                        filter(panel == "general" & section == "project") %>%
                                        pmap(infoInput_ui)
                                      )
                           )
+contributor_section <- bs_panel(heading = "Project Contributors", class="panel-section",
+                                body = formList_ui("contribList"))
 
-contributor_section <- formList_ui("contribList", "Project Contributors")
+# contributor_section <- formList_ui("contribList", "Project Contributors")
 # )
 
 general_panel <- div(preparer_section, project_section, contributor_section)
@@ -130,17 +132,24 @@ mgmt_panel <-    div(
 dev_panel <-  
   bs_panel(
     heading = div(class = "alert-danger", style = "text-align: center;",
-                  "!!!", br(), 
-                  div(style="font-size:x-small", "This area is for testing only.", br(),
-                      "Improper use will crash the current session. Unsaved changes will be lost."),
-                  "!!!", br()),
+                  "!!!",
+                  # div(style="font-size:x-small", 
+                  #     "This area is for testing only.", br(),
+                  #     "Improper use will crash the current session.", br(),
+                  #     "Unsaved changes will be lost."),
+                  div(style="font-size:x-small", 
+                      "This area is for testing only. 
+                      Improper use will crash the current session. 
+                      Unsaved changes will be lost."),
+                  "!!!"),
     panel_type = "danger",
     body = div(
       actionButton("showInputButton", "Show Input", class ="fillWidth"),
       actionButton("showFormDataButton", "Show Form Data", class = "fillWidth"),
-      actionButton("testButton", "Test", class ="fillWidth"),
-      numericInput("testNumeric", "Numeric", value = 1),
-      radioButtons("testToggle", NULL, list("false", "true"), "false", inline = TRUE, width = "100%")
+      hr(),
+      numericInput("testNumeric", NULL, value = 1, width = "12em"),
+      actionButton("testButton", "Go", class ="fillWidth")
+      
     )
     )
 
@@ -166,19 +175,38 @@ right_area <-
 
 fixed_menu <- fixedPanel(left = 0, right = 0,
   style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
-  fluidRow(
-column(3, img(src = "resnet-logo-4x.png"), style ="padding-left: 1em"),
-column(6, h1("Metadata Questionnaire", align = "center")),
-column(3, shinyWidgets::dropdownButton(
-  div(right_area_accord),
+  fluidRow(class = "topmenu",
+column(3, align="right", img(src = "resnet-logo-4x.png")),
+column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
+column(3, align="left", shinyWidgets::dropdownButton(
+  right_area_accord,
   icon = icon("gear"),
   right = TRUE,
-  inline = FALSE,
+  inline = TRUE,
   circle = FALSE,
   size = "lg",
   inputId = "action_menu_dropdown",
   label = "Menu"
 ))))
+
+# fixed_menu <- fixedPanel(left = 0, right = 0,
+#                          style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
+#                          fluidRow(class = "topmenu",
+#                                   column(3, align="right", shinyWidgets::dropdownButton(
+#                                     div(right_area_accord),
+#                                     icon = icon("gear"),
+#                                     # right = TRUE,
+#                                     # inline = FALSE,
+#                                     circle = FALSE,
+#                                     # size = "lg",
+#                                     inputId = "action_menu_dropdown",
+#                                     label = "Menu"
+#                                   )),
+#                                   column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
+#                                   column(3, align="left", img(src = "resnet-logo-4x.png")
+#                                   )
+#                                   )
+#                          )
 
 # 
 # fixed_menu <- fixedPanel(left = 0, right = 0,

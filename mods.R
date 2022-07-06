@@ -5,8 +5,9 @@ infoInput_ui <- function(id, label, type, choices, value = "", info=NA, ...) {
   x <- switch(type,
               textIn = textInput(input_id, label, value),
               selectIn = selectInput(input_id, label, choices),
-              dateIn = dateInput(input_id, label),
-              textareaIn = textAreaInput(input_id, label, width = "30em", height = "8em", resize = "both")
+              dateIn = dateInput(input_id, label, value),
+              textareaIn = textAreaInput(input_id, label, width = "fit-content", 
+                                         height = "8em", resize = "both")
   )
   if(!is.na(info)) {
     x %>% 
@@ -107,7 +108,7 @@ formListRow_ui <- function(id, fields, ...){
   ns <- NS(id)
   fields_ns <- fields %>% mutate(id = ns(id))
   
-  deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"))
+  deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), style="margin-top:4px;")
   # print(contrib_row_ns)
   div(class = "inline formGroup formListRow", 
       id = ns("div"),
@@ -157,11 +158,13 @@ formListRow_server <- function(id, fields, formData=formData, modData, parent_id
 formList_ui <- function(id,  label, ...){
   ns <- NS(id)
   
-  addRow <- actionButton(ns("addRow"), "Add Row", icon("plus"), class = "fillWidth")
-  div(class = "margin-panel", bs_panel(heading = label, 
-           body = div(class = "panel panel-default y-overflow-scroll scroll-shadows",
-             addRow))
-  )
+  addRow <- actionButton(ns("addRow"), "Add Row", icon("plus"), class = "eightyWidth button-secondary")
+  # div(class = "margin-panel", 
+      # bs_panel(heading = label, 
+      #      body = div(class = "panel panel-default y-overflow-scroll scroll-shadows",
+      #        addRow))
+  div(class = "panel panel-default y-overflow-scroll scroll-shadows",
+      addRow)
 }
 
 formList_server <- function(id, formData=formData, ...){

@@ -53,17 +53,6 @@ split_class <- function(x) {
   x[[1]]
 }
 
-# textInputInfo <- function(inputId, label,  ...) {
-#   tagx <- textInput(inputId, label)
-#   tagx <- .tag_validate(tagx, name = "div", class = "form-group shiny-input-container")
-#   infoLink <- actionLink(paste0(inputId, "Info"), icon("info-circle"))
-#   infoLink <- htmltools::div(clas = "pull-right", infoLink)
-#   tagx$children[[1]] <- tagx$children[[1]] %>% htmltools::tagAppendChild(infoLink)# %>% 
-#   # htmltools::tagAppendAttributes(style = "width:100%;")
-#   
-#   tagx
-# }
-
 shinyInput_label_embed <- function(tag, element){
   
   # validate shiny input
@@ -81,30 +70,34 @@ shinyInput_label_embed <- function(tag, element){
   # add element to children, add style attribute
   tag$children[[1]] <-
     tag$children[[1]] %>%
-    htmltools::tagAppendChild(element) #%>%
-  # htmltools::tagAppendAttributes(style = "width:100%;")
+    htmltools::tagAppendChild(element) %>%
+  htmltools::tagAppendAttributes(style = "width:50%;")
   
   tag
 }
 
 textInputInfo <- function(inputId, label, ...) {
   infoID <- paste0(inputId, "Info")
-  textInput(inputId, label) %>% shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
+  textInput(inputId, label) %>% 
+    shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
 }
 
 dateInputInfo <- function(inputId, label, ...) {
   infoID <- paste0(inputId, "Info")
-  dateInput(inputId, label) %>% shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
+  dateInput(inputId, label) %>% 
+    shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
 }
 
 selectInputInfo <- function(inputId, label, choices, ...) {
   infoID <- paste0(inputId, "Info")
-  selectInput(inputId, label, choices) %>% shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
+  selectInput(inputId, label, choices) %>% 
+    shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
 }
 
 textAreaInputInfo <- function(inputId, label, width, height, resize, ...) {
   infoID <- paste0(inputId, "Info")
-  textAreaInput(inputId, label, width=width, height=height, resize=resize) %>% shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
+  textAreaInput(inputId, label, width=width, height=height, resize=resize) %>% 
+    shinyInput_label_embed(actionLink(infoID, icon("info-circle")))
 }
 
 # accordion ---------------------------------------------------------------
