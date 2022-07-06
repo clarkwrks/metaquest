@@ -214,3 +214,6 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
 }
 
 
+# misc --------------------------------------------------------------------
+
+removeReactiveValuesIndex <- function(rv, ind) { .subset2(rv, "impl")$.values$remove(ind) }
