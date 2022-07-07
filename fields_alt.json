@@ -1,0 +1,49 @@
+{
+    "panels": [
+        {
+            "id": "generalPanel",
+            "title": "General Information",
+            "sections": [
+                {
+                    "id": "preparer",
+                    "heading": "About the metadata preparer",
+                    "fields": [
+                        {
+                            "id": "prep_name",
+                            "label": "Name",
+                            "type": "textIn"
+                        },
+                        {
+                            "id": "prep_affiliation",
+                            "label": "Affiliation",
+                            "type": "selectIn",
+                            "info": "Your research group within ResNet",
+                            "choices": [
+                                "-",
+                                "Landscape 1",
+                                "Landscape 2",
+                                "Landscape 3",
+                                "Landscape 4",
+                                "Landscape 5",
+                                "Lanscape 6",
+                                "Theme 1",
+                                "Theme 2",
+                                "Theme 3",
+                                "Synthesis",
+                                "Other"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "project",
+                    "heading": "About the research project"
+                }
+            ]
+        },
+        {
+            "id": "dataPanel",
+            "title": "Data Description"
+        }
+    ]
+}
