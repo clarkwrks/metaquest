@@ -26,11 +26,7 @@ left_area <- div()
 
 ## general panel -----------------------------------------------------------
 
-preparer_section <- bs_panel(heading = "About the metadata preparer", class="panel-section",
-                           body = div(class = "inline form-group",
-                                      metaquests %>% 
-                                        filter(panel == "general" & section == "preparer") %>%
-                                        pmap(infoInput_ui)))
+
 
 project_section <- bs_panel(heading = "About the research project", class="panel-section",
                           body = div(class = "inline form-group",
@@ -48,7 +44,7 @@ contributor_section <- bs_panel(heading = "Project Contributors", class="panel-s
 # contributor_section <- formList_ui("contribList", "Project Contributors")
 # )
 
-general_panel <- div(preparer_section, project_section, contributor_section)
+general_panel <- div(preparer_section_ui, project_section, contributor_section)
 
 ## data panel --------------------------------------------------------------
 
@@ -238,10 +234,19 @@ server <- function(input, output, session) {
   
   ## formData rvs -----------------------------------------------------------
 
-  formData <- reactiveValues(version = "0.0.1")
+  # formData <- reactiveValues(version = "0.0.1")
   
-  metaquests %>% pmap(infoInput_server, formData=formData)
+  metaquests  %>% 
+    filter(section != "preparer") %>% pmap(infoInput_server, formData=formData)
+
+  section_server <- function(fields, formData){
+    fields %>% pmap(infoInput_server, formData=formData)
+  }
+
+  preparer_section_fields %>% section_server(formData)
   
+
+
   formList_server("contribList", formData=formData, rowFields = proj_contrib_row)
   formList_server("dataSourceList", formData=formData, rowFields = proj_contrib_row)
 

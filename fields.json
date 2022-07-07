@@ -1,0 +1,65 @@
+{
+    "panels": {
+        "general_panel": {
+            "id": "generalPanel",
+            "sections": {
+                "preparer": {
+                    "heading": "About the metadata preparer",
+                    "fields": [
+                        {
+                            "prep_name": {
+                                "label": "Name",
+                                "type": "textIn"
+                            }
+                        },
+                        {
+                            "prep_affiliation": {
+                                "label": "Affiliation",
+                                "type": "selectIn",
+                                "info": "Your research group within ResNet",
+                                "choices": [
+                                    "-",
+                                    "Landscape 1",
+                                    "Landscape 2",
+                                    "Landscape 3",
+                                    "Landscape 4",
+                                    "Landscape 5",
+                                    "Lanscape 6",
+                                    "Theme 1",
+                                    "Theme 2",
+                                    "Theme 3",
+                                    "Synthesis",
+                                    "Other"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "project": {
+                    "heading": "About the research project",
+                    "fields": [
+                        {
+                            "proj_title": {
+                                "label": "Title",
+                                "type": "textIn"
+                            },
+                            "proj_abstract": {
+                                "label": "Abstract",
+                                "type": "textAreaInput"
+                            },
+                            "proj_contrib": {
+                                "label": "Project Contributors",
+                                "type": "formList",
+                                "fields":[
+                                    {"id": "Tom", "age": 9, "gender":"M"},
+                                    {"name": "Ava", "age": 7, "gender":"F"}
+                                ]
+                                
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
