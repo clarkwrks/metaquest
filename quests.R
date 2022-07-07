@@ -33,6 +33,30 @@ metaquests <- tibble::tribble(
   
   )
 
+proj_contrib_row <- tibble::tribble(
+  ~id,    ~type,        ~label, ~value,
+  "name", "textIn",        "Name", "test1",
+  "institution", "textIn", "Institution", "test2",
+  "email", "textIn",       "Email", "test3"
+)
+
+
+sensitive_panel <- list()
+
+exception_section <-
+  div(checkboxGroupInput(
+    "excep_type",
+    label = "Exception Types",
+    choices = c(
+      "Traditional Knowledge",
+      "Human Subjects",
+      "Sensitive Data",
+      "Existing Restrictions",
+      "Other..."
+    )
+  ),
+  textAreaInput("excep_descrip", label = "Description")
+  )
 
 # sections ----------------------------------------------------------------
 

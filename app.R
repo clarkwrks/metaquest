@@ -12,9 +12,11 @@ library(listviewer)
 # devtools::install_github('timelyportfolio/reactR')
 library(shinyWidgets)
 
-source("quests.R")
 source("utils.R")
 source("mods.R")
+source("quests.R")
+source("fields.R")
+
 
 # left area ---------------------------------------------------------------
 
@@ -34,7 +36,10 @@ project_section <- bs_panel(heading = "About the research project", class="panel
                           body = div(class = "inline form-group",
                                      metaquests %>% 
                                        filter(panel == "general" & section == "project") %>%
-                                       pmap(infoInput_ui)
+                                       pmap(infoInput_ui),
+                                     div(selectizeInput("selectizeTest", label = "Keywords", choices = c("test"),
+                                                        multiple = TRUE, options =  list(create = TRUE))
+                                         )
                                      )
                           )
 contributor_section <- bs_panel(heading = "Project Contributors", class="panel-section",
@@ -47,15 +52,17 @@ general_panel <- div(preparer_section, project_section, contributor_section)
 
 ## data panel --------------------------------------------------------------
 
-data_panel <- div()
+data_panel <- div()#selectizeInput("selectizeTest", label = "Keywords", choices = c("test"),
+                    #             multiple = TRUE, options =  list(create = TRUE)))
 
-## sensitive panel ---------------------------------------------------------
+## exceptions panel ---------------------------------------------------------
 
-sensitive_panel <- div()
+exceptions_panel <- bs_panel(heading = "", class="panel-section",
+                            body = exception_section)
 
 ## sources panel -----------------------------------------------------------
 
-data_sources_panel <- formList_ui("dataSourceList", "Data Sources")
+data_sources_panel <- formList_ui("dataSourceList", "Data Sources", rowFields = proj_contrib_row)
 
 sources_panel <- div(data_sources_panel)
 # sources_panel <- div()
@@ -73,9 +80,9 @@ main_area <- bs_accordion(id = "mainPanelAccord") %>%
             content = general_panel, override_id = "generalPanel") %>%
   bs_append_noparent_toggle(title = "Data Description", 
             content = data_panel, override_id = "dataPanel") %>%
-  bs_append_noparent_toggle(title = "Sensitive Data", 
-            content = sensitive_panel, override_id = "sensitivePanel",
-            condition = "Involves sensitive data?") %>%
+  bs_append_noparent_toggle(title = "Data Exceptions", 
+            content = exceptions_panel, override_id = "exceptionsPanel",
+            condition = "Restrictions on publication?") %>%
   bs_append_noparent_toggle(title = "Data Sources", 
             content = sources_panel, override_id = "sourcePanel",
             condition = "Incorporates external data?") %>%
@@ -86,45 +93,30 @@ main_area <- bs_accordion(id = "mainPanelAccord") %>%
 
 # right area --------------------------------------------------------------
 
-## mgmt panel ----
-# 
-# mgmt_panel <-    bs_panel(
-#       heading = "Manage File",
-#       panel_type = "info",
-#       body = div(
-#         downloadButton(
-#           "exportMetaQuest",
-#           label = "Export MetaQuest File",
-#           class = "fillWidth",
-#           icon = shiny::icon("download")
-#         ),
-#         fileInput(
-#           "uploadMetaQuest",
-#           label = NULL,
-#           multiple = FALSE,
-#           accept = ".json",
-#           width = NULL,
-#           buttonLabel = "Browse...",
-#           placeholder = "No file selected"
-#         ),
-#         actionButton("viewMetaQuest", "View",
-#                      class = "fillWidth",
-#                      icon = shiny::icon("edit")),
-#         actionButton("importMetaQuest", "Import",
-#                      class = "fillWidth",
-#                      icon = shiny::icon("file-import"))
-#   ))
+help_panel <- div(
+  actionButton("showTutorialModal", 
+               div("Show Tutorial"),# icon("graduation-cap")), 
+               width = "100%"),
+  br(),
+  actionButton("openResNetDocs", 
+               div("ResNet Docs", tags$sup(icon("external-link-alt fa-xs"))), 
+               onclick = "window.open('https://docs.nsercresnet.ca', '_blank')",
+               width = "100%")
+)
 
 mgmt_panel <-    div(
-    downloadButton(
-      "exportMetaQuest",
-      label = "Export",
-      class = "fillWidth",
-      icon = shiny::icon("download")
-    ),
-    actionButton("importMetaQuest", "Import",
-                 class = "fillWidth",
-                 icon = shiny::icon("upload"))
+  downloadButton(
+    "exportMetaQuest",
+    label = "Export",
+    class = "fillWidth",
+    icon = shiny::icon("download")
+  ),
+  actionButton(
+    "importMetaQuest",
+    "Import",
+    class = "fillWidth",
+    icon = shiny::icon("upload")
+  )
 )
 
 ## dev panel ----
@@ -133,10 +125,6 @@ dev_panel <-
   bs_panel(
     heading = div(class = "alert-danger", style = "text-align: center;",
                   "!!!",
-                  # div(style="font-size:x-small", 
-                  #     "This area is for testing only.", br(),
-                  #     "Improper use will crash the current session.", br(),
-                  #     "Unsaved changes will be lost."),
                   div(style="font-size:x-small", 
                       "This area is for testing only. 
                       Improper use will crash the current session. 
@@ -156,6 +144,9 @@ dev_panel <-
 right_area_accord <- bs_accordion(id = "rightPanelAccord") %>% 
   bs_set_opts(panel_type = "default", use_heading_link = FALSE
   ) %>%
+  bs_append_noparent_toggle(title = "Help", 
+                            content = help_panel, override_id = "helpPanel", 
+                            status = FALSE) %>%
   bs_append_noparent_toggle(title = "Manage File", 
                             content = mgmt_panel, override_id = "mgmtPanel", 
                             status = FALSE) %>%
@@ -189,47 +180,10 @@ column(3, align="left", shinyWidgets::dropdownButton(
   label = "Menu"
 ))))
 
-# fixed_menu <- fixedPanel(left = 0, right = 0,
-#                          style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
-#                          fluidRow(class = "topmenu",
-#                                   column(3, align="right", shinyWidgets::dropdownButton(
-#                                     div(right_area_accord),
-#                                     icon = icon("gear"),
-#                                     # right = TRUE,
-#                                     # inline = FALSE,
-#                                     circle = FALSE,
-#                                     # size = "lg",
-#                                     inputId = "action_menu_dropdown",
-#                                     label = "Menu"
-#                                   )),
-#                                   column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
-#                                   column(3, align="left", img(src = "resnet-logo-4x.png")
-#                                   )
-#                                   )
-#                          )
-
-# 
-# fixed_menu <- fixedPanel(left = 0, right = 0,
-#                          style = "background-color: white; border-bottom: solid; width:100%; z-index:9999", 
-#                          fluidRow(
-#                            column(2, img(src = "resnet-logo-4x.png"), style ="padding-left: 1em"),
-#                            column(8, h1("Metadata Questionnaire", align = "center")),
-#                            column(2, shinyWidgets::dropMenu(
-#                              actionButton(
-#                                inputId = "drop",
-#                                label = "Menu",
-#                                icon = icon("gear"),
-#                                class = "btn-success",
-#                                placement = "bottom-start"
-#                              ),
-#                              div(right_area_accord)
-#                            ))))
-
-  
 ui <- fluidPage(
   bs_theme = "flatly",
   useShinyjs(),
-  title = "MetaQuest",
+  title = "ResNet MetaQuest",
   # useShinyFeedback(),
   # theme = bs_theme("flatly", version = 5),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
@@ -288,14 +242,27 @@ server <- function(input, output, session) {
   
   metaquests %>% pmap(infoInput_server, formData=formData)
   
-  formList_server("contribList", formData=formData)
-  formList_server("dataSourceList", formData=formData)
-  # observeEvent(input$testButton, {
-  #   formData %>% reactiveValuesToList %>% print
-  # })
+  formList_server("contribList", formData=formData, rowFields = proj_contrib_row)
+  formList_server("dataSourceList", formData=formData, rowFields = proj_contrib_row)
+
+# tutorial modal ----------------------------------------------------------
+  tutorialModal <- function(){
+    modalDialog(
+      div(
+        tags$ul(
+          tags$li("Save early"), 
+          tags$li("Save often"), 
+          tags$li("Avoid special characters"),
+          tags$li("Click", icon("info-circle"), " for more info")
+        )
+      ),
+      title = "Getting Started with MetaQuest",
+      size = "xl"
+    )
+  }
   
-  observeEvent(input$testButton, {
-    formData[["contribList-Nrow"]] <- input$testNumeric
+  observeEvent(input$showTutorialModal, {
+    showModal(tutorialModal())
   })
   
 # input env peek ----------------------------------------------------------
@@ -691,10 +658,10 @@ observeEvent(input$importConfirmButton, {
   })
   
   observe({
-    x <- input$sensitivePanelToggle
-    toggleClass("sensitivePanel", "panel-info", is.null(x))
-    toggleClass("sensitivePanel", "panel-primary", isTRUE(as.logical(x)))
-    toggleClass("sensitivePanel", "panel-default", isFALSE(as.logical(x)))
+    x <- input$exceptionsPanelToggle
+    toggleClass("exceptionsPanel", "panel-info", is.null(x))
+    toggleClass("exceptionsPanel", "panel-primary", isTRUE(as.logical(x)))
+    toggleClass("exceptionsPanel", "panel-default", isFALSE(as.logical(x)))
   })
   
   observe({

@@ -97,32 +97,28 @@ infoInput_demo <- function() {
 
 # formList ------------------------------------------------------------
 
-contrib_row <- tibble::tribble(
-            ~id,    ~type,        ~label, ~value,
-         "name", "textIn",        "Name", "test1",
-  "institution", "textIn", "Institution", "test2",
-        "email", "textIn",       "Email", "test3"
-  )
 
-formListRow_ui <- function(id, fields, ...){
+formListRow_ui <- function(id, rowFields, ...){
   ns <- NS(id)
-  fields_ns <- fields %>% mutate(id = ns(id))
+  fields_ns <- rowFields %>% mutate(id = ns(id))
   
-  deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), style="margin-top:4px;")
-  # print(contrib_row_ns)
-  div(class = "inline formGroup formListRow", 
+  deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
+                               style="float:right; margin-right:10%;", 
+                               class = "btn-danger")
+
+    div(class = "inline formGroup formListRow", 
       id = ns("div"),
       fields_ns %>% pmap(infoInput_ui), 
       deleteButton,
       hr())
 }
 
-formListRow_server <- function(id, fields, formData=formData, modData, parent_id, ...){
+formListRow_server <- function(id, rowFields, formData=formData, modData, parent_id, ...){
   moduleServer(id, function(input, output, session) {
     id
     ns <- session$ns
 
-    fields_ns <- fields
+    fields_ns <- rowFields
     # print(fields_ns)
     fields_ns %>% pmap(infoInput_server, formData=formData)
     row_id <- id
@@ -167,7 +163,7 @@ formList_ui <- function(id,  label, ...){
       addRow)
 }
 
-formList_server <- function(id, formData=formData, ...){
+formList_server <- function(id, formData=formData, rowFields,...){
   moduleServer(id, function(input, output, session) {
     id
     ns <- session$ns
@@ -208,7 +204,7 @@ formList_server <- function(id, formData=formData, ...){
             new_fields <- formData_rows[formData_rows %>% names %>% str_detect(modData_newrow)]
             # new_fields %>% print
             
-            new_row_fields <- contrib_row
+            new_row_fields <- rowFields
             
             for(new_field in 1:length(new_fields)){
               # print(paste0("field: ", new_field, ". ", names(new_fields[new_field])))
@@ -223,15 +219,12 @@ formList_server <- function(id, formData=formData, ...){
               insertUI(
                 selector = insertSelector,
                 where = "beforeBegin",
-                ui = formListRow_ui(ns(row_number), fields = new_row_fields, modData = modData)
+                ui = formListRow_ui(ns(row_number), rowFields = new_row_fields, modData = modData)
               )
-              formListRow_server(row_number, fields = new_row_fields, formData = formData, modData = modData, parent_id = id)
+              formListRow_server(row_number, rowFields = new_row_fields, formData = formData, modData = modData, parent_id = id)
             }
       }
       })
-      
-      # reactivity probably still wrong. need to 
-            # reactiveValuesToList(modData) %>% names %>% print
     })
     
     findFreeNumber <- function(current_numbers) {
@@ -262,11 +255,11 @@ formList_server <- function(id, formData=formData, ...){
         as.numeric %>%
         findFreeNumber
       # formData[[ns("Nrow")]] <- formData[[ns("Nrow")]] + 1
-      new_rows <- rep("", nrow(contrib_row))  %>% 
+      new_rows <- rep("", nrow(rowFields))  %>% 
         as.list %>% set_names(paste0(
           ns(free_num), 
           "-", 
-          contrib_row$id, 
+          rowFields$id, 
           "-Input")) 
       for(x in 1:length(new_rows)){
         x <- new_rows[x]
@@ -275,121 +268,18 @@ formList_server <- function(id, formData=formData, ...){
       }
         # new_rows %>% print
     })
-    # 
-    # counter <- reactiveVal(0)
-    # formData[[ns("Nrow")]] <- 0
-    # formListRows <- reactive({
-    #   x <- reactiveValuesToList(formData)
-    #   x %>% names %>% 
-    #     str_subset(paste0(id, "-\\d+-")) %>% 
-    #     str_extract(paste0(id, "-\\d+-")) %>%
-    #     unique
-    # })
-    # 
-    # rowDif <- reactiveVal(0)
-    # observeEvent(formData[[ns("Nrow")]], {
-    # 
-    #   ui_rows <- formListRows() %>% length
-    #   # ui_rows <- isolate(formListRows()) %>% length
-    #   formData_rows <- formData[[ns("Nrow")]]
-    #   print(paste0(ui_rows, " rows in ui, ", formData_rows, " in data"))
-    #   rowDif(formData_rows - ui_rows)
-    # })
-    # observeEvent(input$addRow, {
-    #   # rowDif() %>% print
-    #   formData[[ns("Nrow")]] <- formData[[ns("Nrow")]] + 1
-    # })
-    # 
-    # findFreeNumber <- function(current_numbers) {
-    #   x <- current_numbers
-    #   print(paste0("length is ", length(x)))
-    #   if(length(x) >= 1) {
-    #     free_nums <- {min(x):max(x)} %>% .[!. %in% x] %>% first
-    #     if(!is.na(free_nums)) {
-    #       print("found free num")
-    #       return(free_nums)
-    #     } else {
-    #       print("add num")
-    #       return(max(x) + 1)
-    #     }
-    #   } else {
-    #     print("length !>= 1")
-    #     return(1)
-    #   }
-    # }
-    # 
-    # next_free_number <- reactiveVal(0)
-    # current_row_ids <- reactiveVal()
-    # 
-    # observe({
-    #   form_ids <- reactiveValuesToList(formData) %>% names %>% 
-    #         str_subset(paste0(id, "-\\d+-")) %>%
-    #         str_extract(paste0(id, "-\\d+-")) %>%
-    #         unique %>%
-    #         str_extract("(?<=-)\\d+(?=-)") %>%
-    #         as.numeric #%>%
-    #   
-    #   # print(form_ids)
-    #   current_row_ids(form_ids)
-    #     #     # findFreeNumber()
-    #     #   print(paste0("numlength ", x))
-    #     #   # if(x > 0) next_free_number(x)
-    # })
-    # 
-    # # observe({
-    # #   x_form <- reactiveValuesToList(formData) %>% names %>% 
-    # #     str_subset(paste0(id, "-\\d+-")) %>% 
-    # #     str_extract(paste0(id, "-\\d+-")) %>%
-    # #     unique
-    # #   # print(x_form)
-    # #   x <- x_form %>% 
-    # #     str_extract("(?<=-)\\d+(?=-)") %>%
-    # #     as.numeric #%>%
-    # #     # findFreeNumber()
-    # #   print(paste0("numlength ", x))
-    # #   # if(x > 0) next_free_number(x)
-    # # })
-    # 
-    # observeEvent(rowDif(), {
-    #     if(rowDif() > 0){
-    #       counter(counter() + 1)
-    #       # free_number <- formListRows() %>% 
-    #       #   str_extract("(?<=-)\\d+(?=-)") %>%
-    #       #   as.numeric %>% findFreeNumber
-    #       # next_free_number(free_number)
-    #       # next_free_number() %>% print
-    #       free_number <- current_row_ids() %>% findFreeNumber
-    #       current_row_ids(c(current_row_ids(), free_number))
-    #       # current_row_ids() %>% print
-    #       # counter() %>% print
-    #       insertUI(
-    #         selector = insertSelector,
-    #         where = "beforeBegin",
-    #         ui = formListRow_ui(ns(free_number), fields = contrib_row)
-    #       )
-    #       formListRow_server(free_number, fields = contrib_row, formData = formData, parent_id = id)
-    #       rowDif(rowDif() - 1)
-    #   }
-    # })
-    # 
-    
-    # formData[[ns("Nrow")]] <- 1
-    
-    
-    # observeEvent(input$addRow, {
-    #   counter(counter() + 1)
-    #   formData[[ns("Nrow")]] <- formData[[ns("Nrow")]] + 1
-    #   insertUI(
-    #     selector = insertSelector,
-    #     where = "beforeBegin",
-    #     ui = formListRow_ui(ns(counter()))
-    #   )
-    #   # formListRow_server(ns(counter()))
-    #   formListRow_server(counter(), formData)
-    #   formListRows() %>% print
-    # })
+    init_rows <- rep("", nrow(rowFields))  %>% 
+      as.list %>% set_names(paste0(
+        ns("1"), 
+        "-", 
+        rowFields$id, 
+        "-Input")) 
+    for(x in 1:length(init_rows)){
+      x <- init_rows[x]
+      x_name <- names(x)
+      formData[[x_name]] <- x[[x_name]]
+    }
   })
-  
 }
 
 formList_demo <- function() {

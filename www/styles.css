@@ -1,4 +1,10 @@
 
+#mainPanelAccord {
+  max-width:100em;
+  margin:auto;
+  
+}
+
 .hidePanel { display: none !important; }
 
 .showPanel { display: block !important; }
@@ -24,6 +30,10 @@
 
 .modal-dialog{
   margin-top:8em
+}
+
+.modal-xl{
+  width:80%;
 }
 
 .y-overflow-scroll{
