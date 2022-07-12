@@ -47,13 +47,6 @@ infoInput_server <- function(id, info=NA, formData = formData, type, ...){
                updateTextAreaInput(session, "Input",
                                    value = formData[[ns("Input")]])
       )
-      # if(type == "textIn"){
-      # #   print("sure")
-      # #   xyz <- ns("Input") %>% as.character
-      # #   print(xyz)
-      # #   # updateTextInput(session, "Input", value = formData[[ns("Input")]])
-      #   updateTextInput(session, inputId = "Input", value = "wtf")
-      # }
     }
     )
     

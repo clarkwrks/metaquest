@@ -17,16 +17,18 @@ source("mods.R")
 source("quests.R")
 source("fields.R")
 
-
-# left area ---------------------------------------------------------------
-
-left_area <- div() 
-
 # main area ---------------------------------------------------------------
 
 ## general panel -----------------------------------------------------------
 
 
+preparer_section <- bs_panel(heading = " About the metadata preparer", class="panel-section",
+                            body = div(class = "inline form-group",
+                                       metaquests %>% 
+                                         filter(panel == "general" & section == "preparer") %>%
+                                         pmap(infoInput_ui)
+                                       )
+                            )
 
 project_section <- bs_panel(heading = "About the research project", class="panel-section",
                           body = div(class = "inline form-group",
@@ -41,15 +43,11 @@ project_section <- bs_panel(heading = "About the research project", class="panel
 contributor_section <- bs_panel(heading = "Project Contributors", class="panel-section",
                                 body = formList_ui("contribList"))
 
-# contributor_section <- formList_ui("contribList", "Project Contributors")
-# )
-
-general_panel <- div(preparer_section_ui, project_section, contributor_section)
+general_panel <- div(preparer_section, project_section, contributor_section)
 
 ## data panel --------------------------------------------------------------
 
-data_panel <- div()#selectizeInput("selectizeTest", label = "Keywords", choices = c("test"),
-                    #             multiple = TRUE, options =  list(create = TRUE)))
+data_panel <- div()
 
 ## exceptions panel ---------------------------------------------------------
 
@@ -87,7 +85,9 @@ main_area <- bs_accordion(id = "mainPanelAccord") %>%
             condition = "Contains spatial data?")
 
 
-# right area --------------------------------------------------------------
+
+# menu --------------------------------------------------------------------
+
 
 help_panel <- div(
   actionButton("showTutorialModal", 
@@ -137,7 +137,7 @@ dev_panel <-
     )
     )
 
-right_area_accord <- bs_accordion(id = "rightPanelAccord") %>% 
+menu_accord <- bs_accordion(id = "menuAccord") %>% 
   bs_set_opts(panel_type = "default", use_heading_link = FALSE
   ) %>%
   bs_append_noparent_toggle(title = "Help", 
@@ -150,31 +150,25 @@ right_area_accord <- bs_accordion(id = "rightPanelAccord") %>%
                             content = dev_panel, override_id = "devPanel", 
                             status = FALSE)
 
-right_area <-
-  fixedPanel(
-    top = "8em",
-    height = "50%",
-    right = "10px",
-    width = "15%",
-    right_area_accord)
-    
-# ui ----------------------------------------------------------------------
 
 fixed_menu <- fixedPanel(left = 0, right = 0,
-  style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
-  fluidRow(class = "topmenu",
-column(3, align="right", img(src = "resnet-logo-4x.png")),
-column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
-column(3, align="left", shinyWidgets::dropdownButton(
-  right_area_accord,
-  icon = icon("gear"),
-  right = TRUE,
-  inline = TRUE,
-  circle = FALSE,
-  size = "lg",
-  inputId = "action_menu_dropdown",
-  label = "Menu"
-))))
+                         style = "background-color: honeydew; border-bottom: solid; width:100%; z-index:9999",
+                         fluidRow(class = "topmenu",
+                                  column(3, align="right", img(src = "resnet-logo-4x.png")),
+                                  column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
+                                  column(3, align="left", shinyWidgets::dropdownButton(
+                                    menu_accord,
+                                    icon = icon("gear"),
+                                    right = TRUE,
+                                    inline = TRUE,
+                                    circle = FALSE,
+                                    size = "lg",
+                                    inputId = "action_menu_dropdown",
+                                    label = "Menu"
+                                  ))))
+
+# ui ----------------------------------------------------------------------
+
 
 ui <- fluidPage(
   bs_theme = "flatly",
@@ -190,60 +184,28 @@ ui <- fluidPage(
   # titlePanel(h1("Metadata Questionnaire", align = "center"), 
   #   "Metadata Questionnaire"),
   div(fixed_menu),
-  div(style = "padding-top:8em;",main_area)
+  div(style = "padding-top:8em;", main_area)
 )
-
-# ui <- fluidPage(
-#     bs_theme = "flatly",
-#     useShinyjs(),
-#     # useShinyFeedback(),
-#   # theme = bs_theme("flatly", version = 5),
-#     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
-#     # titlePanel(fluidRow(
-#     #   column(3, img(src = "resnet-logo-4x.png")), 
-#     #   column(9, h1("Metadata Questionnaire", align = "center"))), 
-#     #   "Metadata Questionnaire"),
-#     # titlePanel(h1("Metadata Questionnaire", align = "center"), 
-#     #   "Metadata Questionnaire"),
-#     fillRow(
-#       flex = c(5,1),
-#       # flex = c(1,4,1),
-#       # left_area,
-#       div(fixedRow(
-#           column(1, img(src = "resnet-logo-4x.png")),
-#           column(10, h1("Metadata Questionnaire", align = "center")),
-#           column(1, shinyWidgets::dropdownButton(
-#             right_area_accord,
-#             icon = icon("gear"),
-#             right = TRUE,
-#             circle = FALSE,
-#             size = "lg"
-#           )
-#           )), 
-#           main_area),
-#       right_area,
-#       id = "mainTab")
-# )
 
 # server ------------------------------------------------------------------
 
 server <- function(input, output, session) {
 
-
 # build question hooks ----------------------------------------------------
   
   ## formData rvs -----------------------------------------------------------
 
-  # formData <- reactiveValues(version = "0.0.1")
+  formData <- reactiveValues(version = "0.0.1")
   
   metaquests  %>% 
-    filter(section != "preparer") %>% pmap(infoInput_server, formData=formData)
+    # filter(section != "preparer") %>% 
+    pmap(infoInput_server, formData=formData)
 
   section_server <- function(fields, formData){
     fields %>% pmap(infoInput_server, formData=formData)
   }
 
-  preparer_section_fields %>% section_server(formData)
+  # preparer_section_fields %>% section_server(formData)
   
 
 
@@ -296,7 +258,6 @@ server <- function(input, output, session) {
 
 # form data peek ----------------------------------------------------------
 
-  
   formDataModal <- function(){
     modalDialog(
       reactjsonOutput("form_peek"),
@@ -312,13 +273,12 @@ server <- function(input, output, session) {
   })
   
   formjson <- reactive({
-    reactiveValuesToList(formData) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
+    reactiveValuesToList(formData) %>% reactjson(sortKeys = TRUE)
   })
   
   output$form_peek <- renderReactjson({
     formjson()
   })
- 
 
 #  json io ----------------------------------------------------------------
   
@@ -327,14 +287,12 @@ server <- function(input, output, session) {
   output$exportMetaQuest <- downloadHandler(
     filename = "test.json",
     content = function(file) {
-      # reactiveValuesToList(input) %>% jsonlite::toJSON(., pretty = TRUE) %>% write_json(., file)
       formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
     }
   )
 
 ## import ------------------------------------------------------------------
 
-  
   importModal <- function(){
     modalDialog(
       div(style = "min-height:60vh;overflow-y:auto",
@@ -385,80 +343,6 @@ server <- function(input, output, session) {
   })
   
 
-### old_import --------------------------------------------------------------
-
-  
-  # observeEvent(input$importConfirmButton, {
-  #   file <- input$uploadMetaQuest
-  #   import_data <- jsonlite::read_json(file$datapath) %>% unlist
-  #   
-  #   # 
-  #   # # maybe pass list inputs as nested list?
-  #   # # or setup module_server observer for list items in `formData` but not `input`
-  #   # # delete all listForm items on import, then create rows as needed?
-  #   # 
-  #   form_data <- reactiveValuesToList(formData)
-  #   
-  #   import_data_names <- names(import_data)
-  #   list_inputs <- import_data[str_detect(import_data_names, "-Nrow")]
-  #   for(x in 1:length(list_inputs)){
-  #     list_nrow <- as.numeric(list_inputs[[x]])
-  #     list_nrow_name <- names(list_inputs)[x]
-  #     list_name <- list_nrow_name %>% str_remove("-Nrow")
-  #     if(list_nrow > 0){
-  #       if(formData[[list_nrow_name]] < list_nrow){
-  #         formData[[list_nrow_name]] <- list_nrow
-  #       }
-  #       
-  #       # # recapture formData to see if updated
-  #       form_data <- reactiveValuesToList(formData)
-  # 
-  #       import_list_rows <- names(import_data) %>%
-  #         str_extract(str_c(list_name, "-\\d+-")) %>%
-  #         na.omit %>% unique %>% sort
-  #       form_list_rows <- names(form_data) %>%
-  #         str_extract(str_c(list_name, "-\\d+-")) %>%
-  #         na.omit %>% unique %>% sort %>%
-  #         c(import_list_rows) %>% unique# combine
-  # 
-  #       # import_list_rows <- c(form_list_rows, import_list_rows) %>% unique %>% .[1:list_nrow]
-  #       # print(import_list_rows)
-  #       # 
-  #       # # loop through list inputs, extract all rows, rename to existing row numbers
-  #       for(x in 1:length(import_list_rows)){
-  #         import_data_names <- str_replace(import_data_names, import_list_rows[[x]], form_list_rows[[x]])
-  #       }
-  #       # print(import_data_names)
-  #       # # still have a reactive chain race... setting formData["contribList-Nrow] <- x works outside of this observer,
-  #       # # but here contribList-Nrow already = the import, because module server sees all inputs exist.
-  #       # # Either prioritize the row creation in the module, somehow, before the formData is changed,
-  #       # # or rework the listForm module observers.
-  #       # # Extract to function?
-  #       # # Isolate something on the module side? Kills me that the test button increment works but not here
-  #     }
-  #   }
-  # 
-  #   mod_data <- set_names(import_data, import_data_names)
-  #     valid_inputs <- mod_data[str_detect(names(mod_data), "-Input")]
-  #     for(x in 1:length(valid_inputs)){
-  #       input_name <- names(valid_inputs)[[x]]
-  #       formData[[input_name]] <- valid_inputs[[x]]
-  #       }
-  # 
-  #   # # old, working version
-  #   # import_json <- jsonlite::read_json(file$datapath) %>% unlist
-  #   # import_json <- import_data
-  #   # valid_inputs <- import_json[str_detect(names(import_json), "-Input")]
-  #   # for(x in 1:length(valid_inputs)){
-  #   #   input_name <- names(valid_inputs)[[x]]
-  #   #   formData[[input_name]] <- valid_inputs[[x]]
-  #   # }
-  #   # 
-  #   # 
-  #   removeModal()
-  # })
-
-### new new import ---------------------------------------  
 observeEvent(input$importConfirmButton, {
   file <- input$uploadMetaQuest
   import_data <- jsonlite::read_json(file$datapath) %>% unlist
@@ -470,188 +354,8 @@ observeEvent(input$importConfirmButton, {
     input_name <- names(valid_inputs)[[x]]
     formData[[input_name]] <- valid_inputs[[x]]
   }
-  
-  
   removeModal()
 })
-
-### new import --------------------------------------------------------------
-# 
-# 
-#   mod_data_for_import <- reactiveVal()
-#   
-#   observeEvent(input$importConfirmButton, {
-#     file <- input$uploadMetaQuest
-#     import_data <- jsonlite::read_json(file$datapath) %>% unlist
-#     
-#     # 
-#     # # maybe pass list inputs as nested list?
-#     # # or setup module_server observer for list items in `formData` but not `input`
-#     # # delete all listForm items on import, then create rows as needed?
-#     # 
-#     form_data <- reactiveValuesToList(formData)
-#     
-#     import_data_names <- names(import_data)
-#     list_inputs <- import_data[str_detect(import_data_names, "-Nrow")]
-#     for(x in 1:length(list_inputs)){
-#       list_nrow <- as.numeric(list_inputs[[x]])
-#       list_nrow_name <- names(list_inputs)[x]
-#       list_name <- list_nrow_name %>% str_remove("-Nrow")
-#       if(list_nrow > 0){
-#         if(formData[[list_nrow_name]] < list_nrow){
-#           formData[[list_nrow_name]] <- list_nrow
-#         }
-#         
-#         # # recapture formData to see if updated
-#         # form_data <- reactiveValuesToList(formData)
-#         # 
-#         # import_list_rows <- names(import_data) %>%
-#         #   str_extract(str_c(list_name, "-\\d+-")) %>%
-#         #   na.omit %>% unique %>% sort
-#         # form_list_rows <- names(form_data) %>%
-#         #   str_extract(str_c(list_name, "-\\d+-")) %>%
-#         #   na.omit %>% unique %>% sort %>%
-#         #   c(import_list_rows) %>% unique# combine
-#         # import_list_rows <- c(form_list_rows, import_list_rows) %>% unique %>% .[1:list_nrow]
-#         # 
-#         # # loop through list inputs, extract all rows, rename to existing row numbers
-#         # for(x in 1:length(import_list_rows)){
-#           # import_data_names <- str_replace(import_data_names, import_list_rows[[x]], form_list_rows[[x]])
-#         # }
-# 
-#       }
-#       print("current rows")
-#       reactiveValuesToList(formData) %>% names %>%
-#         str_extract(str_c(list_name, "-\\d+-")) %>%
-#         na.omit %>% unique %>% sort %>% print
-#     }
-# 
-#     
-#     # valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
-#     mod_data_for_import(import_data)
-#     # 
-#     # mod_data <- set_names(import_data, import_data_names)
-#     # for(x in 1:length(valid_inputs)){
-#     #   input_name <- names(valid_inputs)[[x]]
-#     #   mod_data_for_import[[input_name]] <- valid_inputs[[x]]
-#     # }
-#     
-#     # # old, working version
-#     # import_json <- jsonlite::read_json(file$datapath) %>% unlist
-#     # import_json <- import_data
-#     # valid_inputs <- import_json[str_detect(names(import_json), "-Input")]
-#     # for(x in 1:length(valid_inputs)){
-#     #   input_name <- names(valid_inputs)[[x]]
-#     #   formData[[input_name]] <- valid_inputs[[x]]
-#     # }
-#     # 
-#     # 
-#     
-# 
-#     
-#     removeModal()
-#   })
-#   
-#   
-#   observe({
-#     # mod_import <- reactiveValuesToList(mod_data_for_import)
-#     import_data <- mod_data_for_import()
-#     req(length(import_data) > 0)
-#     print(import_data)
-#     isolate({
-#       print("copying import")
-#         form_data <- reactiveValuesToList(formData)
-# 
-#         import_data_names <- names(import_data)
-#         list_inputs <- import_data[str_detect(import_data_names, "-Nrow")]
-#         for(x in 1:length(list_inputs)){
-#           list_nrow <- as.numeric(list_inputs[[x]])
-#           list_nrow_name <- names(list_inputs)[x]
-#           list_name <- list_nrow_name %>% str_remove("-Nrow")
-#           if(list_nrow > 0){
-# 
-# 
-#             # # recapture formData to see if updated
-# 
-#             import_list_rows <- names(import_data) %>%
-#               str_extract(str_c(list_name, "-\\d+-")) %>%
-#               na.omit %>% unique %>% sort
-#             form_list_rows <- names(form_data) %>%
-#               str_extract(str_c(list_name, "-\\d+-")) %>%
-#               na.omit %>% unique %>% sort %>%
-#               c(import_list_rows) %>% unique# combine
-#             # print(import_list_rows)
-#             # print("form list rows")
-#             # names(form_data) %>%
-#               # str_extract(str_c(list_name, "-\\d+-")) %>%
-#               # na.omit %>% unique %>% sort %>% print
-#             import_list_rows <- c(form_list_rows, import_list_rows) %>% unique %>% .[1:list_nrow]
-#             #
-#             # # loop through list inputs, extract all rows, rename to existing row numbers
-#             for(x in 1:length(import_list_rows)){
-#               import_data_names <- str_replace(import_data_names, import_list_rows[[x]], form_list_rows[[x]])
-#             }
-#             # print(import_data_names)
-#             # # still have a reactive chain race... setting formData["contribList-Nrow] <- x works outside of this observer,
-#             # # but here contribList-Nrow already = the import, because module server sees all inputs exist.
-#             # # Either prioritize the row creation in the module, somehow, before the formData is changed,
-#             # # or rework the listForm module observers.
-#             # # Extract to function?
-#             # # Isolate something on the module side? Kills me that the test button increment works but not here
-#           }
-#         }
-# 
-#         mod_data <- set_names(import_data, import_data_names)
-#           valid_inputs <- mod_data[str_detect(names(mod_data), "-Input")]
-#           # print("valid inputs")
-#           # print(valid_inputs)
-#           for(x in 1:length(valid_inputs)){
-#             input_name <- names(valid_inputs)[[x]]
-#             formData[[input_name]] <- valid_inputs[[x]]
-#             }
-#       })
-#     })
-
-
-  # 
-  # viewMetaQuestModal <- function(){
-  #   modalDialog(
-  #     reactjsonOutput("view_upload_json"),
-  #     footer = tagList(
-  #       modalButton("Cancel"),
-  #       actionButton("ok", "OK")
-  #     )
-  #   )
-  # }
-  # 
-  # observeEvent(input$viewMetaQuest, {
-  #   showModal(viewMetaQuestModal())
-  # })
-  # 
-  # uploadjson <- reactive({
-  #   file <- input$uploadMetaQuest
-  #   ext <- tools::file_ext(file$datapath)
-  #   
-  #   req(file)
-  #   # validate(need(ext == "json", "Please upload a json file"))
-  #   
-  #   uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson()# %>% jsonlite::toJSON()
-  # })
-  # 
-  # output$view_upload_json <- renderReactjson({
-  #   uploadjson()
-  # })
-  # 
-  # observeEvent(input$importMetaQuest, {
-  #   file <- input$uploadMetaQuest
-  #   import_json <- jsonlite::read_json(file$datapath)
-  #   updateTextInput(session, "prep_name-Input", value = import_json$prep_name)
-  #   updateSelectInput(session, "prep_affiliation-Input", selected = import_json$prep_affiliation)
-  #   updateTextInput(session, "prep_email-Input", value = import_json$prep_email)
-  #   updateDateInput(session, "prep_date-Input", value = import_json$prep_date %>% unlist)
-  #   updateTextInput(session, "proj_title-Input", value = import_json$proj_title)
-  #   updateTextAreaInput(session, "proj_abstract-Input", value = import_json$proj_abstract)
-  # })
   
 # panel modals ------------------------------------------------------------
 

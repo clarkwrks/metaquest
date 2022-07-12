@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
 # install dependencies of the euler app
-RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'listviewer'))"
+RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'listviewer', 'shinyWidgets'))"
 RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
 
 
@@ -36,6 +36,7 @@ COPY app.R /root/metaquest
 COPY mods.R /root/metaquest
 COPY utils.R /root/metaquest
 COPY quests.R /root/metaquest
+COPY fields.R /root/metaquest
 
 COPY Rprofile.site /usr/local/lib/R/etc/
 

@@ -1,0 +1,305 @@
+{
+    "panels": [
+        {
+            "id": "generalPanel",
+            "title": "General Information",
+            "sections": [
+                {
+                    "id": "preparerSection",
+                    "heading": "About the metadata preparer",
+                    "fields": [
+                        {
+                            "id": "prep_name",
+                            "label": "Name",
+                            "type": "textInput"
+                        },
+                        {
+                            "id": "prep_affiliation",
+                            "label": "Affiliation",
+                            "type": "selectInput",
+                            "info": "Your research group within ResNet",
+                            "choices": [
+                                "-",
+                                "Landscape 1",
+                                "Landscape 2",
+                                "Landscape 3",
+                                "Landscape 4",
+                                "Landscape 5",
+                                "Lanscape 6",
+                                "Theme 1",
+                                "Theme 2",
+                                "Theme 3",
+                                "Synthesis",
+                                "Other"
+                            ]
+                        },
+                        {
+                            "id": "prep_email",
+                            "label": "Email",
+                            "type": "textInput",
+                            "info": "Email address you use for ResNet communication"
+                        },
+                        {
+                            "id": "prep_date",
+                            "label": "Date",
+                            "type": "dateInput",
+                            "info": "The date this form was last updated"
+                        }
+                    ]
+                },
+                {
+                    "id": "projectSection",
+                    "heading": "About the research project",
+                    "fields": [
+                        {
+                            "id": "proj_title",
+                            "label": "Title",
+                            "type": "textInput",
+                            "info": "A concise, descriptive title for the overall project"
+                        },
+                        {
+                            "id": "proj_abstract",
+                            "label": "Abstract",
+                            "type": "textAreaInput",
+                            "info": "A brief abstract describing the project"
+                        },
+                        {
+                            "id": "proj_location",
+                            "label": "Location",
+                            "type": "textInput",
+                            "info": "In general terms, the extent within research was conducted (eg 'Manitoba', 'Landscape 6', 'Canada')."
+                        },
+                        {
+                            "id":"proj_keywords",
+                            "label": "Keywords",
+                            "type": "selectizeInput",
+                            "info": "",
+                            "multiple":true,
+                            "create":true,
+                            "choices":[""]
+                        },
+                        {
+                            "id": "proj_start",
+                            "label": "Start Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project began"
+                        },
+                        {
+                            "id": "proj_end",
+                            "label": "End Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project concluded. Leave blank if project is ongoing."
+                        },
+                        {
+                            "id": "proj_contributors",
+                            "label": "Contributors",
+                            "type": "listInput",
+                            "info": "Collaborators and co-authors who participated in the project.",
+                            "fields": [
+                                {
+                                    "id": "name",
+                                    "label": "Name",
+                                    "type": "textInput"
+                                },
+                                {
+                                    "id": "institution",
+                                    "label": "Institution",
+                                    "type": "textInput"
+                                },
+                                {
+                                    "id": "email",
+                                    "label": "Email",
+                                    "type": "textInput"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "dataPanel",
+            "title": "Data Description",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"datasets",
+                            "label":"Datasets",
+                            "info":"",
+                            "type":"listInput",
+                            "fields":[
+                                {
+                                    "id":"dataset_title",
+                                    "label":"Title",
+                                    "type":"textInput"
+                                },
+                                {
+                                    "id":"dataset_format",
+                                    "label":"Format",
+                                    "type":"selectInput",
+                                    "choices":[
+                                        "Tabular", "Spatial Points", "Spatial Polygons", "Spatial Raster", "Other"
+                                    ]
+                                },
+                                {
+                                    "id":"dataset_description",
+                                    "label":"Description",
+                                    "type":"textAreaInput"
+                                },
+                                {
+                                    "id":"dataset_methods",
+                                    "label":"Methods",
+                                    "type":"textAreaInput"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "exceptionsPanel",
+            "title": "Data Exceptions",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id": "exception_type",
+                            "label": "Exception Types",
+                            "type": "checkboxGroupInput",
+                            "info":"Check all that apply.",
+                            "choices": [
+                                "Traditional Knowledge",
+                                "Human Subjects",
+                                "Sensitive Data",
+                                "Existing Restrictions",
+                                "Other..."
+                            ]
+                        },
+                        {
+                            "id":"exception_description",
+                            "label": "Description",
+                            "type": "textAreaInput",
+                            "info":"Describe the data publication exceptions that apply to this project. See ResNet Data Policy."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "sourcesPanel",
+            "title": "Data Sources",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"data_sources",
+                            "label":"Data Sources",
+                            "type":"listInput",
+                            "fields":[
+                                {
+                                    "id":"source_title",
+                                    "label":"Title",
+                                    "type":"textInput"
+                                },
+                                {
+                                    "id":"source_description",
+                                    "label":"Description",
+                                    "type":"textAreaInput"
+                                },
+                                {
+                                    "id":"source_citation",
+                                    "label":"Citation",
+                                    "type":"textInput"
+                                },
+                                {
+                                    "id":"source_access",
+                                    "label":"Access",
+                                    "type":"textInput"
+                                },
+                                {
+                                    "id":"source_license",
+                                    "label":"License",
+                                    "type":"textInput"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "spatialPanel",
+            "title": "Spatial Data",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"spatialdataset_title",
+                            "label":"Title",
+                            "type":"textInput"
+                        },
+                        {
+                            "id":"spatialdataset_isspatial",
+                            "label":"Spatial",
+                            "type":"checkBoxInput"
+                        },
+                        {
+                            "id":"spatialdataset_projection",
+                            "label":"Projection",
+                            "type":"textInput"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "supplementaryPanel",
+            "title": "Supplementary Information",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"supp_notes",
+                            "label":"Additional Notes",
+                            "type":"textAreaInput"
+                        },
+                        {
+                            "id":"supp_resources",
+                            "label":"External Resources",
+                            "type":"listInput",
+                            "fields":[
+                                {
+                                    "id":"supp_title",
+                                    "label":"Title",
+                                    "type":"textInput"
+                                },
+                                {
+                                    "id":"supp_description",
+                                    "label":"Description",
+                                    "type":"textAreaInput"
+                                },
+                                {
+                                    "id":"supp_location",
+                                    "label":"Location",
+                                    "type":"textInput"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
