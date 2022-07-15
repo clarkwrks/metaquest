@@ -1,7 +1,7 @@
 
 # load libs ---------------------------------------------------------------
 
-# library(jsonlite)
+library(jsonlite)
 library(shiny)
 library(tidyverse)
 library(bslib)

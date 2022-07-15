@@ -1,4 +1,4 @@
-FROM openanalytics/r-ver:4.1.3
+FROM openanalytics/r-ver:4.2.1
 
 LABEL maintainer="John Clark <jclark@xylemgeo.com>"
 
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
 # install dependencies of the euler app
-RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'listviewer', 'shinyWidgets'))"
+RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets'))"
 RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
 
 
@@ -37,6 +37,7 @@ COPY mods.R /root/metaquest
 COPY utils.R /root/metaquest
 COPY quests.R /root/metaquest
 COPY fields.R /root/metaquest
+COPY metaquest_0-1-0.json /root/metaquest
 
 COPY Rprofile.site /usr/local/lib/R/etc/
 
