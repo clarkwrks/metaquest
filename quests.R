@@ -20,24 +20,24 @@ choices_affiliation <- c("-",
 
 metaquests <- tibble::tribble(
                  ~id,        ~type,        ~label,    ~panel,   ~section,              ~choices,                                                  ~info,
-         "prep_name",     "textIn",        "Name", "general", "preparer",                    NA,                                            NA,
-  "prep_affiliation",   "selectIn", "Affiliation", "general", "preparer",   choices_affiliation,                    "Your research group within ResNet",
-        "prep_email",     "textIn",       "Email", "general", "preparer",                    NA,               "Email you use for ResNet communication",
-         "prep_date",     "dateIn",        "Date", "general", "preparer",                    NA,                                         "Today's date",
-        "proj_title",     "textIn",       "Title", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
-     "proj_abstract", "textareaIn",    "Abstract", "general",  "project",                    NA,               "A brief abstract desribing the project",
-     "proj_location",     "textIn",       "Location", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
-     "proj_start",     "dateIn",       "Start Date", "general",  "project",                    NA, "The date work began on this project",
-      "proj_end",     "dateIn",       "End Date", "general",  "project",                    NA, "The date the project was completed. Leave blank if the project is ongoing."
+         "prep_name",     "textInput",        "Name", "general", "preparer",                    NA,                                            NA,
+  "prep_affiliation",   "selectInput", "Affiliation", "general", "preparer",   choices_affiliation,                    "Your research group within ResNet",
+        "prep_email",     "textInput",       "Email", "general", "preparer",                    NA,               "Email you use for ResNet communication",
+         "prep_date",     "dateInput",        "Date", "general", "preparer",                    NA,                                         "Today's date",
+        "proj_title",     "textInput",       "Title", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
+     "proj_abstract", "textareaInput",    "Abstract", "general",  "project",                    NA,               "A brief abstract desribing the project",
+     "proj_location",     "textInput",       "Location", "general",  "project",                    NA, "A concise, descriptive title for the overall project",
+     "proj_start",     "dateInput",       "Start Date", "general",  "project",                    NA, "The date work began on this project",
+      "proj_end",     "dateInput",       "End Date", "general",  "project",                    NA, "The date the project was completed. Leave blank if the project is ongoing."
   
   
   )
 
 proj_contrib_row <- tibble::tribble(
   ~id,    ~type,        ~label, ~value,
-  "name", "textIn",        "Name", "test1",
-  "institution", "textIn", "Institution", "test2",
-  "email", "textIn",       "Email", "test3"
+  "name", "textInput",        "Name", "test1",
+  "institution", "textInput", "Institution", "test2",
+  "email", "textInput",       "Email", "test3"
 )
 
 

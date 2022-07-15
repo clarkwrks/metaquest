@@ -3,10 +3,10 @@
 infoInput_ui <- function(id, label, type, choices, value = "", info=NA, ...) {
   input_id <- NS(id, "Input")
   x <- switch(type,
-              textIn = textInput(input_id, label, value),
-              selectIn = selectInput(input_id, label, choices),
-              dateIn = dateInput(input_id, label, value),
-              textareaIn = textAreaInput(input_id, label, width = "fit-content", 
+              textInput = textInput(input_id, label, value),
+              selectInput = selectInput(input_id, label, choices),
+              dateInput = dateInput(input_id, label, value),
+              textareaInput = textAreaInput(input_id, label, width = "fit-content", 
                                          height = "8em", resize = "both")
   )
   if(!is.na(info)) {
@@ -70,7 +70,7 @@ infoInput_server <- function(id, info=NA, formData = formData, type, ...){
 
 infoInput_demo <- function() {
   ui <- fluidPage(
-    infoInput_ui(id = "testText", label = "testText", info = "info", type = "textIn"),
+    infoInput_ui(id = "testText", label = "testText", info = "info", type = "textInput"),
     actionButton("testButton", "testButton")
     )
   server <- function(input, output, session) {
@@ -146,12 +146,7 @@ formListRow_server <- function(id, rowFields, formData=formData, modData, parent
 
 formList_ui <- function(id,  label, ...){
   ns <- NS(id)
-  
   addRow <- actionButton(ns("addRow"), "Add Row", icon("plus"), class = "eightyWidth button-secondary")
-  # div(class = "margin-panel", 
-      # bs_panel(heading = label, 
-      #      body = div(class = "panel panel-default y-overflow-scroll scroll-shadows",
-      #        addRow))
   div(class = "panel panel-default y-overflow-scroll scroll-shadows",
       addRow)
 }

@@ -151,10 +151,16 @@ menu_accord <- bs_accordion(id = "menuAccord") %>%
                             status = FALSE)
 
 
-fixed_menu <- fixedPanel(left = 0, right = 0,
-                         style = "background-color: honeydew; border-bottom: solid; width:100%; z-index:9999",
-                         fluidRow(class = "topmenu",
-                                  column(3, align="right", img(src = "resnet-logo-4x.png")),
+fixed_header <- fixedPanel(left = 0, right = 0,
+                         style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
+                         fluidRow(class = "fixed-header",
+                                  column(3, align="right", 
+                                         a(
+                                           img(src = "resnet-logo-4x.png"), 
+                                           href="https://www.nsercresnet.ca/",
+                                           target='_blank'
+                                           )
+                                         ),
                                   column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
                                   column(3, align="left", shinyWidgets::dropdownButton(
                                     menu_accord,
@@ -183,8 +189,9 @@ ui <- fluidPage(
   #   "Metadata Questionnaire"),
   # titlePanel(h1("Metadata Questionnaire", align = "center"), 
   #   "Metadata Questionnaire"),
-  div(fixed_menu),
-  div(style = "padding-top:8em;", main_area)
+  div(fixed_header),
+  div(id = "main-area", main_area)
+  # div(main_area)
 )
 
 # server ------------------------------------------------------------------
@@ -333,8 +340,7 @@ server <- function(input, output, session) {
     file <- input$uploadMetaQuest
     ext <- tools::file_ext(file$datapath)
     req(file)
-    # validate(need(ext == "json", "Please upload a json file"))
-    uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
+    uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)
   })
   
   

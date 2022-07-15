@@ -1,9 +1,57 @@
-
+body{
+  bottom: 0;
+  top: 0;
+  overflow-y:scroll;
+  background:#a9ba9d;
+}
+#main-area {
+  padding-top:8em;
+  margin-bottom:5em;
+}
 #mainPanelAccord {
   max-width:100em;
   margin:auto;
-  
+  margin-bottom:0;
+  background:#a9ba9d;
 }
+
+
+.panel-accordian.panel + .panel{
+ border-radius:0;
+  margin-top:0;
+}
+
+.panel-accordian.panel .panel-heading{
+   border-radius:0;
+}
+
+.panel-accordian{
+  border-radius:0;
+}
+
+.panel-accordian.panel:first-child{
+ border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius:0;
+  border-bottom-left-radius:0;
+}
+
+.panel-accordian.panel:last-child{
+ border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+/*
+.panel-group .panel + .panel{
+  margin-top:0;
+  border-radius:0;
+}
+
+.panel-group .panel-heading{
+  border-radius:0;
+}
+
+*/
 
 .hidePanel { display: none !important; }
 
@@ -15,17 +63,21 @@
   margin-left:10%;
 }
 
-
+.panel-group{
+  margin-bottom:0;
+  background:darkseagreens;
+}
 .panel-section {
   padding:5px;
 }
 
 .selectize-input{ z-index: 0; }
 
-.topmenu{
+.fixed-header{
   -webkit-box-align: center;
   -webkit-box-pack: center;
   display: -webkit-box;
+  box-shadow: 0px 5px 5px #888888;
 }
 
 .modal-dialog{
@@ -61,17 +113,15 @@
     ) center bottom,
     
     /* Shadow TOP */
-    radial-gradient(
-      farthest-side at 50% 0,
+    linear-gradient(
       rgba(0, 0, 0, 0.2),
       rgba(0, 0, 0, 0)
     ) center top,
     
     /* Shadow BOTTOM */
-    radial-gradient(
-      farthest-side at 50% 100%,
-      rgba(0, 0, 0, 0.2),
-      rgba(0, 0, 0, 0)
+    linear-gradient(
+          rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.2)
     ) center bottom;
   
   background-repeat: no-repeat;
@@ -97,6 +147,10 @@
 /* for some reason role=presentation comes and goes
 .inline label.control-label + div[role=presentation] {width: 100%;}
 */
+
+.selectize-control.multi .selectize-input > div{
+  background:lightgreen;
+}
 
 .fa-info-circle{margin-top:2px;}
 .fa-info-circle{margin-left:2px}

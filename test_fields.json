@@ -1,0 +1,162 @@
+{
+    "panels": [
+        {
+            "id": "generalPanel",
+            "title": "General Information",
+            "sections": [
+                {
+                    "id": "preparerSection",
+                    "heading": "About the metadata preparer",
+                    "fields": [
+                        {
+                            "id": "prep_name",
+                            "label": "Name",
+                            "type": "textInput"
+                        },
+                        {
+                            "id": "prep_affiliation",
+                            "label": "Affiliation",
+                            "type": "selectInput",
+                            "info": "Your research group within ResNet",
+                            "input_options": {
+                                "choices": [
+                                    "Landscape 1",
+                                    "Landscape 2",
+                                    "Landscape 3",
+                                    "Landscape 4",
+                                    "Landscape 5",
+                                    "Landscape 6",
+                                    "Theme 1",
+                                    "Theme 2",
+                                    "Theme 3",
+                                    "Synthesis",
+                                    "Other"
+                                ],
+                                "multiple": true
+                            }
+                        },
+                        {
+                            "id": "prep_email",
+                            "label": "Email",
+                            "type": "textInput",
+                            "info": "Email address you use for ResNet communication"
+                        },
+                        {
+                            "id": "prep_date",
+                            "label": "Date",
+                            "type": "dateInput",
+                            "info": "The date this form was last updated"
+                        }
+                    ]
+                },
+                {
+                    "id": "projectSection",
+                    "heading": "About the research project",
+                    "fields": [
+                        {
+                            "id": "proj_title",
+                            "label": "Title",
+                            "type": "textInput",
+                            "info": "A concise, descriptive title for the overall project"
+                        },
+                        {
+                            "id": "proj_abstract",
+                            "label": "Abstract",
+                            "type": "textAreaInput",
+                            "info": "A brief abstract describing the project"
+                        },
+                        {
+                            "id": "proj_location",
+                            "label": "Location",
+                            "type": "textInput",
+                            "info": "In general terms, the extent within research was conducted (eg 'Manitoba', 'Landscape 6', 'Canada')."
+                        },
+                        {
+                            "id": "proj_keywords",
+                            "label": "Keywords",
+                            "type": "selectizeInput",
+                            "info": "",
+                            "input_options": {
+                                "choices": [
+                                    ""
+                                ],
+                                "multiple": true,
+                                "options": {
+                                    "create": true
+                                }
+                            }
+                        },
+                        {
+                            "id": "proj_start",
+                            "label": "Start Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project began"
+                        },
+                        {
+                            "id": "proj_end",
+                            "label": "End Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project concluded. Leave blank if project is ongoing."
+                        },
+                        {
+                            "id": "proj_contributors",
+                            "label": "Contributors",
+                            "type": "listInput",
+                            "fields": [
+                                {
+                                    "id": "name",
+                                    "label": "Name",
+                                    "type": "textInput"
+                                },
+                                {
+                                    "id": "institution",
+                                    "label": "Institution",
+                                    "type": "textInput"
+                                },
+                                {
+                                    "id": "email",
+                                    "label": "Email",
+                                    "type": "textInput"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id":"dataPanel",
+            "title":"Data Description",
+            "sections":[
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"datasets",
+                            "label":"Datasets",
+                            "type":"listInput",
+                            "fields":[
+                                {
+                                    "id":"dataset_title",
+                                    "label":"Title",
+                                    "type":"textInput"
+                                },
+                                {
+                                    "id":"dataset_description",
+                                    "label":"Description",
+                                    "type":"textAreaInput"
+                                },
+                                {
+                                    "id":"dataset_methods",
+                                    "label":"Methods",
+                                    "type":"textAreaInput"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

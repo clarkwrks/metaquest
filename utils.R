@@ -197,7 +197,7 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
   
   # compose the panel
   panel <-
-    htmltools::tags$div(class = "panel", id = id_panel, heading, collapse)
+    htmltools::tags$div(class = "panel panel-accordian", id = id_panel, heading, collapse)
   panel <- htmltools::tagAppendAttributes(panel, class = panel_type)
   
   # append panel to accordion
