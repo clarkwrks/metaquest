@@ -108,7 +108,7 @@ textAreaInputInfo <- function(inputId, label, width, height, resize, ...) {
 # attach status div
 # title -> span(icon("plus"), title)
 bs_append_noparent_toggle <- function(tag, title, content, override_id, 
-                                      condition = NULL, status = TRUE, ...){
+                                      condition = NULL, status = FALSE, ...){
   
   # characterize the existing accordion
   n_panel <- length(tag$children)

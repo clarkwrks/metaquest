@@ -80,15 +80,15 @@ buildField_ui <- function(field, ...){
   }
   field_out <- do.call(type, input_args)
 
-    # if(isTruthy(field$info)) {
-    #   field_out %>%
-    #     shinyInput_label_embed(actionLink(NS(field$id, "Info"), icon("info-circle")))
-    #   # paste(c(inputId, "has info")) %>% print
-    # } else {
-    #   field_out
-    #   # paste(c(inputId, "has no info")) %>% print
-    #   
-    # }
+    if(isTruthy(field$info)) {
+      field_out %>%
+        shinyInput_label_embed(actionLink(NS(field$id, "Info"), icon("info-circle")))
+      # paste(c(inputId, "has info")) %>% print
+    } else {
+      field_out
+      # paste(c(inputId, "has no info")) %>% print
+
+    }
 }
 
 buildSection_ui <- function(section){
@@ -151,9 +151,13 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
              textAreaInput =
                updateTextAreaInput(session, "Input",
                                    value = formData[[ns("Input")]]),
-             selectiveInput = 
+             selectizeInput = 
                updateSelectizeInput(session, "Input",
-                                    value = formData[[ns("Input")]])
+                                    choices = formData[[ns("Input")]],
+                                    selected = formData[[ns("Input")]]),
+             checkboxGroupInput = 
+               updateCheckboxGroupInput(session, "Input",
+                                        selected = formData[[ns("Input")]])
       )
     }
     )
@@ -361,7 +365,7 @@ buildInput_server <- function(input, formData){
 
 buildField_server <- function(field, formData){
   # print(field$type)
-  if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput")){
+  if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
     fieldInput_server(id = field$id, info=field$info, type=field$type, formData=formData)
   }
   if(field$type == "listInput"){

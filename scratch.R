@@ -156,3 +156,30 @@ test_contrib_row
 
 # rlang::are_na
 # rlang::missing
+
+
+
+ui <- fluidPage(
+  p("The first checkbox group controls the second"),
+  checkboxGroupInput("inCheckboxGroup", "Input checkbox",
+                     c("Item A", "Item B", "Item C")),
+  checkboxGroupInput("inCheckboxGroup2", "Input checkbox 2",
+                     c("Item A", "Item B", "Item C"))
+)
+
+server <- function(input, output, session) {
+  observe({
+    x <- input$inCheckboxGroup
+    
+    # Can use character(0) to remove all choices
+
+    # Can also set the label and selec    # if (is.null(x))
+    #   x <- character(0)
+    # t items
+    updateCheckboxGroupInput(session, "inCheckboxGroup2",
+                             selected = x
+    )
+  })
+}
+
+shinyApp(ui, server)

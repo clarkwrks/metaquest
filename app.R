@@ -21,70 +21,72 @@ source("fields.R")
 
 ## general panel -----------------------------------------------------------
 
+# 
+# preparer_section <- bs_panel(heading = " About the metadata preparer", class="panel-section",
+#                             body = div(class = "inline form-group",
+#                                        metaquests %>% 
+#                                          filter(panel == "general" & section == "preparer") %>%
+#                                          pmap(infoInput_ui)
+#                                        )
+#                             )
+# 
+# project_section <- bs_panel(heading = "About the research project", class="panel-section",
+#                           body = div(class = "inline form-group",
+#                                      metaquests %>% 
+#                                        filter(panel == "general" & section == "project") %>%
+#                                        pmap(infoInput_ui),
+#                                      div(selectizeInput("selectizeTest", label = "Keywords", choices = c("test"),
+#                                                         multiple = TRUE, options =  list(create = TRUE))
+#                                          )
+#                                      )
+#                           )
+# contributor_section <- bs_panel(heading = "Project Contributors", class="panel-section",
+#                                 body = formList_ui("contribList"))
+# 
+# general_panel <- div(preparer_section, project_section, contributor_section)
+# 
+# ## data panel --------------------------------------------------------------
+# 
+# data_panel <- div()
+# 
+# ## exceptions panel ---------------------------------------------------------
+# 
+# exceptions_panel <- bs_panel(heading = "", class="panel-section",
+#                             body = exception_section)
+# 
+# ## sources panel -----------------------------------------------------------
+# 
+# data_sources_panel <- formList_ui("dataSourceList", "Data Sources", rowFields = proj_contrib_row)
+# 
+# sources_panel <- div(data_sources_panel)
+# # sources_panel <- div()
+# 
+# ## spatial panel -----------------------------------------------------------
+# 
+# spatial_panel <- div("")
+# 
+# ## build accordion --------------------------------------------------------
+# 
+# main_area <- bs_accordion(id = "mainPanelAccord") %>% 
+#   bs_set_opts(panel_type = "primary", use_heading_link = FALSE
+#               ) %>%
+#   bs_append_noparent_toggle(title = "General Information", 
+#             content = general_panel, override_id = "generalPanel") %>%
+#   bs_append_noparent_toggle(title = "Data Description", 
+#             content = data_panel, override_id = "dataPanel") %>%
+#   bs_append_noparent_toggle(title = "Data Exceptions", 
+#             content = exceptions_panel, override_id = "exceptionsPanel",
+#             condition = "Restrictions on publication?") %>%
+#   bs_append_noparent_toggle(title = "Data Sources", 
+#             content = sources_panel, override_id = "sourcePanel",
+#             condition = "Incorporates external data?") %>%
+#   bs_append_noparent_toggle(title = "Spatial Data", 
+#             content = spatial_panel, override_id = "spatialPanel",
+#             condition = "Contains spatial data?")
 
-preparer_section <- bs_panel(heading = " About the metadata preparer", class="panel-section",
-                            body = div(class = "inline form-group",
-                                       metaquests %>% 
-                                         filter(panel == "general" & section == "preparer") %>%
-                                         pmap(infoInput_ui)
-                                       )
-                            )
+metaquest_fields <- read_json("metaquest_0-1-0.json")
 
-project_section <- bs_panel(heading = "About the research project", class="panel-section",
-                          body = div(class = "inline form-group",
-                                     metaquests %>% 
-                                       filter(panel == "general" & section == "project") %>%
-                                       pmap(infoInput_ui),
-                                     div(selectizeInput("selectizeTest", label = "Keywords", choices = c("test"),
-                                                        multiple = TRUE, options =  list(create = TRUE))
-                                         )
-                                     )
-                          )
-contributor_section <- bs_panel(heading = "Project Contributors", class="panel-section",
-                                body = formList_ui("contribList"))
-
-general_panel <- div(preparer_section, project_section, contributor_section)
-
-## data panel --------------------------------------------------------------
-
-data_panel <- div()
-
-## exceptions panel ---------------------------------------------------------
-
-exceptions_panel <- bs_panel(heading = "", class="panel-section",
-                            body = exception_section)
-
-## sources panel -----------------------------------------------------------
-
-data_sources_panel <- formList_ui("dataSourceList", "Data Sources", rowFields = proj_contrib_row)
-
-sources_panel <- div(data_sources_panel)
-# sources_panel <- div()
-
-## spatial panel -----------------------------------------------------------
-
-spatial_panel <- div("")
-
-## build accordion --------------------------------------------------------
-
-main_area <- bs_accordion(id = "mainPanelAccord") %>% 
-  bs_set_opts(panel_type = "primary", use_heading_link = FALSE
-              ) %>%
-  bs_append_noparent_toggle(title = "General Information", 
-            content = general_panel, override_id = "generalPanel") %>%
-  bs_append_noparent_toggle(title = "Data Description", 
-            content = data_panel, override_id = "dataPanel") %>%
-  bs_append_noparent_toggle(title = "Data Exceptions", 
-            content = exceptions_panel, override_id = "exceptionsPanel",
-            condition = "Restrictions on publication?") %>%
-  bs_append_noparent_toggle(title = "Data Sources", 
-            content = sources_panel, override_id = "sourcePanel",
-            condition = "Incorporates external data?") %>%
-  bs_append_noparent_toggle(title = "Spatial Data", 
-            content = spatial_panel, override_id = "spatialPanel",
-            condition = "Contains spatial data?")
-
-
+main_area <- buildMetaQuest_ui(metaquest_fields)
 
 # menu --------------------------------------------------------------------
 
@@ -201,24 +203,25 @@ server <- function(input, output, session) {
 # build question hooks ----------------------------------------------------
   
   ## formData rvs -----------------------------------------------------------
-
-  formData <- reactiveValues(version = "0.0.1")
-  
-  metaquests  %>% 
-    # filter(section != "preparer") %>% 
-    pmap(infoInput_server, formData=formData)
-
-  section_server <- function(fields, formData){
-    fields %>% pmap(infoInput_server, formData=formData)
-  }
-
-  # preparer_section_fields %>% section_server(formData)
-  
-
-
-  formList_server("contribList", formData=formData, rowFields = proj_contrib_row)
-  formList_server("dataSourceList", formData=formData, rowFields = proj_contrib_row)
-
+# 
+#   formData <- reactiveValues(version = "0.0.1")
+#   
+#   metaquests  %>% 
+#     # filter(section != "preparer") %>% 
+#     pmap(infoInput_server, formData=formData)
+# 
+#   section_server <- function(fields, formData){
+#     fields %>% pmap(infoInput_server, formData=formData)
+#   }
+# 
+#   # preparer_section_fields %>% section_server(formData)
+#   
+# 
+# 
+#   formList_server("contribList", formData=formData, rowFields = proj_contrib_row)
+#   formList_server("dataSourceList", formData=formData, rowFields = proj_contrib_row)
+  formData <- reactiveValues(version = "0.1.0")
+  buildMetaQuest_server(metaquest_fields, formData)
 # tutorial modal ----------------------------------------------------------
   tutorialModal <- function(){
     modalDialog(
@@ -340,7 +343,8 @@ server <- function(input, output, session) {
     file <- input$uploadMetaQuest
     ext <- tools::file_ext(file$datapath)
     req(file)
-    uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)
+    # uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)
+    uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson(sortKeys = TRUE)
   })
   
   
@@ -351,11 +355,15 @@ server <- function(input, output, session) {
 
 observeEvent(input$importConfirmButton, {
   file <- input$uploadMetaQuest
-  import_data <- jsonlite::read_json(file$datapath) %>% unlist
+  import_data <- jsonlite::read_json(file$datapath) #%>% unlist
   
   valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
   # print("valid inputs")
   # print(valid_inputs)
+  for(x in 1:length(valid_inputs)){
+    input_name <- names(valid_inputs)[[x]]
+    formData[[input_name]] <- valid_inputs[[x]]
+  }
   for(x in 1:length(valid_inputs)){
     input_name <- names(valid_inputs)[[x]]
     formData[[input_name]] <- valid_inputs[[x]]
