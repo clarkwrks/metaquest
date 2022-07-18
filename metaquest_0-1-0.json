@@ -181,8 +181,10 @@
             ]
         },
         {
-            "id": "exceptions_panel",
+            "id": "exceptionsPanel",
             "title": "Data Exceptions",
+            "condition":"Restrictions on publication?",
+            "info": "Test info",
             "sections": [
                 {
                     "id": "mainSection",
@@ -212,8 +214,9 @@
             ]
         },
         {
-            "id":"sources_panel",
+            "id":"sourcesPanel",
             "title":"Data Sources",
+            "condition":"Incorporates external data?",
             "sections": [
                 {
                     "id": "mainSection",
@@ -267,7 +270,33 @@
             ]
         },
         {
-            "id":"supplementary_panel",
+            "id":"spatialPanel",
+            "title":"Spatial Data",
+            "condition":"Contains spatial data?",
+            "sections": [
+                {
+                    "id":"mainSection",
+                    "heading":"",
+                    "fields":[
+                        {
+                            "id":"spatial_title",
+                            "label":"Title",
+                            "type":"textInput"
+                        },                        {
+                            "id":"spatial_projection",
+                            "label":"Projection",
+                            "type":"textInput"
+                        },                        {
+                            "id":"spatial_resolution",
+                            "label":"Resolution",
+                            "type":"textInput"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id":"supplementaryPanel",
             "title":"Supplementary Information",
             "sections": [
                 {

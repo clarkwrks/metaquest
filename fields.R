@@ -92,33 +92,45 @@ buildField_ui <- function(field, ...){
 }
 
 buildSection_ui <- function(section){
-  list2env(section, environment())
-  section_fields <- fields %>% map(., buildField_ui)
+  # list2env(section, environment())
+  # section_fields <- fields %>% map(., buildField_ui)
+  section_fields <- section$fields %>% map(buildField_ui)
   bs_panel(heading = section$heading, class="panel-section",
            body = div(class = "inline form-group",
                       section_fields
            )
   )
 }
-
-buildPanel_ui <- function(panel_title, panel_id, panel_sections){
-  panel_sections_ui <- panel_sections %>% map(buildSection_ui)
-  list(title=panel_title, content=div(panel_sections_ui), override_id=panel_id)
+buildPanel_ui <- function(panel){
+  print(paste("Building panel", panel$id))
+  # buildPanel_ui <- function(panel){
+  panel_sections_ui <- panel$sections %>% map(buildSection_ui)
+  # list(title=panel_title, content=div(panel_sections_ui), override_id=panel_id)
+  # panel_sections_ui <- panel$sections %>% map(buildSection_ui)
+  list(title = panel$title, content = div(panel_sections_ui), override_id = panel$id, condition=panel$condition)
+  # bs_append_noparent_toggle(parent,
+  #                           title = panel$title,
+  #                           content = panel_sections_ui,
+  #                           override_id = panel$override_id,
+  #                           condition = panel$condition)
 }
 
 buildAccordion_ui <- function(parent, child){
   bs_append_noparent_toggle(parent, 
                             title = child$title, 
                             content = child$content, 
-                            override_id = child$override_id)
+                            override_id = child$override_id,
+                            condition = child$condition)
 }
 buildMetaQuest_ui <- function(form_json){
-  panel_tb <- 1:length(form_json$panels) %>% map_dfr(getPanels, form_json=form_json)
-  panels_ui <- panel_tb %>% pmap(buildPanel_ui)
+  # panel_tb <- 1:length(form_json$panels) %>% map_dfr(getPanels, form_json=form_json)
+  # panels_ui <- panel_tb %>% pmap(buildPanel_ui)
+  panels_ui <- form_json$panels %>% map(buildPanel_ui)
   main_area_ui <- bs_accordion(id = "mainPanelAccord") %>%
     bs_set_opts(panel_type = "primary", use_heading_link = FALSE
     )
   reduce(panels_ui, buildAccordion_ui, .init = main_area_ui)
+  # reduce(form_json$panels, buildPanel_ui, .init = main_area_ui)
 }
 
 
@@ -134,10 +146,10 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
     })
     
     observeEvent(formData[[ns("Input")]], {
-      print(paste0(
-        "Updating ", type, " field: ",
-        ns("Input"), " = ", formData[[ns("Input")]]
-        ))
+      # print(paste0(
+      #   "Updating ", type, " field: ",
+      #   ns("Input"), " = ", formData[[ns("Input")]]
+      #   ))
       switch(type,
              textInput =
                updateTextInput(session, "Input",
@@ -189,7 +201,7 @@ listInputRow_ui <- function(id, rowFields, ...){
   deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
                                style="float:right; margin-right:10%;", 
                                class = "btn-danger")
-  fields_ns %>% print
+  # fields_ns %>% print
   div(class = "inline formGroup formListRow", 
       id = ns("div"),
       # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
@@ -379,9 +391,48 @@ buildSection_server <- function(section, formData){
   section$fields %>% map(buildField_server, formData=formData)
 }
 
+
+
+panel_server <- function(id, formData, info, condition, ...){
+  moduleServer(id, function(input, output, session){
+    id
+    if(isTruthy(condition)){
+      observe({
+        ### got problems. may be related to the shinyjs package needing to call shinyjs::useShinyJS AFTER modules
+        ### to revert, use namespacing in bs_append_noparent_toggle
+        ns <- session$ns
+        
+        # x <- ns("Toggle")
+        panel_status <- input$Toggle
+        # print(paste0(id, "-Toggle"))
+        # print(input$Toggle)
+        print(panel_status)
+        print(id)
+        toggleCssClass(id, "panel-info", is.null(panel_status), asis=TRUE)
+        toggleCssClass(id, "panel-primary", isTRUE(as.logical(panel_status)), asis=TRUE)
+        toggleCssClass(id, "panel-disabled", isFALSE(as.logical(panel_status)), asis=TRUE)
+      })
+    }
+    
+    panelModal <- function(){
+      modalDialog(
+        div(
+          info
+        )
+      )
+    }
+    observeEvent(input$Info, {
+      print("blah")
+      showModal(panelModal())
+    })
+  })
+}
+  
 buildPanel_server <- function(panel, formData){
   # print(panel$id)
   panel$sections %>% map(buildSection_server, formData = formData)
+  panel_server(id = panel$id, formData, session, info = panel$info, condition = panel$condition)
+  
 }
 
 buildMetaQuest_server <- function(form_json, 
@@ -398,8 +449,8 @@ testFun <- function(id, title){
 
 # demo --------------------------------------------------------------------
 
-test_fields <- read_json("/home/jclark/Work/metaquest/test_fields.json")
-test_fields$panels %>% map(~ testFun(.x$id, .x$title))
+test_fields <- read_json("metaquest_0-1-0.json")
+# test_fields$panels %>% map(~ testFun(.x$id, .x$title))
 
 # test_fields %>% buildMetaQuest_server
 
@@ -412,13 +463,13 @@ testListFun <- function(dfrowlist){
 # listInput originally designed to accept tibble of rowFields, rework has lists. 
 # tried converting to tibble then back for new ui builders 
 # something fucky
-test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% map(~testListFun(.x %>% as.list))
-
-test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% .[1,] %>% as.list
-
-test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% as.list
-test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% transpose
-
+# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% map(~testListFun(.x %>% as.list))
+# 
+# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% .[1,] %>% as.list
+# 
+# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% as.list
+# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% transpose
+# 
 buildMetaQuest_demo <- function() {
   ui <- fluidPage(
     test_fields %>% buildMetaQuest_ui()

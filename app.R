@@ -180,9 +180,9 @@ fixed_header <- fixedPanel(left = 0, right = 0,
 
 ui <- fluidPage(
   bs_theme = "flatly",
-  useShinyjs(),
   title = "ResNet MetaQuest",
   # useShinyFeedback(),
+  useShinyjs(),
   # theme = bs_theme("flatly", version = 5),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
   # titlePanel(fluidRow(
@@ -372,28 +372,28 @@ observeEvent(input$importConfirmButton, {
 })
   
 # panel modals ------------------------------------------------------------
+# 
+#   observe({
+#     x <- input$sourcesPanelToggle
+#     toggleClass("sourcesPanel", "panel-info", is.null(x))
+#     toggleClass("sourcesPanel", "panel-primary", isTRUE(as.logical(x)))
+#     toggleClass("sourcesPanel", "panel-default", isFALSE(as.logical(x)))
+#   })
+# 
+#   observe({
+#     x <- input$exceptionsPanelToggle
+#     toggleClass("exceptionsPanel", "panel-info", is.null(x))
+#     toggleClass("exceptionsPanel", "panel-primary", isTRUE(as.logical(x)))
+#     toggleClass("exceptionsPanel", "panel-default", isFALSE(as.logical(x)))
+#   })
+# 
+#   observe({
+#     x <- input$spatialPanelToggle
+#     toggleClass("spatialPanel", "panel-info", is.null(x))
+#     toggleClass("spatialPanel", "panel-primary", isTRUE(as.logical(x)))
+#     toggleClass("spatialPanel", "panel-default", isFALSE(as.logical(x)))
+#   })
 
-  observe({
-    x <- input$sourcePanelToggle
-    toggleClass("sourcePanel", "panel-info", is.null(x))
-    toggleClass("sourcePanel", "panel-primary", isTRUE(as.logical(x)))
-    toggleClass("sourcePanel", "panel-default", isFALSE(as.logical(x)))
-  })
-  
-  observe({
-    x <- input$exceptionsPanelToggle
-    toggleClass("exceptionsPanel", "panel-info", is.null(x))
-    toggleClass("exceptionsPanel", "panel-primary", isTRUE(as.logical(x)))
-    toggleClass("exceptionsPanel", "panel-default", isFALSE(as.logical(x)))
-  })
-  
-  observe({
-    x <- input$spatialPanelToggle
-    toggleClass("spatialPanel", "panel-info", is.null(x))
-    toggleClass("spatialPanel", "panel-primary", isTRUE(as.logical(x)))
-    toggleClass("spatialPanel", "panel-default", isFALSE(as.logical(x)))
-  })
-  
   
   # session$onSessionEnded(function() {
   #   isolate(saveRDS( input, file = 'integer.RDS'))

@@ -109,6 +109,7 @@ textAreaInputInfo <- function(inputId, label, width, height, resize, ...) {
 # title -> span(icon("plus"), title)
 bs_append_noparent_toggle <- function(tag, title, content, override_id, 
                                       condition = NULL, status = FALSE, ...){
+  ns <- NS(override_id)
   
   # characterize the existing accordion
   n_panel <- length(tag$children)
@@ -155,8 +156,11 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
   # put the panel title into the heading
   heading <- htmltools::tagAppendChild(heading, panel_title)
   if (length(condition) > 0) {
-    id_toggle <- paste0(id_panel, "Toggle")
-    id_info <- paste0(id_panel, "Info")
+    # id_toggle <- paste0(id_panel, "Toggle")
+    # id_info <- paste0(id_panel, "Info")
+    id_toggle <- ns("Toggle")
+    id_info <- ns("Info")
+    print(id_info)
     panel_toggle <- radioButtons(id_toggle, condition, 
                                  c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE) %>% 
       shinyInput_label_embed(actionLink(id_info, icon("info-circle")))
