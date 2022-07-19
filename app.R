@@ -312,6 +312,13 @@ server <- function(input, output, session) {
 ## import ------------------------------------------------------------------
 
   importModal <- function(){
+    import_compare <- bs_collapse(id = "import_compare", content = (fillRow(flex = 1, 
+                              bs_panel(heading = "Current File", 
+                                       body=reactjsonOutput("current_file_json")),
+                              bs_panel(heading = "Import File", 
+                                       body=reactjsonOutput("view_upload_json")))
+    )
+    )
     modalDialog(
       div(style = "min-height:60vh;overflow-y:auto",
           bs_panel(heading = "Select File to Import", 
@@ -323,13 +330,9 @@ server <- function(input, output, session) {
             width = NULL,
             buttonLabel = "Browse...",
             placeholder = "No file selected"
-          )),
-      fillRow(flex = 1, 
-              bs_panel(heading = "Current File", 
-                       body=reactjsonOutput("current_file_json")),
-              bs_panel(heading = "Import File", 
-                       body=reactjsonOutput("view_upload_json"))
-              )
+          )), 
+          bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), import_compare
+
       ),
       title = "Import File",
       size = "l",
