@@ -149,15 +149,24 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
     ns <- session$ns
     # need to use freezeReactiveValue? on input and formData
     # https://mastering-shiny.org/action-dynamic.html#freezing-reactive-inputs
-    observeEvent(input$Input, {
-      formData[[ns("Input")]] <- input$Input
+    # observeEvent(input$Input, {
+    #   freezeReactiveValue(input, ns("Input"))
+    #   formData[[ns("Input")]] <- input$Input
+    # })    
+    observe({
+      input$Input
+      invalidateLater(2000, session)
+      # freezeReactiveValue(input, ns("Input"))
+      formData[[ns("Input")]] <- isolate(input$Input)
     })
     
     observeEvent(formData[[ns("Input")]], {
-      # print(paste0(
-      #   "Updating ", type, " field: ",
-      #   ns("Input"), " = ", formData[[ns("Input")]]
-      #   ))
+      # freezeReactiveValue(formData, ns("Input"))
+      
+      print(paste0(
+        "Updating ", type, " field: ",
+        ns("Input"), " = ", formData[[ns("Input")]]
+        ))
       
       switch(type,
              textInput =

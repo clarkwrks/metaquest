@@ -173,12 +173,14 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
   }
 
   # what to do if panel is empty?
-  panel_body_style <-
-    ifelse(
-      identical(length(content), 0L),
-      "padding-top: 0px; padding-bottom: 0px;",
-      ""
-    )
+  # panel_body_style <-
+  #   ifelse(
+  #     identical(length(content), 0L),
+  #     "padding-top: 0px; padding-bottom: 0px;",
+  #     ""
+  #   )  
+  panel_body_style <- ""
+
   
   collapse <-
     htmltools::tags$div(

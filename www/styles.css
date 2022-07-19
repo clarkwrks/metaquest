@@ -185,3 +185,11 @@ body{
 	background-color:lightgrey;
 	border-color: grey;
 }
+
+#dropdown-menu-action_menu_dropdown {
+	padding: 0;
+}
+.dropdown-menu li{
+  margin:0 !important; 
+}
+

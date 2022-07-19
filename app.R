@@ -131,11 +131,10 @@ dev_panel <-
     panel_type = "danger",
     body = div(
       actionButton("showInputButton", "Show Input", class ="fillWidth"),
-      actionButton("showFormDataButton", "Show Form Data", class = "fillWidth"),
-      hr(),
-      numericInput("testNumeric", NULL, value = 1, width = "12em"),
-      actionButton("testButton", "Go", class ="fillWidth")
-      
+      actionButton("showFormDataButton", "Show Form Data", class = "fillWidth")
+      # hr(),
+      # numericInput("testNumeric", NULL, value = 1, width = "fit-content"),
+      # actionButton("testButton", "Go", class ="fillWidth")
     )
     )
 
