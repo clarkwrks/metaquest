@@ -46,7 +46,10 @@
                             "id": "prep_date",
                             "label": "Date",
                             "type": "dateInput",
-                            "info": "The date this form was last updated"
+                            "info": "The date this form was last updated",
+                            "input_options": {
+                                "value":null
+                            }
                         }
                     ]
                 },
@@ -112,6 +115,7 @@
                             "id": "proj_contributors",
                             "label": "Contributors",
                             "type": "listInput",
+                            "info": "Test",
                             "fields": [
                                 {
                                     "id": "name",
@@ -279,17 +283,24 @@
                     "heading":"",
                     "fields":[
                         {
-                            "id":"spatial_title",
-                            "label":"Title",
-                            "type":"textInput"
-                        },                        {
-                            "id":"spatial_projection",
-                            "label":"Projection",
-                            "type":"textInput"
-                        },                        {
-                            "id":"spatial_resolution",
-                            "label":"Resolution",
-                            "type":"textInput"
+                            "id":"spatial_data",
+                            "label":"Spatial Datasets",
+                            "type":"listInput",
+                            "fields": [
+                                {
+                                    "id":"spatial_title",
+                                    "label":"Title",
+                                    "type":"textInput"
+                                },                        {
+                                    "id":"spatial_projection",
+                                    "label":"Projection",
+                                    "type":"textInput"
+                                },                        {
+                                    "id":"spatial_resolution",
+                                    "label":"Resolution",
+                                    "type":"textInput"
+                                }
+                            ]
                         }
                     ]
                 }

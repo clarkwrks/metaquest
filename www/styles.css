@@ -2,7 +2,7 @@ body{
   bottom: 0;
   top: 0;
   overflow-y:scroll;
-  background:#a9ba9d;
+  background:#d1e1c5;
 }
 #main-area {
   padding-top:8em;
@@ -12,7 +12,7 @@ body{
   max-width:100em;
   margin:auto;
   margin-bottom:0;
-  background:#a9ba9d;
+  background:#d1e1c5;
 }
 
 
@@ -79,6 +79,7 @@ body{
 }
 .panel-section {
   padding:5px;
+  border:none;
 }
 
 .selectize-input{ z-index: 0; }
@@ -101,6 +102,11 @@ body{
 .y-overflow-scroll{
   max-height:10em;
   overflow-y:auto;
+}
+
+.control-label {
+	max-width: fit-content;
+	margin-left:5px;
 }
 
 .scroll-shadows {
@@ -151,7 +157,7 @@ body{
 .formListRow .form-group {margin-bottom: .5em}
 
 
-.inline .form-group .control-label {min-width: 5em; text-align: right; margin: 5px; vertical-align: middle;}
+.inline .form-group .control-label {min-width: fit-content; text-align: right; margin: 5px; vertical-align: middle;}
 .inline .form-group .form-control {min-width: 5em;}
 .inline label.control-label + div {width: 100%;}
 /* for some reason role=presentation comes and goes

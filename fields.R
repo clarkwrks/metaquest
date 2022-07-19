@@ -29,7 +29,7 @@ checkboxInput_ui <- function(inputId, label, value = FALSE){
   checkboxInput(inputId, label, value)
 }
 
-dateInput_ui <- function(inputId, label, value = NULL){
+dateInput_ui <- function(inputId, label, value = ""){
   dateInput(inputId, label, value)
 }
 
@@ -52,12 +52,19 @@ textAreaInput_ui <- function(inputId, label, value="", width="fit-content", heig
   textAreaInput(inputId, label, value, width, height, resize = resize)
 }
 
-listInput_ui <- function(inputId,  label, ...){
+listInput_ui <- function(inputId,  label, info,...){
   ns <- NS(inputId)
-
+  
+  info_link <- NULL
+  if(isTruthy(info)){
+    info_link <- div(class="pull-right", actionLink(ns("Info"), icon("info-circle")))
+  }
   addRow <- actionButton(ns("addRow"), "Add Row", icon("plus"), class = "eightyWidth button-secondary")
-  div(class = "panel panel-default y-overflow-scroll scroll-shadows",
+  div(
+    div(class = "control-label", tag("label", label), info_link),
+    div(class = "panel panel-default y-overflow-scroll scroll-shadows",
       addRow)
+    )
 }
 
 # build_ui ----------------------------------------------------------------
@@ -72,23 +79,23 @@ buildField_ui <- function(field, ...){
     # print(paste("id:", id))
     # print(field)
     input_args <- list(inputId = field$id,
-                       label = field$label) %>% c(field$input_options)
+                       label = field$label, info=field$info) %>% c(field$input_options)
     # print(input_args)
+    field_out <- do.call(type, input_args)
+    
   } else {
     input_args <- list(inputId = NS(field$id, "Input"),
                        label = field$label) %>% c(field$input_options)
-  }
-  field_out <- do.call(type, input_args)
-
+    field_out <- do.call(type, input_args)
+    
     if(isTruthy(field$info)) {
       field_out %>%
         shinyInput_label_embed(actionLink(NS(field$id, "Info"), icon("info-circle")))
-      # paste(c(inputId, "has info")) %>% print
     } else {
       field_out
-      # paste(c(inputId, "has no info")) %>% print
-
     }
+  }
+
 }
 
 buildSection_ui <- function(section){
@@ -140,7 +147,8 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
   moduleServer(id, function(input, output, session) {
     id
     ns <- session$ns
-    
+    # need to use freezeReactiveValue? on input and formData
+    # https://mastering-shiny.org/action-dynamic.html#freezing-reactive-inputs
     observeEvent(input$Input, {
       formData[[ns("Input")]] <- input$Input
     })
@@ -150,6 +158,7 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
       #   "Updating ", type, " field: ",
       #   ns("Input"), " = ", formData[[ns("Input")]]
       #   ))
+      
       switch(type,
              textInput =
                updateTextInput(session, "Input",
@@ -215,6 +224,8 @@ listInputRow_server <- function(id, rowFields, formData=formData, modData, paren
     id
     ns <- session$ns
     
+    
+    
     fields_ns <- rowFields
     # print(fields_ns)
     fields_ns %>% pmap(fieldInput_server, formData=formData)
@@ -248,10 +259,26 @@ listInputRow_server <- function(id, rowFields, formData=formData, modData, paren
   })
 }
 
-listInput_server <- function(id, formData=formData, rowFields,...){
+listInput_server <- function(id, formData=formData, info=NULL, rowFields,...){
   moduleServer(id, function(input, output, session) {
     id
     ns <- session$ns
+    
+    if(isTruthy(info)) {
+      infoModal <- function(content){
+        modalDialog(
+          content,
+          easyClose = TRUE,
+          footer = tagList(
+            modalButton("OK")
+          )
+        )
+      }
+      observeEvent(input$Info, {
+        showModal(infoModal(info))
+      })
+    }
+    
     
     insertSelector = paste0("#", ns("addRow"))
     
@@ -381,7 +408,7 @@ buildField_server <- function(field, formData){
     fieldInput_server(id = field$id, info=field$info, type=field$type, formData=formData)
   }
   if(field$type == "listInput"){
-    listInput_server(id = field$id, formData = formData, rowFields = field$fields %>% map_dfr(as_tibble))
+    listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble))
     # field$fields %>% map_dfr(as_tibble) %>% print
   }
 }
