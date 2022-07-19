@@ -64,16 +64,22 @@
                             "info": "A concise, descriptive title for the overall project"
                         },
                         {
-                            "id": "proj_abstract",
-                            "label": "Abstract",
-                            "type": "textAreaInput",
-                            "info": "A brief abstract describing the project"
-                        },
-                        {
                             "id": "proj_location",
                             "label": "Location",
                             "type": "textInput",
                             "info": "In general terms, the extent within research was conducted (eg 'Manitoba', 'Landscape 6', 'Canada')."
+                        },
+                        {
+                            "id": "proj_start",
+                            "label": "Start Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project began"
+                        },
+                        {
+                            "id": "proj_end",
+                            "label": "End Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project concluded. Leave blank if project is ongoing."
                         },
                         {
                             "id": "proj_keywords",
@@ -100,22 +106,16 @@
                             }
                         },
                         {
-                            "id": "proj_start",
-                            "label": "Start Date",
-                            "type": "dateInput",
-                            "info": "When work on the research project began"
-                        },
-                        {
-                            "id": "proj_end",
-                            "label": "End Date",
-                            "type": "dateInput",
-                            "info": "When work on the research project concluded. Leave blank if project is ongoing."
+                            "id": "proj_abstract",
+                            "label": "Abstract",
+                            "type": "textAreaInput",
+                            "info": "A brief abstract describing the project"
                         },
                         {
                             "id": "proj_contributors",
                             "label": "Contributors",
                             "type": "listInput",
-                            "info": "Test",
+                            "info": "List individuals that contributed to this research project",
                             "fields": [
                                 {
                                     "id": "name",

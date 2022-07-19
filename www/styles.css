@@ -155,7 +155,9 @@ body{
 
 .formListRow hr {margin: .5em}
 .formListRow .form-group {margin-bottom: .5em}
-
+.formListRow label{
+  font-weight:normal;
+}
 
 .inline .form-group .control-label {min-width: fit-content; text-align: right; margin: 5px; vertical-align: middle;}
 .inline .form-group .form-control {min-width: 5em;}

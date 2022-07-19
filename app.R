@@ -312,12 +312,13 @@ server <- function(input, output, session) {
 ## import ------------------------------------------------------------------
 
   importModal <- function(){
-    import_compare <- bs_collapse(id = "import_compare", content = (fillRow(flex = 1, 
+    import_compare <- bs_collapse(id = "import_compare", content = 
+                                    (fillRow(flex = 1, 
                               bs_panel(heading = "Current File", 
                                        body=reactjsonOutput("current_file_json")),
                               bs_panel(heading = "Import File", 
                                        body=reactjsonOutput("view_upload_json")))
-    )
+                      )
     )
     modalDialog(
       div(style = "min-height:60vh;overflow-y:auto",
@@ -331,7 +332,22 @@ server <- function(input, output, session) {
             buttonLabel = "Browse...",
             placeholder = "No file selected"
           )), 
-          bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), import_compare
+          bs_panel(panel_type = "danger", body = 
+                     div(
+                       h4(style="color:red;",
+                          "Known Issue:", br(),
+              "If there are multiple rows for any fields (ie you clicked 
+              'Add Row' to enter data for an additonal item) you will need 
+              to import twice.", br(), 
+              tags$ol(tags$li("Click 'Confirm'."), 
+                      tags$li("Reopen this dialog."),
+                      tags$li("Click 'Confirm' once more."),
+                      tags$li("Your imported data should now display correctly.")
+                      ), 
+                      "This is a known issue with work in progress."
+              ))),
+          bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
+          import_compare
 
       ),
       title = "Import File",
