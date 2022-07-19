@@ -293,8 +293,17 @@ server <- function(input, output, session) {
   
 ## export ------------------------------------------------------------------
 
+  export_file_name <- reactive({
+    # observe({
+      prep_name <- formData$prep_name
+      prep_time <- as.POSIXlt(Sys.time(), tz = "UTC") %>% format("%Y-%m-%d_%H-%M-%S")
+      if(!(prep_name %>% length > 1)) prep_name <- "unnamedPreparer"
+    # })
+    paste0(prep_name, "_", prep_time, ".json")
+  })
   output$exportMetaQuest <- downloadHandler(
-    filename = "test.json",
+    # filename = "test.json",
+    filename = export_file_name(),
     content = function(file) {
       formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
     }
