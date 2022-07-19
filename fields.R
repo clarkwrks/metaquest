@@ -150,23 +150,29 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
     # need to use freezeReactiveValue? on input and formData
     # https://mastering-shiny.org/action-dynamic.html#freezing-reactive-inputs
     # observeEvent(input$Input, {
-    #   freezeReactiveValue(input, ns("Input"))
+    ##   freezeReactiveValue(input, ns("Input"))
     #   formData[[ns("Input")]] <- input$Input
     # })    
     observe({
-      input$Input
-      invalidateLater(2000, session)
+      # input$Input
+      # invalidateLater(4000, session)
       # freezeReactiveValue(input, ns("Input"))
-      formData[[ns("Input")]] <- isolate(input$Input)
+      formData[[ns("Input")]] <- input$Input
+      # formData[[ns("Input")]] <- isolate(input$Input)      
+      # isolate(
+      # formData[[ns("Input")]] <- input$Input
+      # )
     })
-    
-    observeEvent(formData[[ns("Input")]], {
+    observe({
+      # invalidateLater(4000, session)
+      # isolate({
+      new_val <- formData[[ns("Input")]]
       # freezeReactiveValue(formData, ns("Input"))
       
       print(paste0(
         "Updating ", type, " field: ",
         ns("Input"), " = ", formData[[ns("Input")]]
-        ))
+      ))
       
       switch(type,
              textInput =
@@ -189,8 +195,40 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
                updateCheckboxGroupInput(session, "Input",
                                         selected = formData[[ns("Input")]])
       )
-    }
+      # })
+      }
     )
+    # observeEvent(formData[[ns("Input")]], {
+    #   # freezeReactiveValue(formData, ns("Input"))
+    #   
+    #   print(paste0(
+    #     "Updating ", type, " field: ",
+    #     ns("Input"), " = ", formData[[ns("Input")]]
+    #     ))
+    #   
+    #   switch(type,
+    #          textInput =
+    #            updateTextInput(session, "Input",
+    #                            value = formData[[ns("Input")]]),
+    #          selectInput =
+    #            updateSelectInput(session, "Input",
+    #                              selected = formData[[ns("Input")]]),
+    #          dateInput =
+    #            updateDateInput(session, "Input",
+    #                            value = formData[[ns("Input")]]),
+    #          textAreaInput =
+    #            updateTextAreaInput(session, "Input",
+    #                                value = formData[[ns("Input")]]),
+    #          selectizeInput = 
+    #            updateSelectizeInput(session, "Input",
+    #                                 choices = formData[[ns("Input")]],
+    #                                 selected = formData[[ns("Input")]]),
+    #          checkboxGroupInput = 
+    #            updateCheckboxGroupInput(session, "Input",
+    #                                     selected = formData[[ns("Input")]])
+    #   )
+    # }
+    # )
     
     if(isTruthy(info)) {
       infoModal <- function(content){
