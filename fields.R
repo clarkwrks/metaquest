@@ -233,7 +233,7 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
     if(isTruthy(info)) {
       infoModal <- function(content){
         modalDialog(
-          content,
+          HTML(content),
           easyClose = TRUE,
           footer = tagList(
             modalButton("OK")
@@ -255,15 +255,14 @@ listInputRow_ui <- function(id, rowFields, ...){
   fields_ns <- rowFields %>% mutate(id = ns(id))
   
   deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
-                               style="float:right; margin-right:10%;", 
+                               style="float:right; margin-right:.5em;", 
                                class = "btn-danger")
   # fields_ns %>% print
   div(class = "inline formGroup formListRow", 
       id = ns("div"),
       # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
       fields_ns %>% transpose %>% map(buildField_ui), 
-      deleteButton,
-      hr())
+      deleteButton)
 }
 
 listInputRow_server <- function(id, rowFields, formData=formData, modData, parent_id, ...){
@@ -314,7 +313,7 @@ listInput_server <- function(id, formData=formData, info=NULL, rowFields,...){
     if(isTruthy(info)) {
       infoModal <- function(content){
         modalDialog(
-          content,
+          HTML(content),
           easyClose = TRUE,
           footer = tagList(
             modalButton("OK")
@@ -491,12 +490,12 @@ panel_server <- function(id, formData, info, condition, ...){
     panelModal <- function(){
       modalDialog(
         div(
-          info
-        )
+          HTML(info)
+        ),
+        easyClose = TRUE
       )
     }
     observeEvent(input$Info, {
-      print("blah")
       showModal(panelModal())
     })
   })
@@ -523,7 +522,7 @@ testFun <- function(id, title){
 
 # demo --------------------------------------------------------------------
 
-test_fields <- read_json("metaquest_0-1-0.json")
+test_fields <- read_json("metaquest_fields.json")
 # test_fields$panels %>% map(~ testFun(.x$id, .x$title))
 
 # test_fields %>% buildMetaQuest_server

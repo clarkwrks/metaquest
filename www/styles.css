@@ -100,7 +100,7 @@ body{
 }
 
 .y-overflow-scroll{
-  max-height:10em;
+  max-height:14em;
   overflow-y:auto;
 }
 
@@ -153,11 +153,19 @@ body{
 */
 .inline .form-group {display: inline-flex;}
 
-.formListRow hr {margin: .5em}
+.formListRow{
+  margin:.5em;
+  padding:.5em;
+}
+.formListRow + .formListRow{
+  border-top:#ddd medium solid;
+}
+
 .formListRow .form-group {margin-bottom: .5em}
 .formListRow label{
   font-weight:normal;
 }
+
 
 .inline .form-group .control-label {min-width: fit-content; text-align: right; margin: 5px; vertical-align: middle;}
 .inline .form-group .form-control {min-width: 5em;}

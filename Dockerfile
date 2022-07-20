@@ -37,7 +37,7 @@ COPY mods.R /root/metaquest
 COPY utils.R /root/metaquest
 COPY quests.R /root/metaquest
 COPY fields.R /root/metaquest
-COPY metaquest_0-1-0.json /root/metaquest
+COPY metaquest_fields.json /root/metaquest
 
 COPY Rprofile.site /usr/local/lib/R/etc/
 

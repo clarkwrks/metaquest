@@ -17,74 +17,12 @@ source("mods.R")
 source("quests.R")
 source("fields.R")
 
+metaquest_fields <- read_json("metaquest_fields.json")
+metaquest_version <- "0.5.0"
+
+
 # main area ---------------------------------------------------------------
 
-## general panel -----------------------------------------------------------
-
-# 
-# preparer_section <- bs_panel(heading = " About the metadata preparer", class="panel-section",
-#                             body = div(class = "inline form-group",
-#                                        metaquests %>% 
-#                                          filter(panel == "general" & section == "preparer") %>%
-#                                          pmap(infoInput_ui)
-#                                        )
-#                             )
-# 
-# project_section <- bs_panel(heading = "About the research project", class="panel-section",
-#                           body = div(class = "inline form-group",
-#                                      metaquests %>% 
-#                                        filter(panel == "general" & section == "project") %>%
-#                                        pmap(infoInput_ui),
-#                                      div(selectizeInput("selectizeTest", label = "Keywords", choices = c("test"),
-#                                                         multiple = TRUE, options =  list(create = TRUE))
-#                                          )
-#                                      )
-#                           )
-# contributor_section <- bs_panel(heading = "Project Contributors", class="panel-section",
-#                                 body = formList_ui("contribList"))
-# 
-# general_panel <- div(preparer_section, project_section, contributor_section)
-# 
-# ## data panel --------------------------------------------------------------
-# 
-# data_panel <- div()
-# 
-# ## exceptions panel ---------------------------------------------------------
-# 
-# exceptions_panel <- bs_panel(heading = "", class="panel-section",
-#                             body = exception_section)
-# 
-# ## sources panel -----------------------------------------------------------
-# 
-# data_sources_panel <- formList_ui("dataSourceList", "Data Sources", rowFields = proj_contrib_row)
-# 
-# sources_panel <- div(data_sources_panel)
-# # sources_panel <- div()
-# 
-# ## spatial panel -----------------------------------------------------------
-# 
-# spatial_panel <- div("")
-# 
-# ## build accordion --------------------------------------------------------
-# 
-# main_area <- bs_accordion(id = "mainPanelAccord") %>% 
-#   bs_set_opts(panel_type = "primary", use_heading_link = FALSE
-#               ) %>%
-#   bs_append_noparent_toggle(title = "General Information", 
-#             content = general_panel, override_id = "generalPanel") %>%
-#   bs_append_noparent_toggle(title = "Data Description", 
-#             content = data_panel, override_id = "dataPanel") %>%
-#   bs_append_noparent_toggle(title = "Data Exceptions", 
-#             content = exceptions_panel, override_id = "exceptionsPanel",
-#             condition = "Restrictions on publication?") %>%
-#   bs_append_noparent_toggle(title = "Data Sources", 
-#             content = sources_panel, override_id = "sourcePanel",
-#             condition = "Incorporates external data?") %>%
-#   bs_append_noparent_toggle(title = "Spatial Data", 
-#             content = spatial_panel, override_id = "spatialPanel",
-#             condition = "Contains spatial data?")
-
-metaquest_fields <- read_json("metaquest_0-1-0.json")
 
 main_area <- buildMetaQuest_ui(metaquest_fields)
 
@@ -184,15 +122,8 @@ ui <- fluidPage(
   useShinyjs(),
   # theme = bs_theme("flatly", version = 5),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
-  # titlePanel(fluidRow(
-  #   column(3, img(src = "resnet-logo-4x.png")), 
-  #   column(9, h1("Metadata Questionnaire", align = "center"))), 
-  #   "Metadata Questionnaire"),
-  # titlePanel(h1("Metadata Questionnaire", align = "center"), 
-  #   "Metadata Questionnaire"),
   div(fixed_header),
   div(id = "main-area", main_area)
-  # div(main_area)
 )
 
 # server ------------------------------------------------------------------
@@ -219,8 +150,9 @@ server <- function(input, output, session) {
 # 
 #   formList_server("contribList", formData=formData, rowFields = proj_contrib_row)
 #   formList_server("dataSourceList", formData=formData, rowFields = proj_contrib_row)
-  formData <- reactiveValues(version = "0.1.0")
+  formData <- reactiveValues(version = metaquest_version)
   buildMetaQuest_server(metaquest_fields, formData)
+  
 # tutorial modal ----------------------------------------------------------
   tutorialModal <- function(){
     modalDialog(
@@ -229,7 +161,8 @@ server <- function(input, output, session) {
           tags$li("Save early"), 
           tags$li("Save often"), 
           tags$li("Avoid special characters"),
-          tags$li("Click", icon("info-circle"), " for more info")
+          tags$li("Click", icon("info-circle"), " for more info"),
+          tags$li("Report issues to resnet.data@mcgill.ca")
         )
       ),
       title = "Getting Started with MetaQuest",
@@ -294,15 +227,12 @@ server <- function(input, output, session) {
 ## export ------------------------------------------------------------------
 
   export_file_name <- reactive({
-    # observe({
-      prep_name <- formData$prep_name
+      prep_name <- (formData$`prep_name-Input`) %>% str_remove_all("[^[:alnum:]]")
       prep_time <- as.POSIXlt(Sys.time(), tz = "UTC") %>% format("%Y-%m-%d_%H-%M-%S")
-      if(!(prep_name %>% length > 1)) prep_name <- "unnamedPreparer"
-    # })
-    paste0(prep_name, "_", prep_time, ".json")
+      if(!(nchar(prep_name) > 1)) prep_name <- "unnamedPreparer"
+    paste0(prep_name, "_metaquest_", prep_time, ".json")
   })
   output$exportMetaQuest <- downloadHandler(
-    # filename = "test.json",
     filename = export_file_name(),
     content = function(file) {
       formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
@@ -369,7 +299,6 @@ server <- function(input, output, session) {
   uploadjson <- reactive({
     file <- input$uploadMetaQuest
     ext <- tools::file_ext(file$datapath)
-    req(file)
     # uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)
     uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson(sortKeys = TRUE)
   })
@@ -381,6 +310,7 @@ server <- function(input, output, session) {
   
 
 observeEvent(input$importConfirmButton, {
+  req(input$uploadMetaQuest)
   file <- input$uploadMetaQuest
   import_data <- jsonlite::read_json(file$datapath) #%>% unlist
   
