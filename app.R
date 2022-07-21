@@ -18,7 +18,7 @@ source("quests.R")
 source("fields.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.5.4"
+metaquest_version <- "0.5.5"
 
 
 # main area ---------------------------------------------------------------

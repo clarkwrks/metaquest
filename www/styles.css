@@ -94,7 +94,10 @@ body{
 .modal-dialog{
   margin-top:8em
 }
-
+.modal-body{
+  max-height:50em;
+  overflow-y:scroll;
+}
 .modal-xl{
   width:80%;
 }
