@@ -95,7 +95,7 @@ body{
   margin-top:8em
 }
 .modal-body{
-  max-height:50em;
+  max-height:45em;
   overflow-y:scroll;
 }
 .modal-xl{

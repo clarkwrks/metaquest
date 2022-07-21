@@ -18,7 +18,7 @@ source("quests.R")
 source("fields.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.5.5"
+metaquest_version <- "0.5.7"
 
 
 # main area ---------------------------------------------------------------
@@ -206,7 +206,7 @@ server <- function(input, output, session) {
             )
             ),
         hr(),
-        h5("Report Issues"),
+        h3("Report Issues"),
         div(p("MetaQuest is under active development are there will be problems and bugs. It's critical to provide a detailed description to the developers so that they can replicate, troubleshoot, and resolve the issue."),
             p("Important information to provide includes:",
               tags$ul(
