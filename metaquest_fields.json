@@ -193,7 +193,7 @@
             "id": "exceptionsPanel",
             "title": "Data Exceptions",
             "condition":"Restrictions on publication?",
-            "info": "<p>Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this product?</p><p>Examples include studies involving Traditional Knowledge, human subjects, sensitive data, and data with existing license restrictions, among other considerations.</p><p>See ResNet Data Policy.</p>",
+            "info": "<p>Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this project?</p><p>Examples include studies involving Traditional Knowledge, human subjects, sensitive data, and data with existing license restrictions, among other considerations.</p><p>See ResNet Data Policy.</p>",
             "sections": [
                 {
                     "id": "mainSection",

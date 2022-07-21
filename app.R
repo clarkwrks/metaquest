@@ -18,7 +18,7 @@ source("quests.R")
 source("fields.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.5.0"
+metaquest_version <- "0.5.4"
 
 
 # main area ---------------------------------------------------------------
@@ -31,7 +31,7 @@ main_area <- buildMetaQuest_ui(metaquest_fields)
 
 help_panel <- div(
   actionButton("showTutorialModal", 
-               div("Show Tutorial"),# icon("graduation-cap")), 
+               div("Show User Guide"),# icon("graduation-cap")), 
                width = "100%"),
   br(),
   actionButton("openResNetDocs", 
@@ -123,7 +123,8 @@ ui <- fluidPage(
   # theme = bs_theme("flatly", version = 5),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
   div(fixed_header),
-  div(id = "main-area", main_area)
+  div(id = "main-area", main_area),
+  div(style=("position:absolute; right:0; padding-right:5px;"), paste0("MetaQuest v", metaquest_version))
 )
 
 # server ------------------------------------------------------------------
@@ -156,20 +157,75 @@ server <- function(input, output, session) {
 # tutorial modal ----------------------------------------------------------
   tutorialModal <- function(){
     modalDialog(
+      div(em("View this guide at any time from the menu in the top right.")),
+      hr(),
       div(
-        tags$ul(
-          tags$li("Save early"), 
-          tags$li("Save often"), 
-          tags$li("Avoid special characters"),
-          tags$li("Click", icon("info-circle"), " for more info"),
-          tags$li("Report issues to resnet.data@mcgill.ca")
-        )
+        div(
+          strong("Save Early, Save Often!"),
+          em("See `Export` below.")
+        ),
+        hr(),
+        h3("Workflow"),
+        h4("- Fill"),
+        div(
+          p("Complete all relevant fields to the best of your knowledge and the information available."),
+          tags$ul(
+            tags$li("Click", icon("info-circle"), " for more information about a field or section."),
+            tags$li("Click on section headers to expand or collapse content."),
+            tags$li("Some sections may not be applicable to all projects, and include a True/False question in the header. If the answer is False, the section is not required."),
+            tags$li("You may prefer to write longer passages, such as the project abstract, outside of MetaQuest and then copy/paste the content into the field.")
+          ),
+          ),
+        h4("- Export"),
+        div(
+          p("Whenever you make significant changes, save your work to your local computer. Do this frequently or you may lose your work unexpectedly!"),
+          tags$ul(
+            tags$li("Open the `Menu` from the top right."),
+            tags$li("Expand `Manage File`."),
+            tags$li("Click `Export`."),
+            tags$li("Save the file to your local machine.")
+          )
+        ),
+        h4("- Import"),
+        div(
+          p("To resume working on a project, or switch to a different project, import the `.json` file you've previously exported."),
+          tags$ul(
+            tags$li("Open the `Menu` from the top right."),
+            tags$li("Expand `Manage File`."),
+            tags$li("Click `Import`."),
+            tags$li("Navigate to the file you have saved to your local computer and select it."),
+            tags$li("Click `Confirm`. Fields should now automatically fill with your previous responses.")
+          )
+          ),
+        h4("- Submit"),
+        div(p("Once you've completed all applicable fields, email your saved/export file as an attachment to the Central Team."),
+            tags$ul(
+              tags$li("To: resnet.data@mcgill.ca"),
+              tags$li("Subject: MetaQuest - ", em("`your project title")),
+              tags$li("Attached: Exported .json file of the version you're submitting.")
+            )
+            ),
+        hr(),
+        h5("Report Issues"),
+        div(p("MetaQuest is under active development are there will be problems and bugs. It's critical to provide a detailed description to the developers so that they can replicate, troubleshoot, and resolve the issue."),
+            p("Important information to provide includes:",
+              tags$ul(
+                tags$li("Data and time of incident"),
+                tags$li("Description of the issue"),
+                tags$li("Preceding actions"),
+                tags$li("Your computer's operating system and web browser"),
+                tags$li("The .json export file you're working on"),
+                tags$li("Screenshot(s) of the issue")
+                )
+              ),
+            p("Please email issue reports to resnet.data@mcgill.ca")
+            )
       ),
-      title = "Getting Started with MetaQuest",
-      size = "xl"
+      title = "MetaQuest User Guide",
+      size = "l"
     )
   }
-  
+  showModal(tutorialModal())
   observeEvent(input$showTutorialModal, {
     showModal(tutorialModal())
   })
