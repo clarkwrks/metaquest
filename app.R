@@ -18,7 +18,7 @@ source("mods.R")
 source("fields.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.6.2"
+metaquest_version <- "0.6.3"
 
 
 # main area ---------------------------------------------------------------
@@ -375,7 +375,7 @@ observeEvent(input$importConfirmButton, {
   # print(valid_inputs)
   for(x in 1:length(valid_inputs)){
     input_name <- names(valid_inputs)[[x]]
-    # freezeReactiveValue(input, input_name)
+    freezeReactiveValue(input, input_name)
     formData[[input_name]] <- valid_inputs[[x]]
   }
   # for(x in 1:length(valid_inputs)){

@@ -86,6 +86,9 @@ buildField_ui <- function(field, ...){
   } else {
     input_args <- list(inputId = NS(field$id, "Input"),
                        label = field$label) %>% c(field$input_options)
+    if(type %in% c("textInput_ui", "textAreaInput_ui")){
+      input_args$value <- field$value
+    }
     field_out <- do.call(type, input_args)
     
     if(isTruthy(field$info)) {
@@ -149,10 +152,7 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
     ns <- session$ns
     # need to use freezeReactiveValue? on input and formData
     # https://mastering-shiny.org/action-dynamic.html#freezing-reactive-inputs
-    observeEvent(input$Input, {
-      freezeReactiveValue(formData, ns("Input"))
-      formData[[ns("Input")]] <- input$Input
-    })
+
     # observe({
     #   # input$Input
     #   invalidateLater(4000, session)
@@ -229,7 +229,10 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
       )
     }
     )
-    
+    observeEvent(input$Input, {
+      freezeReactiveValue(formData, ns("Input"))
+      formData[[ns("Input")]] <- input$Input
+    })
     if(isTruthy(info)) {
       infoModal <- function(content){
         modalDialog(
@@ -365,7 +368,7 @@ listInput_server <- function(id, formData=formData, info=NULL, rowFields,...){
             new_row_fields <- rowFields
             
             for(new_field in 1:length(new_fields)){
-              # print(paste0("field: ", new_field, ". ", names(new_fields[new_field])))
+              print(paste0("field: ", new_field, ". ", names(new_fields[new_field])))
               new_field <- new_fields[new_field]
               new_field_name <- names(new_field)
               # new_field[[new_field_name]] %>% print
