@@ -14,11 +14,11 @@ library(shinyWidgets)
 
 source("utils.R")
 source("mods.R")
-source("quests.R")
+# source("quests.R")
 source("fields.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.5.7"
+metaquest_version <- "0.6.0"
 
 
 # main area ---------------------------------------------------------------
@@ -201,13 +201,13 @@ server <- function(input, output, session) {
         div(p("Once you've completed all applicable fields, email your saved/export file as an attachment to the Central Team."),
             tags$ul(
               tags$li("To: resnet.data@mcgill.ca"),
-              tags$li("Subject: MetaQuest - ", em("`your project title")),
+              tags$li("Subject: MetaQuest - ", em("`your project title`")),
               tags$li("Attached: Exported .json file of the version you're submitting.")
             )
             ),
         hr(),
         h3("Report Issues"),
-        div(p("MetaQuest is under active development are there will be problems and bugs. It's critical to provide a detailed description to the developers so that they can replicate, troubleshoot, and resolve the issue."),
+        div(p("MetaQuest is under active development and there will be problems and bugs. It's critical to provide a detailed description to the developers so that they can replicate, troubleshoot, and resolve the issue."),
             p("Important information to provide includes:",
               tags$ul(
                 tags$li("Data and time of incident"),
