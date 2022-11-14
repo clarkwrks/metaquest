@@ -31,8 +31,7 @@
                                     "Theme 2",
                                     "Theme 3",
                                     "Synthesis",
-                                    "Other",
-                                    "External"
+                                    "Other"
                                 ],
                                 "multiple": true
                             }
@@ -152,8 +151,7 @@
                                             "Theme 2",
                                             "Theme 3",
                                             "Synthesis",
-                                            "Other",
-                                            "External"
+                                            "Other"
                                         ],
                                         "multiple": true
                                     }
@@ -188,6 +186,21 @@
                                     "label": "Title",
                                     "type": "textInput",
                                     "info":"A descriptive, succinct title for the dataset."
+                                },
+                                {
+                                    "id": "exception_types",
+                                    "label": "Exception Types",
+                                    "type": "checkboxGroupInput",
+                                    "info":"<p>Check all options that apply to project data products.</p><p>See ResNet Data Policy.</p>",
+                                    "input_options": {
+                                        "choices": [
+                                            "Traditional Knowledge",
+                                            "Human Subjects",
+                                            "Sensitive Data",
+                                            "Existing Restrictions",
+                                            "Other..."
+                                        ]
+                                    }
                                 },
                                 {
                                     "id": "dataset_format",

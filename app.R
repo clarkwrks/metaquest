@@ -13,10 +13,11 @@ library(listviewer)
 library(shinyWidgets)
 
 source("utils.R")
-source("mods.R")
+# source("mods.R")
 # source("quests.R")
 source("fields.R")
 
+# metaquest_fields <- read_json("metaquest_fields_tester.json")
 metaquest_fields <- read_json("metaquest_fields.json")
 metaquest_version <- "0.6.3"
 

@@ -1,6 +1,6 @@
 source("utils.R")
-source("mods.R")
-source("quests.R")
+# source("mods.R")
+# source("quests.R")
 
 library(jsonlite)
 
@@ -201,10 +201,10 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
     observeEvent(formData[[ns("Input")]], {
       freezeReactiveValue(input, ns("Input"))
 
-      print(paste0(
-        "Updating ", type, " field: ",
-        ns("Input"), " = ", formData[[ns("Input")]]
-        ))
+      # print(paste0(
+      #   "Updating ", type, " field: ",
+      #   ns("Input"), " = ", formData[[ns("Input")]]
+      #   ))
 
       switch(type,
              textInput =
@@ -253,18 +253,22 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
 
 
 
-listInputRow_ui <- function(id, rowFields, ...){
+listInputRow_ui <- function(id, rowFields, rowFieldsJson, ...){
   ns <- NS(id)
   fields_ns <- rowFields %>% mutate(id = ns(id))
   
   deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
                                style="float:right; margin-right:.5em;", 
                                class = "btn-danger")
-  # fields_ns %>% print
+  fields_ns %>% print
+  rowFieldsJson_ns <- rowFieldsJson %>% map(function(x) modify_at(x, "id", function(y) y=ns(y)))
+  rowFieldsJson_ns %>% print
+  # fields_ns %>% transpose %>% print
   div(class = "inline formGroup formListRow", 
       id = ns("div"),
       # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
-      fields_ns %>% transpose %>% map(buildField_ui), 
+      # fields_ns %>% transpose %>% map(buildField_ui), 
+      rowFieldsJson_ns %>% map(buildField_ui),
       deleteButton)
 }
 
@@ -308,7 +312,7 @@ listInputRow_server <- function(id, rowFields, formData=formData, modData, paren
   })
 }
 
-listInput_server <- function(id, formData=formData, info=NULL, rowFields,...){
+listInput_server <- function(id, formData=formData, info=NULL, rowFields, rowFieldsJson, ...){
   moduleServer(id, function(input, output, session) {
     id
     ns <- session$ns
@@ -331,58 +335,116 @@ listInput_server <- function(id, formData=formData, info=NULL, rowFields,...){
     
     insertSelector = paste0("#", ns("addRow"))
     
+    # 
     modData <- reactiveValues()
-    
+    # formData_test <- reactiveValues()
+    # 
+    # observe({
+    #   formData_new <- reactiveValuesToList(formData) %>% 
+    #     keep(names(.) %>% str_detect(paste0("^", id, "-"))) %>% .[order(names(.))]
+    #   isolate({
+    #     formData_old <- reactiveValuesToList(formData_test) %>% .[order(names(.))]
+    #     if(!identical(formData_new, formData_old)){
+    #       print(paste("changes in", id))
+    #       formData_test <- do.call("reactiveValues",formData_new)
+    #     }
+    #   })
+    # })
+    #   
+      
     observe({
       formData_rows <- reactiveValuesToList(formData)
       isolate({
+        # get rownames in formData (may not be rendered yet)
+        # print(paste0(id, "-\\d+-"))
         formData_rownames <- formData_rows %>% names %>%
-          str_subset(paste0(id, "-\\d+-")) %>%
-          str_extract(paste0(id, "-\\d+-")) %>%
+          str_subset(paste0("^", id, "-\\d+-")) %>%
+          str_extract(paste0("^", id, "-\\d+-")) %>%
           unique
+        # print("formData_rownames:")
+        # print(formData_rownames)
+        # get rownames in modData (currently rendered)
         modData_rownames <- reactiveValuesToList(modData) %>% names %>%
-          str_subset(paste0(id, "-\\d+-")) %>%
-          str_extract(paste0(id, "-\\d+-")) %>%
+          str_subset(paste0("^", id, "-\\d+-")) %>%
+          str_extract(paste0("^", id, "-\\d+-")) %>%
           unique
         
+        # print("modData_rownames:")
+        # print(modData_rownames)
+        
+        # get list of rownames to be inserted
         if(length(modData_rownames) > 0) {
-          modData_rownames_mismatch <- formData_rownames[!formData_rownames %in% modData_rownames]
+          toInsert_rownames <- formData_rownames[!formData_rownames %in% modData_rownames]
         } else {
-          modData_rownames_mismatch <- formData_rownames
+          toInsert_rownames <- formData_rownames
         }
-        # formData_rownames %>% print
-        # modData_rownames %>% print
-        if(length(modData_rownames_mismatch) > 0){
-          modData_rownames_mismatch <- modData_rownames_mismatch %>% str_sort
+
+        # if any formData rows missing from modData, insert them
+        if(length(toInsert_rownames) > 0){
+          # sort by rownumber
+          toInsert_rownames <- toInsert_rownames %>% str_sort
           
-          for(formData_rowname in 1:length(modData_rownames_mismatch)){
-            modData_newrow <- modData_rownames_mismatch[[formData_rowname]]
-            # modData_newrow %>% print
-            row_number <- modData_newrow %>%
-              str_extract("(?<=-)\\d+(?=-)") %>%
-              as.numeric
-            # modData_newrow %>% print
-            new_fields <- formData_rows[formData_rows %>% names %>% str_detect(modData_newrow)]
-            # new_fields %>% print
+          # loop through rows to insert
+          for(toInsert_rowindex in 1:length(toInsert_rownames)){
+            toInsert_rowname <- toInsert_rownames[[toInsert_rowindex]]
+            # print(paste("toInsert_rowindex = ", toInsert_rowindex))
+            # print(paste("toInsert_rowname = ", toInsert_rowname))
             
-            new_row_fields <- rowFields
+            # get toInsert_fields values from formData
+            toInsert_fields <- formData_rows[formData_rows %>% names %>% str_detect(paste0("^", toInsert_rowname))]
             
-            for(new_field in 1:length(new_fields)){
-              print(paste0("field: ", new_field, ". ", names(new_fields[new_field])))
-              new_field <- new_fields[new_field]
+            toInsert_fields_template <- rowFields
+            # toInsert_fields_template <- rowFieldsJson
+
+            for(new_field in 1:length(toInsert_fields)){
+              print(paste0("field: ", new_field, ". ", names(toInsert_fields[new_field])))
+              new_field <- toInsert_fields[new_field]
               new_field_name <- names(new_field)
-              # new_field[[new_field_name]] %>% print
               modData[[new_field_name]] <- new_field[[new_field_name]]
               new_field_id <- new_field_name %>% str_extract("[a-z]+(?=-Input)")
-              new_row_fields[str_detect(new_row_fields$id, new_field_id), "value"] <- new_field[[new_field_name]]
+              toInsert_fields_template[str_detect(toInsert_fields_template$id, new_field_id), "value"] <- new_field[[new_field_name]]
             }
+            
+            # toInsert_fields_template_json <- rowFieldsJson
+            # # toInsert_fields_template_json_ids <- 
+            # 
+            # for(toInsert_field_id in names(toInsert_fields)){
+            #   # toInsert_field_id <- toInsert_field %>% names
+            #   toInsert_field_value <- toInsert_fields[[toInsert_field_id]]
+            #   toInsert_field_root_id <- toInsert_field_id %>% str_extract("[a-z]+(?=-Input)")
+            #   
+            #   print(paste("start ", toInsert_field_id))
+            #   toInsert_field_id %>% print
+            #   toInsert_field_root_id %>% print
+            #   toInsert_field_value %>% print
+            #   
+            #   testmodData[[toInsert_field_id]] <- toInsert_field_value
+            #   
+            #   toInsert_fields_template_json_target_id <- 
+            #     toInsert_fields_template_json %>% 
+            #     map("id") %>%
+            #     str_detect(toInsert_field_root_id)
+            #   
+            #   print(toInsert_fields_template_json[toInsert_fields_template_json_target_id])
+            #   toInsert_field_type <- toInsert_fields_template_json[toInsert_fields_template_json_target_id][[1]]$type
+            #   
+            #   toInsert_fields_template_json_target_id %>% print
+            #   toInsert_field_type %>% print
+            #   
+            # }
+            
+            # print(c("rowFields = ", rowFields))
+            # print(c("rowFieldsJson = ", rowFieldsJson))
+            toInsert_rownumber <- toInsert_rowname %>%
+              str_extract("(?<=-)\\d+(?=-)") %>%
+              as.numeric
             
             insertUI(
               selector = insertSelector,
               where = "beforeBegin",
-              ui = listInputRow_ui(ns(row_number), rowFields = new_row_fields, modData = modData)
+              ui = listInputRow_ui(ns(toInsert_rownumber), rowFields = toInsert_fields_template, rowFieldsJson = rowFieldsJson, modData = modData)
             )
-            listInputRow_server(row_number, rowFields = new_row_fields, formData = formData, modData = modData, parent_id = id)
+            listInputRow_server(toInsert_rownumber, rowFields = toInsert_fields_template, formData = formData, modData = modData, parent_id = id)
           }
         }
       })
@@ -428,8 +490,8 @@ listInput_server <- function(id, formData=formData, info=NULL, rowFields,...){
         x_name <- names(x)
         formData[[x_name]] <- x[[x_name]]
       }
-      # new_rows %>% print
     })
+    
     init_rows <- rep("", nrow(rowFields))  %>% 
       as.list %>% set_names(paste0(
         ns("1"), 
@@ -457,7 +519,7 @@ buildField_server <- function(field, formData){
     fieldInput_server(id = field$id, info=field$info, type=field$type, formData=formData)
   }
   if(field$type == "listInput"){
-    listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble))
+    listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble), rowFieldsJson = field$fields)
     # field$fields %>% map_dfr(as_tibble) %>% print
   }
 }
@@ -482,8 +544,8 @@ panel_server <- function(id, formData, info, condition, ...){
         panel_status <- input$Toggle
         # print(paste0(id, "-Toggle"))
         # print(input$Toggle)
-        print(panel_status)
-        print(id)
+        # print(panel_status)
+        # print(id)
         toggleCssClass(id, "panel-info", is.null(panel_status), asis=TRUE)
         toggleCssClass(id, "panel-primary", isTRUE(as.logical(panel_status)), asis=TRUE)
         toggleCssClass(id, "panel-disabled", isFALSE(as.logical(panel_status)), asis=TRUE)
@@ -517,24 +579,24 @@ buildMetaQuest_server <- function(form_json,
   form_json$panels %>% map(buildPanel_server, formData = formData)
 }
 
-testFun <- function(id, title){
-  print(id)
-  print(title)
-}
+# testFun <- function(id, title){
+#   print(id)
+#   print(title)
+# }
 
 
 # demo --------------------------------------------------------------------
 
-test_fields <- read_json("metaquest_fields.json")
+# test_fields <- read_json("metaquest_fields.json")
 # test_fields$panels %>% map(~ testFun(.x$id, .x$title))
 
 # test_fields %>% buildMetaQuest_server
 
 # test_fields %>% buildMetaQuest_ui
 
-testListFun <- function(dfrowlist){
-  print(dfrowlist$id)
-}
+# testListFun <- function(dfrowlist){
+#   print(dfrowlist$id)
+# }
 
 # listInput originally designed to accept tibble of rowFields, rework has lists. 
 # tried converting to tibble then back for new ui builders 
@@ -546,14 +608,14 @@ testListFun <- function(dfrowlist){
 # test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% as.list
 # test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% transpose
 # 
-buildMetaQuest_demo <- function() {
-  ui <- fluidPage(
-    test_fields %>% buildMetaQuest_ui()
-  )
-  server <- function(input, output, session) {
-    formData <- reactiveValues(version = "0.0.1")
-    test_fields %>% buildMetaQuest_server(formData = formData)
-  }
-  shinyApp(ui, server)
-}
-buildMetaQuest_demo()
+# buildMetaQuest_demo <- function() {
+#   ui <- fluidPage(
+#     test_fields %>% buildMetaQuest_ui()
+#   )
+#   server <- function(input, output, session) {
+#     formData <- reactiveValues(version = "0.0.1")
+#     test_fields %>% buildMetaQuest_server(formData = formData)
+#   }
+#   shinyApp(ui, server)
+# }
+# buildMetaQuest_demo()

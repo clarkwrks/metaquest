@@ -183,3 +183,63 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+
+testfieldjson <- read_json("metaquest_fields.json")
+
+testfieldsjson <- testfieldjson$panels[[1]]$sections[[2]]$fields[[7]]$fields
+
+testfieldsjson %>% assign_in()
+
+testfieldsjson %>% pluck(1)
+
+testfieldsjson_ids <- testfieldsjson %>% map("id")
+target_field <- testfieldsjson_ids %>% str_detect("name")
+
+testfieldsjson %>% assign_in()
+
+testfieldsjson[target_field][[1]]$value <- "test"
+
+testfieldsjson[testfieldsjson_ids %>% str_detect("name")][[1]]$blah <- "testblah"
+
+
+testfieldjson$panels[[6]]$sections[[1]]$fields[[7]]$fields
+
+test_list <- list("external_resources-1-external_title-Input",
+                 "external_resources-1-external_link-Input",
+                  "sources-1-source_license-Input",
+                 "sources-1-source_location-Input")
+test_string <- "sources"
+str_detect(test_list, paste0("^", test_string))
+
+
+test_list <- list( "a"=c(1,2,3,4), "b"=c(2,4,5), "c"=c(9,5,3,2))
+test_select <- c("a", "c")
+
+test_id <- "proj_contributors"
+
+test_list <- list("proj_contributors-1-affiliation-Input"=c(1,2,3,4), 
+                  "proj_contributors-1-name-Input"=c(2,4,5), 
+                  "proj_contributors-2-affiliation-Input"=c(9,5,3,2),
+                  "spatial_data-1-spatial_projection-Input" =c(999,-1))
+
+test_id <- "proj"
+test_list <- list("proj-1-affiliation-Input"=c(1,2,3,4), 
+                  "proj-1-name-Input"=c(2,4,5), 
+                  "proj-2-affiliation-Input"=c(9,5,3,2),
+                  "projectors-2-affiliation-Input"=c(9,5,3,2),
+                  "reproj-2-affiliation-Input"=c(9,5,3,2),
+                  "pro-2-affiliation-Input"=c(9,5,3,2),
+                  "spatial_data-1-spatial_projection-Input" =c(999,-1))
+
+
+test_list %>% keep(names(.) %in% test_id)
+test_list %>% keep(names(.) %>% str_detect(paste0("^", test_id, "-")))
+
+
+testlist  <- list(list("test"=NULL,"id"=NULL), list("test"=NULL,"id"=NULL),
+                  list("test"=NULL,"id"=NULL))
+
+
+testlist %>% map(function(x) modify_at(x, "id", function(y) y="one"))
