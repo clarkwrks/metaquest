@@ -82,6 +82,14 @@ body{
   border:none;
 }
 
+.section-header{
+    margin-top: 0;
+    margin-bottom: 1em;
+    font-size: 16px;
+    color: inherit;
+    font-weight: bold;
+}
+
 .selectize-input{ z-index: 0; }
 
 .fixed-header{
@@ -98,10 +106,22 @@ body{
   max-height:45em;
   overflow-y:scroll;
 }
+
+.help-modal-body{
+  padding:1em 3em 1em 3em;
+}
+
 .modal-xl{
   width:80%;
 }
 
+.modal-footer{
+  box-shadow: 0px -.3em .3em #888;
+}
+
+.modal-header{
+  box-shadow: 0px .3em .3em #888;
+}
 .y-overflow-scroll{
   max-height:14em;
   overflow-y:auto;
@@ -111,6 +131,13 @@ body{
 	max-width: fit-content;
 	margin-left:5px;
 }
+
+/*
+.help-scroll{
+  max-height:95em;
+  overflow-y:auto;
+}
+*/
 
 .scroll-shadows {
 /*  max-height: 200px; */

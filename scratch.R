@@ -243,3 +243,28 @@ testlist  <- list(list("test"=NULL,"id"=NULL), list("test"=NULL,"id"=NULL),
 
 
 testlist %>% map(function(x) modify_at(x, "id", function(y) y="one"))
+
+library(shiny)
+
+choices <- list(a = 1, B = list(B = 2), c = list(3), d = list(fi = "fo", fum = "5"))
+
+choices <- list(
+  Spatial = list("Local", "Regional", "national", "global"),
+  Temporal = list("daily", "weekly", "monthly", "annual", "decadal", "forecast")
+)
+
+ui <- bootstrapPage(
+  selectizeInput("x1", "x", choices = choices, 
+                 # options = list(placeholder = "test"),
+                 # selected = NULL,
+                 multiple = TRUE,
+                 options = list(placeholder = '')
+                 ),
+  selectizeInput("x2", "x", multiple = TRUE, choices = NULL, selected = NULL)
+)
+
+server <- function(input, output, session) {
+  updateSelectizeInput(session, "x2", choices = choices, server = TRUE)
+}
+
+shinyApp(ui, server)

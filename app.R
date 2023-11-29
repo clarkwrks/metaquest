@@ -18,7 +18,8 @@ source("utils.R")
 source("fields.R")
 
 # metaquest_fields <- read_json("metaquest_fields_tester.json")
-metaquest_fields <- read_json("metaquest_fields.json")
+# metaquest_fields <- read_json("metaquest_fields.json")
+metaquest_fields <- read_json("metaquest_fields_tags.json")
 metaquest_version <- "0.6.3"
 
 
@@ -36,7 +37,7 @@ help_panel <- div(
                width = "100%"),
   br(),
   actionButton("openResNetDocs", 
-               div("ResNet Docs", tags$sup(icon("external-link-alt fa-xs"))), 
+               div("ResNet Docs", tags$sup(icon("up-right-from-square"))), 
                onclick = "window.open('https://docs.nsercresnet.ca', '_blank')",
                width = "100%")
 )
@@ -64,8 +65,9 @@ dev_panel <-
                   "!!!",
                   div(style="font-size:x-small", 
                       "This area is for testing only. 
-                      Improper use will crash the current session. 
-                      Unsaved changes will be lost."),
+                      Improper use will crash the current session.",
+                      br(),
+                      "Unsaved changes will be lost."),
                   "!!!"),
     panel_type = "danger",
     body = div(
@@ -85,33 +87,80 @@ menu_accord <- bs_accordion(id = "menuAccord") %>%
                             status = FALSE) %>%
   bs_append_noparent_toggle(title = "Manage File", 
                             content = mgmt_panel, override_id = "mgmtPanel", 
-                            status = FALSE) %>%
+                            status = FALSE, 
+                            force_open = TRUE) %>%
   bs_append_noparent_toggle(title = "Developer", 
                             content = dev_panel, override_id = "devPanel", 
                             status = FALSE)
 
 
-fixed_header <- fixedPanel(left = 0, right = 0,
-                         style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
-                         fluidRow(class = "fixed-header",
-                                  column(3, align="right", 
-                                         a(
-                                           img(src = "resnet-logo-4x.png"), 
-                                           href="https://www.nsercresnet.ca/",
-                                           target='_blank'
-                                           )
-                                         ),
-                                  column(6, align="center", h1("Metadata Questionnaire", style = "text-align: center;")),
-                                  column(3, align="left", shinyWidgets::dropdownButton(
-                                    menu_accord,
-                                    icon = icon("gear"),
-                                    right = TRUE,
-                                    inline = TRUE,
-                                    circle = FALSE,
-                                    size = "lg",
-                                    inputId = "action_menu_dropdown",
-                                    label = "Menu"
-                                  ))))
+
+fixed_header <- fixedPanel(
+  left = 0,
+  right = 0,
+  style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
+  fluidRow(
+    class = "fixed-header",
+    column(
+      3,
+      align = "right",
+      a(
+        img(src = "resnet-logo-4x.png"),
+        href = "https://www.nsercresnet.ca/",
+        target = '_blank'
+      )
+    ),
+    column(
+      6,
+      align = "center",
+      h1("Metadata Questionnaire", style = "text-align: center;")
+    ),
+    # column(3, shinyWidgets::dropdownButton(
+    #   menu_accord,
+    #   icon = icon("bars"),
+    #   right = TRUE,
+    #   inline = TRUE,
+    #   circle = FALSE,
+    #   size = "lg",
+    #   inputId = "action_menu_dropdown",
+    #   label = "Menu"
+    # ))
+    column(3,
+           align = "left",
+           fluidRow(
+      column(3, shinyWidgets::dropdownButton(
+        help_panel,
+        icon = icon("circle-question"),
+        right = TRUE,
+        inline = TRUE,
+        circle = FALSE,
+        # size = "lg",
+        inputId = "action_menu_test2",
+        label = "Help"
+      )),
+      column(3, shinyWidgets::dropdownButton(
+        dev_panel,
+        icon = icon("wrench"),
+        right = TRUE,
+        inline = TRUE,
+        circle = FALSE,
+        # size = "lg",
+        inputId = "action_menu_dropdown",
+        label = "Options"
+      )),
+      column(3, shinyWidgets::dropdownButton(
+        mgmt_panel,
+        icon = icon("save"),
+        right = TRUE,
+        inline = TRUE,
+        circle = FALSE,
+        # size = "lg",
+        inputId = "action_menu_test",
+        label = "File"
+      ))
+    ))
+  )
+)
 
 # ui ----------------------------------------------------------------------
 
@@ -158,14 +207,26 @@ server <- function(input, output, session) {
 # tutorial modal ----------------------------------------------------------
   tutorialModal <- function(){
     modalDialog(
-      div(em("View this guide at any time from the menu in the top right.")),
-      hr(),
       div(
-        div(
-          strong("Save Early, Save Often!"),
-          em("See `Export` below.")
-        ),
-        hr(),
+        # class = "panel panel-default y-overflow-scroll scroll-shadows",
+        # class = "y-overflow-scroll scroll-shadows",
+        # class = "help-scroll scroll-shadows",
+        # class = "help-scroll-shadows",  
+      div(style = "text-align: center;", 
+          em("View this guide at any time from the menu in the top right."),
+          br(),
+          strong("Save Early, Save Often! "),
+          # em("See `Export` below.")
+          " - See `Export` below.",
+          hr()
+          ),
+      div(class="help-modal-body",
+        # div(
+        #   strong("Save Early, Save Often! "),
+        #   # em("See `Export` below.")
+        #   "See `Export` below."
+        # ),
+        # hr(),
         h3("Workflow"),
         h4("- Fill"),
         div(
@@ -221,9 +282,10 @@ server <- function(input, output, session) {
               ),
             p("Please email issue reports to resnet.data@mcgill.ca")
             )
-      ),
+      )),
       title = "MetaQuest User Guide",
-      size = "l"
+      size = "l",
+      easyClose = FALSE
     )
   }
   showModal(tutorialModal())

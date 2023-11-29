@@ -1,0 +1,474 @@
+{
+    "version":"0.5.0",
+    "panels": [
+        {
+            "id": "generalPanel",
+            "title": "General Information",
+            "sections": [
+                {
+                    "id": "welcomePanel",
+                    "heading": "Welcome!",
+                    "description": 
+                        "<p><strong>Read the User Guide before proceeding.</strong> You can access the User Guide at any point from the Menu button in the top right. </p>"
+                    },
+                {
+                    "id": "preparerSection",
+                    "heading": "About You",
+                    "description": "<p>Basic information about the individual preparing this metadata.</p>",
+                    "fields": [
+                        {
+                            "id": "prep_name",
+                            "label": "Name",
+                            "type": "textInput"
+                        },
+                        {
+                            "id": "prep_affiliation",
+                            "label": "Affiliation",
+                            "type": "selectInput",
+                            "info": "Your research group within ResNet. You can select multiple choices.",
+                            "input_options": {
+                                "choices": [
+                                    "Landscape 1",
+                                    "Landscape 2",
+                                    "Landscape 3",
+                                    "Landscape 4",
+                                    "Landscape 5",
+                                    "Landscape 6",
+                                    "Theme 1",
+                                    "Theme 2",
+                                    "Theme 3",
+                                    "Synthesis",
+                                    "Other",
+                                    "External"
+                                ],
+                                "multiple": true
+                            }
+                        },
+                        {
+                            "id": "prep_email",
+                            "label": "Email",
+                            "type": "textInput",
+                            "info": "Email address you use for ResNet communication."
+                        },
+                        {
+                            "id": "prep_date",
+                            "label": "Date",
+                            "type": "dateInput",
+                            "info": "The date this form was last updated.",
+                            "input_options": {
+                                "value":null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "projectSection",
+                    "heading": "About the Research Project",
+                    "description": "<p>Provide basic information about the research project.</p>",
+                    "fields": [
+                        {
+                            "id": "proj_title",
+                            "label": "Title",
+                            "type": "textInput",
+                            "info": "<p>A concise, descriptive title for the overall project.</p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>"
+                        },
+                        {
+                            "id": "proj_location",
+                            "label": "Location",
+                            "type": "textInput",
+                            "info": "In general terms, the extent within research was conducted (eg 'Manitoba', 'Landscape 6', 'Canada')."
+                        },
+                        {
+                            "id": "proj_start",
+                            "label": "Start Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project began."
+                        },
+                        {
+                            "id": "proj_end",
+                            "label": "End Date",
+                            "type": "dateInput",
+                            "info": "When work on the research project concluded. Leave blank if project is ongoing."
+                        },
+                        {
+                            "id": "proj_abstract",
+                            "label": "Abstract",
+                            "type": "textAreaInput",
+                            "info": "<p>A brief abstract describing the project</p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>"
+                        }
+                    ]
+                },
+                
+                {
+                    "id": "contributorsSection",
+                    "heading": "Project Contributors",
+                    "description": "List individuals that contributed to this research project.",
+                    "fields": [
+                        {
+                            "id": "proj_contributors",
+                            "label": "Contributors",
+                            "type": "listInput",
+                            "info": "<p>List individuals that contributed to this research project.</p>",
+                            "fields": [
+                                {
+                                    "id": "name",
+                                    "label": "Name",
+                                    "type": "textInput"
+                                },
+                                {
+                                    "id": "institution",
+                                    "label": "Institution",
+                                    "type": "textInput",
+                                    "info": "Professional affiliation, such as a university, government agency, or business."
+                                },
+                                {
+                                    "id": "email",
+                                    "label": "Email",
+                                    "type": "textInput",
+                                    "info": "Point of contact for the contributor."
+                                },
+                                {
+                                    "id": "affiliation",
+                                    "label": "Affiliation",
+                                    "type": "selectizeInput",
+                                    "info": "Contributor's research group within ResNet or relationship to the network. You can select multiple choices.",
+                                    "input_options": {
+                                        "choices": [
+                                            "Landscape 1",
+                                            "Landscape 2",
+                                            "Landscape 3",
+                                            "Landscape 4",
+                                            "Landscape 5",
+                                            "Landscape 6",
+                                            "Theme 1",
+                                            "Theme 2",
+                                            "Theme 3",
+                                            "Synthesis",
+                                            "Other",
+                                            "External"
+                                        ],
+                                        "multiple": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {"id":"keywordPanel",
+        "title":"Keywords",
+        "sections":[
+            {
+                "id": "keywordSection",
+                "heading": "Project Keywords",
+                "description": "<p>Please fill in as far as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. We want to be able to represent your work, but we also need some categories to give structure to all the data - for this we use a set of terms that might not totally comply with your understanding. For metadata collection here, we use 'ecosystem services' (ES) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system (--> 'aspects').</p><p>Each field also allows free-text, so you can supply additional project specific keywords.</p>",
+                "fields": [
+                    {
+                        "id":"proj_keywords",
+                        "label": "Keywords",
+                        "type":"listInput",
+                        "fields":[
+                    {
+                        "id": "proj_service",
+                        "label": "Ecosystem Service(s)",
+                        "type": "selectizeInput",
+                        "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                        "input_options": {
+                            "choices": [
+                                "Crop provisioning", "Grazed biomass provisioning", "Timber provisioning", "Non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "Fish and other aquatic products provisioning", "Water supply (drinking, irrigation)", "Carbon storage (aboveground, belowground)", "Carbon sequestration", "Local (micro) climate regulation", "Air filtration services", "Soil erosion control services", "Water purification services", "Flood prevention/water retention services", "Riverine flood mitigation services (in-stream)", "Coastal flood protection", "Pollination services", "Pest control services", "Habitat maintenance services", "Recreation-related services", "Cultural aspects"
+                            ],
+                            "multiple": true,
+                            "options": {
+                                "create": true
+                            }
+                        }
+                    },
+                    {
+                        "id": "proj_aspects",
+                        "label": "Aspects",
+                        "type": "selectizeInput",
+                        "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                        "input_options": {
+                            "choices": [
+                                "supply/capacity/potential", "benefit/actual flow (instrumental values)", "relational values", "human demand", "anthropogenic assets (incl. anthropogenic contribution)", "biodiversity/ecosystem condition", "ecosystem function", "drivers (direct/indirect, natural/anthropogenic)"
+                            ],
+                            "multiple": true,
+                            "options": {
+                                "create": true
+                            }
+                        }
+                    },
+                    {
+                        "id": "proj_temporalext",
+                        "label": "Temporal Extent",
+                        "type": "selectizeInput",
+                        "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                        "input_options": {
+                            "choices": [
+                                "present",
+                                "future (e.g. scenarios, management comparison)",
+                                "past",
+                                "work is not time dependant"
+                            ],
+                            "multiple": true,
+                            "options": {
+                                "create": true
+                            }
+                        }
+                    },
+                    {
+                        "id": "proj_spatialext",
+                        "label": "Spatial Extent",
+                        "type": "selectizeInput",
+                        "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                        "input_options": {
+                            "choices": [
+                                "local",
+                                "regiona/landscape",
+                                "national",
+                                "global",
+                                "work is non-spatial"
+                            ],
+                            "multiple": true,
+                            "options": {
+                                "create": true
+                            }
+                        }
+                    }]
+                }
+                ]
+            }
+        ]
+        },
+        {
+            "id": "dataPanel",
+            "title": "Data Description",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"datasets_summary",
+                            "label":"Summary",
+                            "type":"textAreaInput",
+                            "info":"A brief overview of the data products produced by this project."
+                        },
+                        {
+                            "id": "datasets",
+                            "label": "Datasets",
+                            "type": "listInput",
+                            "fields": [
+                                {
+                                    "id": "dataset_title",
+                                    "label": "Title",
+                                    "type": "textInput",
+                                    "info":"A descriptive, succinct title for the dataset."
+                                },
+                                {
+                                    "id": "dataset_format",
+                                    "label": "Format",
+                                    "type":"textInput",
+                                    "info":"selectInput with choices = Tabular, Spatial Points, Spatial Polygons, Spatial Raster, Other"
+                                },
+                                {
+                                    "id": "dataset_description",
+                                    "label": "Description",
+                                    "type": "textAreaInput",
+                                    "info":"What does the dataset contain and represent? What is the purpose of the data, how can it be used? What are the units of measurement?"
+                                },
+                                {
+                                    "id": "dataset_methods",
+                                    "label": "Methods",
+                                    "type": "textAreaInput",
+                                    "info":"How was the data created? Was it field data collected following a specific protocol? What was the protocol? Was it derived from existing products? How?"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "exceptionsPanel",
+            "title": "Data Exceptions",
+            "condition":"Restrictions on publication?",
+            "info": "<p>Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this project?</p><p>Examples include studies involving Traditional Knowledge, human subjects, sensitive data, and data with existing license restrictions, among other considerations.</p><p>See ResNet Data Policy.</p>",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id": "exception_types",
+                            "label": "Exception Types",
+                            "type": "checkboxGroupInput",
+                            "info":"<p>Check all options that apply to project data products.</p><p>See ResNet Data Policy.</p>",
+                            "input_options": {
+                                "choices": [
+                                    "Traditional Knowledge",
+                                    "Human Subjects",
+                                    "Sensitive Data",
+                                    "Existing Restrictions",
+                                    "Other..."
+                                ]
+                            }
+                        },
+                        {
+                            "id": "exception_description",
+                            "label": "Description",
+                            "type": "textAreaInput",
+                            "info": "Detail the exceptions declared above. What are the specific conditions? Is a partial or anonymized release of project data feasible? Are there agreements in place with First Nations?"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id":"sourcesPanel",
+            "title":"Data Sources",
+            "condition":"Incorporates external data?",
+            "info":"Many research project incorporate existing data products as inputs. Properly attributing these sources and documenting how they were used is an important part of reproducible research.",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"sources_summary",
+                            "label":"Summary",
+                            "type":"textAreaInput",
+                            "info":"A brief overview of data products incorporated into this project."
+                        },
+                        {
+                            "id": "sources",
+                            "label": "Sources",
+                            "type": "listInput",
+                            "fields": [
+                                {
+                                    "id": "source_title",
+                                    "label": "Title",
+                                    "type": "textInput",
+                                    "info":"A succinct, descriptive title for this data source."
+                                },
+                                {
+                                    "id": "source_citation",
+                                    "label": "Citation",
+                                    "type":"textInput",
+                                    "info":"A formal citation for the dataset as provided by the creator or existing publications."
+                                },
+                                {
+                                    "id": "source_description",
+                                    "label": "Description",
+                                    "type": "textAreaInput",
+                                    "info":"Briefly describe the dataset source, purpose, format, and relevance to the research project."
+                                },                                                 
+                                {
+                                    "id": "source_methods",
+                                    "label": "Methods",
+                                    "type": "textAreaInput",
+                                    "info": "Describe how the external data was incorporated into the research project."
+                                },                                
+                                {
+                                    "id": "source_location",
+                                    "label": "Location",
+                                    "type": "textInput",
+                                    "info":"A URL or DOI that can be used to access the dataset."
+                                },
+                                {
+                                    "id": "source_license",
+                                    "label": "License",
+                                    "type": "textInput",
+                                    "info":"Any licensing information provided by the dataset creator."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id":"spatialPanel",
+            "title":"Spatial Data",
+            "condition":"Contains spatial data?",
+            "info":"Indicate whether any of the research project datasets contain a spatial component. For example, if field work was conducted and the coordinates of sites were recorded using a GPS.",
+            "sections": [
+                {
+                    "id":"mainSection",
+                    "heading":"",
+                    "fields":[
+                        {
+                            "id":"spatial_data",
+                            "label":"Spatial Datasets",
+                            "type":"listInput",
+                            "info":"Describe the properties of each spatial dataset. These technical questions can be difficult. Provide what you can.",
+                            "fields": [
+                                {
+                                    "id":"spatial_title",
+                                    "label":"Title",
+                                    "type":"textInput",
+                                    "info":"This should match the title of a dataset listed in the Data Description section."
+                                },                        {
+                                    "id":"spatial_projection",
+                                    "label":"Projection",
+                                    "type":"textInput",
+                                    "info":"Any information available about the spatial projection of the dataset (eg 'lat/long, 'WGS84', 'EPSG:4326', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')."
+                                },                        {
+                                    "id":"spatial_resolution",
+                                    "label":"Resolution",
+                                    "type":"textInput",
+                                    "info":"Where relevant, describe the spatial resolution of the dataset. This is always needed for raster data (eg 'cellsize = 30-m', 'cellsize = 1/8 arc second'). May apply to vector data as well (eg 'minimum mapping unit = 1 hectare')."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id":"supplementaryPanel",
+            "title":"Supplementary Information",
+            "sections": [
+                {
+                    "id": "mainSection",
+                    "heading": "",
+                    "fields": [
+                        {
+                            "id":"supplementary_comments",
+                            "label":"Comments",
+                            "type":"textAreaInput",
+                            "info":"Free text area for additional comments and information relevant to this research project documentation."
+                        },
+                        {
+                            "id": "external_resources",
+                            "label": "External Resources",
+                            "type": "listInput",
+                            "info":"List any external resources relevant to this research project documentation. This might include publications, conferences posters, technical documents describing established methodology, among others.",
+                            "fields": [
+                                {
+                                    "id": "external_title",
+                                    "label": "Title",
+                                    "type": "textInput",
+                                    "info":"A succinct, descriptive title for this resource."
+                                },
+                                {
+                                    "id": "external_link",
+                                    "label": "Location",
+                                    "type":"textInput",
+                                    "info":"A URL or DOI that can be used to access this resource."
+                                },
+                                {
+                                    "id": "external_description",
+                                    "label": "Description",
+                                    "type": "textAreaInput",
+                                    "info":"Describe the external resource and it's relevance to this research project documentation."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -101,16 +101,20 @@ buildField_ui <- function(field, ...){
 
 }
 
-buildSection_ui <- function(section){
+buildSection_ui <- function(section) {
   # list2env(section, environment())
   # section_fields <- fields %>% map(., buildField_ui)
   section_fields <- section$fields %>% map(buildField_ui)
-  bs_panel(heading = section$heading, class="panel-section",
-           body = div(class = "inline form-group",
-                      section_fields
-           )
+  bs_panel(
+    heading = div(class = "section-header", HTML(section$heading)),
+    class = "panel-section",
+    body = div(
+      div(class =  "section-description", HTML(section$description)),
+      div(class = "inline form-group", section_fields)
+    )
   )
 }
+
 buildPanel_ui <- function(panel){
   print(paste("Building panel", panel$id))
   # buildPanel_ui <- function(panel){
@@ -221,6 +225,7 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
                                    value = formData[[ns("Input")]]),
              selectizeInput =
                updateSelectizeInput(session, "Input",
+                                    server = TRUE,
                                     choices = formData[[ns("Input")]],
                                     selected = formData[[ns("Input")]]),
              checkboxGroupInput =

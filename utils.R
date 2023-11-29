@@ -108,7 +108,9 @@ textAreaInputInfo <- function(inputId, label, width, height, resize, ...) {
 # attach status div
 # title -> span(icon("plus"), title)
 bs_append_noparent_toggle <- function(tag, title, content, override_id, 
-                                      condition = NULL, status = FALSE, ...){
+                                      condition = NULL, status = FALSE, 
+                                      force_open = FALSE,
+                                      ...){
   ns <- NS(override_id)
   
   # characterize the existing accordion
@@ -199,6 +201,8 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
   # if this is the first panel, set it as open (add option to suppress)
   if (identical(n_panel, 0L)){
     collapse <- htmltools::tagAppendAttributes(collapse, class = "in")
+  } else {
+    if (force_open) collapse <- htmltools::tagAppendAttributes(collapse, class = "in")
   }
   
   # compose the panel
