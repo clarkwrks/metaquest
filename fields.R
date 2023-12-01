@@ -80,12 +80,13 @@ buildField_ui <- function(field, ...){
     # print(field)
     input_args <- list(inputId = field$id,
                        label = field$label, info=field$info) %>% c(field$input_options)
-    # print(input_args)
     field_out <- do.call(type, input_args)
     
   } else {
+    # print(field$input_options)
     input_args <- list(inputId = NS(field$id, "Input"),
                        label = field$label) %>% c(field$input_options)
+    
     if(type %in% c("textInput_ui", "textAreaInput_ui")){
       input_args$value <- field$value
     }
@@ -223,21 +224,40 @@ fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
              textAreaInput =
                updateTextAreaInput(session, "Input",
                                    value = formData[[ns("Input")]]),
-             selectizeInput =
+             selectizeInput = {
+               # print(choices)
+               # arguments <- list(...)
+               # print(input_options)
+               # mc <- match.call(expand.dots = FALSE)
+               # print(mc$...)
+               # print(deparse(substitute(...)))
+               # testprint <- sapply(substitute(list(...))[-1], deparse)
+               # print(testprint(...))
+               # print(names(list(...)))
+               # rlang::dots_list(..., .preserve_empty = FALSE) %>% print
+               # try(print(input_options))
+               # print(ns("test"))
+               # dots <- enquos(..., .named = TRUE)
+               # names(dots) %>% print
+               # dots$input_options %>% print
+          
                updateSelectizeInput(session, "Input",
-                                    server = TRUE,
+                                    # server = TRUE,
                                     choices = formData[[ns("Input")]],
-                                    selected = formData[[ns("Input")]]),
+                                    selected = formData[[ns("Input")]])
+               },
              checkboxGroupInput =
                updateCheckboxGroupInput(session, "Input",
                                         selected = formData[[ns("Input")]])
       )
     }
     )
+    
     observeEvent(input$Input, {
       freezeReactiveValue(formData, ns("Input"))
       formData[[ns("Input")]] <- input$Input
     })
+    
     if(isTruthy(info)) {
       infoModal <- function(content){
         modalDialog(
@@ -265,9 +285,9 @@ listInputRow_ui <- function(id, rowFields, rowFieldsJson, ...){
   deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
                                style="float:right; margin-right:.5em;", 
                                class = "btn-danger")
-  fields_ns %>% print
+  # fields_ns %>% print
   rowFieldsJson_ns <- rowFieldsJson %>% map(function(x) modify_at(x, "id", function(y) y=ns(y)))
-  rowFieldsJson_ns %>% print
+  # rowFieldsJson_ns %>% print
   # fields_ns %>% transpose %>% print
   div(class = "inline formGroup formListRow", 
       id = ns("div"),
@@ -405,6 +425,8 @@ listInput_server <- function(id, formData=formData, info=NULL, rowFields, rowFie
               print(paste0("field: ", new_field, ". ", names(toInsert_fields[new_field])))
               new_field <- toInsert_fields[new_field]
               new_field_name <- names(new_field)
+              # print(new_field)
+              # print(new_field[[new_field_name]])
               modData[[new_field_name]] <- new_field[[new_field_name]]
               new_field_id <- new_field_name %>% str_extract("[a-z]+(?=-Input)")
               toInsert_fields_template[str_detect(toInsert_fields_template$id, new_field_id), "value"] <- new_field[[new_field_name]]
@@ -512,30 +534,6 @@ listInput_server <- function(id, formData=formData, info=NULL, rowFields, rowFie
 }
 
 
-# build_server ------------------------------------------------------------
-
-buildInput_server <- function(input, formData){
-  
-}
-
-buildField_server <- function(field, formData){
-  # print(field$type)
-  if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
-    fieldInput_server(id = field$id, info=field$info, type=field$type, formData=formData)
-  }
-  if(field$type == "listInput"){
-    listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble), rowFieldsJson = field$fields)
-    # field$fields %>% map_dfr(as_tibble) %>% print
-  }
-}
-
-buildSection_server <- function(section, formData){
-  # print(section$id)
-  section$fields %>% map(buildField_server, formData=formData)
-}
-
-
-
 panel_server <- function(id, formData, info, condition, ...){
   moduleServer(id, function(input, output, session){
     id
@@ -570,6 +568,44 @@ panel_server <- function(id, formData, info, condition, ...){
     })
   })
 }
+
+# build_server ------------------------------------------------------------
+
+buildInput_server <- function(input, formData){
+  
+}
+
+buildField_server <- function(field, formData){
+  # print(field$type)
+  if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
+    fieldInput_server(id = field$id, info=field$info, type=field$type, formData=formData)
+  }
+  if(field$type == "listInput"){
+    listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble), rowFieldsJson = field$fields)
+    # field$fields %>% map_dfr(as_tibble) %>% print
+  }
+}
+
+
+# buildField_server <- function(field, formData){
+#   # print(field$type)
+#   # if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
+#     fieldInput_server(field, formData=formData)
+#   # }
+#   # if(field$type == "listInput"){
+#     # listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble), rowFieldsJson = field$fields)
+#     # field$fields %>% map_dfr(as_tibble) %>% print
+#   # }
+# }
+
+
+buildSection_server <- function(section, formData){
+  # print(section$id)
+  section$fields %>% map(buildField_server, formData=formData)
+}
+
+
+
   
 buildPanel_server <- function(panel, formData){
   # print(panel$id)

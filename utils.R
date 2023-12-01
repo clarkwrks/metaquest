@@ -162,7 +162,7 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
     # id_info <- paste0(id_panel, "Info")
     id_toggle <- ns("Toggle")
     id_info <- ns("Info")
-    print(id_info)
+    # print(id_info)
     panel_toggle <- radioButtons(id_toggle, condition, 
                                  c("True" = TRUE, "False" = FALSE), selected = character(0), inline = TRUE) %>% 
       shinyInput_label_embed(actionLink(id_info, icon("info-circle")))

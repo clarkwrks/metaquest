@@ -4,22 +4,22 @@
 library(jsonlite)
 library(shiny)
 library(tidyverse)
-library(bslib)
-library(bsplus)
-library(shinyjs)
-library(reactR)
+library(bslib) # theme
+library(bsplus) # accordion
+library(shinyjs) # toggle css classes etc
+# library(reactR) # ?
 library(listviewer)
 # devtools::install_github('timelyportfolio/reactR')
-library(shinyWidgets)
+library(shinyWidgets) # dropdown button
 
 source("utils.R")
 # source("mods.R")
 # source("quests.R")
 source("fields.R")
 
-# metaquest_fields <- read_json("metaquest_fields_tester.json")
+metaquest_fields <- read_json("metaquest_fields_tester.json")
 # metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_fields <- read_json("metaquest_fields_tags.json")
+# metaquest_fields <- read_json("metaquest_fields_tags.json")
 metaquest_version <- "0.6.3"
 
 
@@ -95,6 +95,98 @@ menu_accord <- bs_accordion(id = "menuAccord") %>%
 
 
 
+menu_row <- fluidRow(
+
+  column(6, 
+         shinyWidgets::dropdownButton(
+    mgmt_panel,
+    icon = icon("save"),
+    right = TRUE,
+    inline = TRUE,
+    circle = FALSE,
+    # size = "lg",
+    inputId = "action_menu_test",
+    label = "File"
+  )
+  ),
+  column(6, 
+         shinyWidgets::dropdownButton(
+    help_panel,
+    icon = icon("circle-question"),
+    right = TRUE,
+    inline = TRUE,
+    circle = FALSE,
+    # size = "lg",
+    inputId = "action_menu_test2",
+    label = "Help"
+  )
+  )
+)
+# 
+# menu_group <-
+#   div(class = "btn-group", role = "group",
+#       shinyWidgets::dropdownButton(
+#         mgmt_panel,
+#         icon = icon("save"),
+#         right = TRUE,
+#         inline = TRUE,
+#         circle = FALSE,
+#         margin = "0",
+#         # size = "lg",
+#         inputId = "action_menu_test",
+#         label = "File"
+#       ),
+#       shinyWidgets::dropdownButton(
+#         help_panel,
+#         icon = icon("circle-question"),
+#         right = TRUE,
+#         inline = TRUE,
+#         circle = FALSE,
+#         margin = "0",
+#         # size = "lg",
+#         inputId = "action_menu_test2",
+#         label = "Help"
+#       )#,
+#       # shinyWidgets::dropdownButton(
+#       #   dev_panel,
+#       #   icon = icon("wrench"),
+#       #   right = TRUE,
+#       #   inline = TRUE,
+#       #   circle = FALSE,
+#       #   # size = "lg",
+#       #   inputId = "action_menu_dropdown",
+#       #   label = "Options"
+#       # )
+#       )
+
+menu_group <-
+  div(
+      shinyWidgets::dropdownButton(
+        mgmt_panel,
+        icon = icon("save"),
+        right = TRUE,
+        inline = FALSE,
+        circle = FALSE,
+        # margin = "0",
+        # size = "lg",
+        inputId = "action_menu_test",
+        label = "File"
+      ),
+      shinyWidgets::dropdownButton(
+        help_panel,
+        icon = icon("circle-question"),
+        right = TRUE,
+        inline = FALSE,
+        circle = FALSE,
+        # margin = "0",
+        # size = "lg",
+        inputId = "action_menu_test2",
+        label = "Help"
+      )
+  )
+
+
+
 fixed_header <- fixedPanel(
   left = 0,
   right = 0,
@@ -105,7 +197,7 @@ fixed_header <- fixedPanel(
       3,
       align = "right",
       a(
-        img(src = "resnet-logo-4x.png"),
+        img(src = "resnet-logo-4x-crop.png"),
         href = "https://www.nsercresnet.ca/",
         target = '_blank'
       )
@@ -127,38 +219,8 @@ fixed_header <- fixedPanel(
     # ))
     column(3,
            align = "left",
-           fluidRow(
-      column(3, shinyWidgets::dropdownButton(
-        help_panel,
-        icon = icon("circle-question"),
-        right = TRUE,
-        inline = TRUE,
-        circle = FALSE,
-        # size = "lg",
-        inputId = "action_menu_test2",
-        label = "Help"
-      )),
-      column(3, shinyWidgets::dropdownButton(
-        dev_panel,
-        icon = icon("wrench"),
-        right = TRUE,
-        inline = TRUE,
-        circle = FALSE,
-        # size = "lg",
-        inputId = "action_menu_dropdown",
-        label = "Options"
-      )),
-      column(3, shinyWidgets::dropdownButton(
-        mgmt_panel,
-        icon = icon("save"),
-        right = TRUE,
-        inline = TRUE,
-        circle = FALSE,
-        # size = "lg",
-        inputId = "action_menu_test",
-        label = "File"
-      ))
-    ))
+           menu_group
+          )
   )
 )
 
@@ -174,7 +236,32 @@ ui <- fluidPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
   div(fixed_header),
   div(id = "main-area", main_area),
-  div(style=("position:absolute; right:0; padding-right:5px;"), paste0("MetaQuest v", metaquest_version))
+  div(style=("position:absolute; left:0; padding-left:5px;"), paste0("MetaQuest v", metaquest_version)#, 
+      # shinyWidgets::dropdownButton(
+      #   dev_panel,
+      #   icon = icon("wrench"),
+      #   right = TRUE,
+      #   up=TRUE,
+      #   inline = TRUE,
+      #   circle = FALSE,
+      #   # size = "lg",
+      #   inputId = "action_menu_dropdown"
+      #   # label = "Options"
+      # )
+      ),
+  div(style=("position:absolute; right:0; padding-right:5px;"),# paste0("MetaQuest v", metaquest_version), 
+      shinyWidgets::dropdownButton(
+        dev_panel,
+        icon = icon("wrench"),
+        right = TRUE,
+        up=TRUE,
+        inline = TRUE,
+        circle = FALSE,
+        # size = "lg",
+        inputId = "action_menu_dropdown"
+        # label = "Options"
+      )
+  )
 )
 
 # server ------------------------------------------------------------------
@@ -436,9 +523,11 @@ observeEvent(input$importConfirmButton, {
   valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
   # print("valid inputs")
   # print(valid_inputs)
+  print("Importing")
   for(x in 1:length(valid_inputs)){
     input_name <- names(valid_inputs)[[x]]
-    freezeReactiveValue(input, input_name)
+    # print(input_name)
+    # freezeReactiveValue(input, input_name)
     formData[[input_name]] <- valid_inputs[[x]]
   }
   # for(x in 1:length(valid_inputs)){
@@ -447,65 +536,6 @@ observeEvent(input$importConfirmButton, {
   # }
   removeModal()
 })
-  
-# panel modals ------------------------------------------------------------
-# 
-#   observe({
-#     x <- input$sourcesPanelToggle
-#     toggleClass("sourcesPanel", "panel-info", is.null(x))
-#     toggleClass("sourcesPanel", "panel-primary", isTRUE(as.logical(x)))
-#     toggleClass("sourcesPanel", "panel-default", isFALSE(as.logical(x)))
-#   })
-# 
-#   observe({
-#     x <- input$exceptionsPanelToggle
-#     toggleClass("exceptionsPanel", "panel-info", is.null(x))
-#     toggleClass("exceptionsPanel", "panel-primary", isTRUE(as.logical(x)))
-#     toggleClass("exceptionsPanel", "panel-default", isFALSE(as.logical(x)))
-#   })
-# 
-#   observe({
-#     x <- input$spatialPanelToggle
-#     toggleClass("spatialPanel", "panel-info", is.null(x))
-#     toggleClass("spatialPanel", "panel-primary", isTRUE(as.logical(x)))
-#     toggleClass("spatialPanel", "panel-default", isFALSE(as.logical(x)))
-#   })
-
-  
-  # session$onSessionEnded(function() {
-  #   isolate(saveRDS( input, file = 'integer.RDS'))
-  # })
-  
-
-# scratch -----------------------------------------------------------------
-  # 
-  # contribRows <- reactive({
-  #   x <- reactiveValuesToList(input) 
-  #   x_all_rows <- x %>% names %>% str_subset(., "contribList-\\d+-DeleteContrib")
-  #   x1 <- x[x_all_rows]
-  #   x2 <- x1 %>% keep(~ .x == 0)
-  #   x2 %>% names %>% str_extract("contribList-\\d+")
-  # })
-  # 
-  # rowDif <- reactiveVal(0)
-  # 
-  # observeEvent(input$testNumeric, {
-  #   current_rows <- isolate(contribRows()) %>% length + 1
-  #     import_rows <- input$testNumeric
-  #   rowDif(import_rows - current_rows)
-  # })
-  # 
-  # observeEvent(rowDif(), {
-  #   req(input$testToggle == "true")
-  #   # shinyjs::click("contribList-addContrib")
-  #   # invalidateLater(2500)
-  #   # Sys.sleep(1)
-  #   if(isolate(rowDif()) > 0){
-  #     rowDif(rowDif() - 1)
-  #     shinyjs::click("contribList-addRow")
-  #     print(rowDif())
-  #   }
-  # })
   
   # https://appsilon.com/how-to-safely-remove-a-dynamic-shiny-module/
   # https://github.com/rstudio/shiny/issues/2374
