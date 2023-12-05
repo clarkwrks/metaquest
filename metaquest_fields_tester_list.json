@@ -67,22 +67,28 @@
                             "id":"proj_keywords",
                             "label": "Keywords",
                             "type":"listInput",
+                            "info":"A brief overview of the data products produced by this project.",
                             "fields":[
-                        {
-                            "id": "proj_service",
-                            "label": "Ecosystem Service(s)",
-                            "type": "selectizeInput",
-                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
-                            "input_options": {
-                                "choices": [
-                                    "Crop provisioning", "Grazed biomass provisioning", "Timber provisioning", "Non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "Fish and other aquatic products provisioning", "Water supply (drinking, irrigation)", "Carbon storage (aboveground, belowground)", "Carbon sequestration", "Local (micro) climate regulation", "Air filtration services", "Soil erosion control services", "Water purification services", "Flood prevention/water retention services", "Riverine flood mitigation services (in-stream)", "Coastal flood protection", "Pollination services", "Pest control services", "Habitat maintenance services", "Recreation-related services", "Cultural aspects"
-                                ],
-                                "multiple": true,
-                                "options": {
-                                    "create": true
-                                }
-                            }
-                        }]
+                                {
+                                    "id": "key_name",
+                                    "label": "LeyName",
+                                    "type": "textInput"
+                                },
+                                {
+                                    "id": "proj_service",
+                                    "label": "Ecosystem Service(s)",
+                                    "type": "selectizeInput",
+                                    "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                                    "input_options": {
+                                        "choices": [
+                                            "Crop provisioning", "Grazed biomass provisioning", "Timber provisioning", "Non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "Fish and other aquatic products provisioning", "Water supply (drinking, irrigation)", "Carbon storage (aboveground, belowground)", "Carbon sequestration", "Local (micro) climate regulation", "Air filtration services", "Soil erosion control services", "Water purification services", "Flood prevention/water retention services", "Riverine flood mitigation services (in-stream)", "Coastal flood protection", "Pollination services", "Pest control services", "Habitat maintenance services", "Recreation-related services", "Cultural aspects"
+                                        ],
+                                        "multiple": true,
+                                        "options": {
+                                            "create": true
+                                        }
+                                    }
+                                }]
                     }
                     ]
                 }

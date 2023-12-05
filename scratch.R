@@ -268,3 +268,11 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+
+metaquest_fields <- read_json("metaquest_fields_tester_list.json")
+metaquest_fields[[2]]
+
+
+metaquest_fields$panels[[1]]$sections[[2]]$fields[[4]]$fields %>% map(function(x) modify_at(x, "id", function(y) y=paste0(y, "test")))

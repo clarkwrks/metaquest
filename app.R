@@ -17,7 +17,7 @@ source("utils.R")
 # source("quests.R")
 source("fields.R")
 
-metaquest_fields <- read_json("metaquest_fields_tester.json")
+metaquest_fields <- read_json("metaquest_fields_tester_list.json")
 # metaquest_fields <- read_json("metaquest_fields.json")
 # metaquest_fields <- read_json("metaquest_fields_tags.json")
 metaquest_version <- "0.6.3"
@@ -384,11 +384,13 @@ server <- function(input, output, session) {
 
   inputModal <- function(){
     modalDialog(
+      title = "Shiny Input",
       reactjsonOutput("input_peek"),
       footer = tagList(
-        modalButton("Cancel"),
-        actionButton("ok", "OK")
-      )
+        modalButton("Close")
+      ),
+      size = "l",
+      easyClose = TRUE
     )
   }
   
@@ -408,11 +410,13 @@ server <- function(input, output, session) {
 
   formDataModal <- function(){
     modalDialog(
+      title = "formData",
       reactjsonOutput("form_peek"),
       footer = tagList(
-        modalButton("Cancel"),
-        actionButton("ok", "OK")
-      )
+        modalButton("Close")
+      ),
+      size = "l",
+      easyClose = TRUE
     )
   }
   
