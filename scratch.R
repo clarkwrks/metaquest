@@ -276,3 +276,29 @@ metaquest_fields[[2]]
 
 
 metaquest_fields$panels[[1]]$sections[[2]]$fields[[4]]$fields %>% map(function(x) modify_at(x, "id", function(y) y=paste0(y, "test")))
+
+test <- 
+  metaquest_fields$panels[[1]]$sections[[2]]$fields[[4]]$fields %>% map(function(x) modify_at(x, "id", function(y) y=paste0(y, "test")))
+
+testnames <- c("proj_keywords-1-", "proj_keywords-1-", "proj_keywords-12-", "proj_fail-1-", "test_proj_keywords-123-")
+testid <- "proj_keywords"
+
+testnames %>%
+  # str_subset(paste0("^", id, "-\\d+-")) %>%
+  str_extract(paste0("(?<=\\b", testid, "-)\\d+(?=-)")) %>%
+  discard(is.na) %>%
+  unique %>% as.numeric() %>% print
+
+
+testx <- 1 %>% print
+
+
+
+
+metaquest_fields$panels[[1]]$sections[[2]]$fields[[4]]$fields %>% map(pluck("id")) 
+metaquest_fields$panels[[1]]$sections[[2]]$fields[[4]]$fields %>% map(pluck("id")) %>% map(str_glue("{x}Test"))
+tester<-metaquest_fields$panels[[1]]$sections[[2]]$fields[[4]]$fields %>% map(pluck("id")) %>%
+  {str_glue("{.}Test")}
+for(test in tester){
+  print(test)
+}

@@ -17,8 +17,8 @@ source("utils.R")
 # source("quests.R")
 source("fields.R")
 
-metaquest_fields <- read_json("metaquest_fields_tester_list.json")
-# metaquest_fields <- read_json("metaquest_fields.json")
+# metaquest_fields <- read_json("metaquest_fields_tester_list.json")
+metaquest_fields <- read_json("metaquest_fields.json")
 # metaquest_fields <- read_json("metaquest_fields_tags.json")
 metaquest_version <- "0.6.3"
 
@@ -367,7 +367,7 @@ server <- function(input, output, session) {
                 tags$li("Screenshot(s) of the issue")
                 )
               ),
-            p("Please email issue reports to resnet.data@mcgill.ca")
+            p("Please email issue reports to john.clark3@affiliate.mcgill.ca")
             )
       )),
       title = "MetaQuest User Guide",

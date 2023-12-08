@@ -71,7 +71,7 @@
                             "fields":[
                                 {
                                     "id": "key_name",
-                                    "label": "LeyName",
+                                    "label": "KeyName",
                                     "type": "textInput"
                                 },
                                 {
