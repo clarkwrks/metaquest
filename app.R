@@ -20,7 +20,7 @@ source("fields.R")
 # metaquest_fields <- read_json("metaquest_fields_tester_list.json")
 metaquest_fields <- read_json("metaquest_fields.json")
 # metaquest_fields <- read_json("metaquest_fields_tags.json")
-metaquest_version <- "0.6.3"
+metaquest_version <- "0.8.0"
 
 
 # main area ---------------------------------------------------------------

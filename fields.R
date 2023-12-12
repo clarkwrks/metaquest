@@ -70,24 +70,6 @@ listInput_ui <- function(inputId,  label, info,...){
   )
 }
 
-# listInputRow_ui <- function(id, rowFields, rowFieldsJson, ...){
-#   ns <- NS(id)
-#   fields_ns <- rowFields %>% mutate(id = ns(id))
-#   
-#   deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
-#                                style="float:right; margin-right:.5em;", 
-#                                class = "btn-danger")
-#   # fields_ns %>% print
-#   rowFieldsJson_ns <- rowFieldsJson %>% map(function(x) modify_at(x, "id", function(y) y=ns(y)))
-#   rowFieldsJson_ns %>% print
-#   # fields_ns %>% transpose %>% print
-#   div(class = "inline formGroup formListRow", 
-#       id = ns("div"),
-#       # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
-#       # fields_ns %>% transpose %>% map(buildField_ui), 
-#       rowFieldsJson_ns %>% map(buildField_ui),
-#       deleteButton)
-# }
 listInputRow_ui <- function(id, fields, ...){
   ns <- NS(id)
   # fields_ns <- rowFields %>% mutate(id = ns(id))
@@ -194,133 +176,6 @@ buildMetaQuest_ui <- function(form_json){
 
 
 # input_server ------------------------------------------------------------
-# 
-# fieldInput_server <- function(id, info=NA, formData = formData, type, ...){
-# 
-#   moduleServer(id, function(input, output, session) {
-#     id
-#     ns <- session$ns
-#     # need to use freezeReactiveValue? on input and formData
-#     # https://mastering-shiny.org/action-dynamic.html#freezing-reactive-inputs
-# 
-#     # observe({
-#     #   # input$Input
-#     #   invalidateLater(4000, session)
-#     #   # freezeReactiveValue(input, ns("Input"))
-#     #   # formData[[ns("Input")]] <- input$Input
-#     #   # formData[[ns("Input")]] <- isolate(input$Input)
-#     #   isolate({
-#     #   formData[[ns("Input")]] <- input$Input
-#     #   })
-#     # })
-#     # observe({
-#     #   invalidateLater(4000, session)
-#     #   isolate({
-#     #   new_val <- formData[[ns("Input")]]
-#     #   # freezeReactiveValue(formData, ns("Input"))
-#     # 
-#     #   print(paste0(
-#     #     "Updating ", type, " field: ",
-#     #     ns("Input"), " = ", formData[[ns("Input")]]
-#     #   ))
-#     # 
-#     #   switch(type,
-#     #          textInput =
-#     #            updateTextInput(session, "Input",
-#     #                            value = formData[[ns("Input")]]),
-#     #          selectInput =
-#     #            updateSelectInput(session, "Input",
-#     #                              selected = formData[[ns("Input")]]),
-#     #          dateInput =
-#     #            updateDateInput(session, "Input",
-#     #                            value = formData[[ns("Input")]]),
-#     #          textAreaInput =
-#     #            updateTextAreaInput(session, "Input",
-#     #                                value = formData[[ns("Input")]]),
-#     #          selectizeInput =
-#     #            updateSelectizeInput(session, "Input",
-#     #                                 choices = formData[[ns("Input")]],
-#     #                                 selected = formData[[ns("Input")]]),
-#     #          checkboxGroupInput =
-#     #            updateCheckboxGroupInput(session, "Input",
-#     #                                     selected = formData[[ns("Input")]])
-#     #   )
-#     #   })
-#     #   }
-#     # )
-#     observeEvent(formData[[ns("Input")]], {
-#       freezeReactiveValue(input, ns("Input"))
-# 
-#       # print(paste0(
-#       #   "Updating ", type, " field: ",
-#       #   ns("Input"), " = ", formData[[ns("Input")]]
-#       #   ))
-# 
-#       switch(type,
-#              textInput =
-#                updateTextInput(session, "Input",
-#                                value = formData[[ns("Input")]]),
-#              selectInput =
-#                updateSelectInput(session, "Input",
-#                                  selected = formData[[ns("Input")]]),
-#              dateInput =
-#                updateDateInput(session, "Input",
-#                                value = formData[[ns("Input")]]),
-#              textAreaInput =
-#                updateTextAreaInput(session, "Input",
-#                                    value = formData[[ns("Input")]]),
-#              selectizeInput = {
-#                # print(choices)
-#                # arguments <- list(...)
-#                # print(input_options)
-#                # mc <- match.call(expand.dots = FALSE)
-#                # print(mc$...)
-#                # print(deparse(substitute(...)))
-#                # testprint <- sapply(substitute(list(...))[-1], deparse)
-#                # print(testprint(...))
-#                # print(names(list(...)))
-#                # rlang::dots_list(..., .preserve_empty = FALSE) %>% print
-#                # try(print(input_options))
-#                # print(ns("test"))
-#                # dots <- enquos(..., .named = TRUE)
-#                # names(dots) %>% print
-#                # dots$input_options %>% print
-#           
-#                updateSelectizeInput(session, "Input",
-#                                     # server = TRUE,
-#                                     choices = formData[[ns("Input")]],
-#                                     selected = formData[[ns("Input")]])
-#                },
-#              checkboxGroupInput =
-#                updateCheckboxGroupInput(session, "Input",
-#                                         selected = formData[[ns("Input")]])
-#       )
-#     }
-#     )
-#     
-#     observeEvent(input$Input, {
-#       freezeReactiveValue(formData, ns("Input"))
-#       print(paste0("Field input observer: ",  ns("Input")))
-#       formData[[ns("Input")]] <- input$Input
-#     })
-#     
-#     if(isTruthy(info)) {
-#       infoModal <- function(content){
-#         modalDialog(
-#           HTML(content),
-#           easyClose = TRUE,
-#           footer = tagList(
-#             modalButton("OK")
-#           )
-#         )
-#       }
-#       observeEvent(input$Info, {
-#         showModal(infoModal(info))
-#       })
-#     }
-#     
-#   })
-# }
 
 fieldInput_server <- function(field, formData = formData, ...){
   id <- field$id
@@ -335,12 +190,11 @@ fieldInput_server <- function(field, formData = formData, ...){
       id
       ns <- session$ns
       # ns <- NS(id)
-      formData[[ns("ns_field")]] <- ns("")
-      
-      print(paste0("fieldInput_server id: ", id))
-      print(paste0("fieldInput_server ns: ", ns("")))
-      # print(paste0("fieldInput_server NS(id): ", wat("")))
-      
+      # formData[[ns("ns_field")]] <- ns("")
+      # 
+      # print(paste0("fieldInput_server id: ", id))
+      # print(paste0("fieldInput_server ns: ", ns("")))
+
       # need to use freezeReactiveValue? on input and formData
       # https://mastering-shiny.org/action-dynamic.html#freezing-reactive-inputs
       
@@ -374,8 +228,8 @@ fieldInput_server <- function(field, formData = formData, ...){
                    field$input_options$choices, 
                    formData[[ns("Input")]]) %>% 
                    unique
-                 print(paste0(ns("Input"), " val: ", formData[[ns("Input")]]))
-                 updated_choices %>% str %>% print
+                 # print(paste0(ns("Input"), " val: ", formData[[ns("Input")]]))
+                 # updated_choices %>% str %>% print
                  updateSelectizeInput(session, "Input",
                                       server = TRUE,
                                       choices = updated_choices,
@@ -383,11 +237,9 @@ fieldInput_server <- function(field, formData = formData, ...){
                }
         )
       })
-      print(ns("Input"))
+      # print(ns("Input"))
       observeEvent(input$Input, {
         freezeReactiveValue(formData, ns("Input"))
-        print(paste0("Field input observer ns: ",  ns("Input")))
-        print(paste0("Field input observer input: ", input$Input))
         formData[[ns("Input")]] <- input$Input
       })
       
@@ -409,54 +261,8 @@ fieldInput_server <- function(field, formData = formData, ...){
       
     })}
 }
-# 
-# listInputRow_server <- function(id, rowFields, formData=formData, modData, parent_id, rowFieldsJson, ...){
-#   moduleServer(id, function(input, output, session) {
-#     id
-#     ns <- session$ns
-#     
-#     fields_ns <- rowFields
-#     # print(fields_ns)
-#     # print(rowFieldsJson)
-#     
-#     # fields_ns %>% pmap(fieldInput_server, formData=formData, fields = rowFields)
-#     # rowFields %>% map(fieldInput_server, formData=formData)
-#     rowFieldsJson %>% map(fieldInput_server, formData=formData)
-#     
-#     row_id <- id
-#     list_id <- id
-#     observeEvent(input$DeleteRow, {
-#       # insertSelector = paste0("#", id)
-#       insertSelector = paste0("#", ns("div"))
-#       
-#       removeUI(
-#         selector = insertSelector#, session = session
-#       )
-#       deleteRowFormData <- function(id, rv, ...){
-#         input_id <- paste0(ns(id), "-Input")
-#         # .subset2(rv, "impl")$.values$remove(input_id)
-#         removeReactiveValuesIndex(rv, input_id)
-#       }
-#       list_nrow <- paste0(parent_id, "-Nrow")
-#       fields_ns %>% pmap(deleteRowFormData, rv=formData)
-#       fields_ns %>% pmap(deleteRowFormData, rv=input)
-#       fields_ns %>% pmap(deleteRowFormData, rv=modData)
-#       
-#       delete_id <- paste0(ns("DeleteRow"))
-#       # .subset2(formData, "impl")$.values$remove(delete_id)
-#       # .subset2(input, "impl")$.values$remove(delete_id)
-#       removeReactiveValuesIndex(formData, delete_id)
-#       removeReactiveValuesIndex(input, delete_id)
-#       formData[[list_nrow]] <- formData[[list_nrow]] -1
-#       
-#     })
-#   })
-# }
 
-
-# listInputRow_server <- function(id, rowFields, formData=formData, modData, parent_id, rowFieldsJson, ...){
-
-listInputRow_server <- function(id, rowFields, formData=formData, ...){
+listInputRow_server <- function(id, rowFields, formData=formData, modData, ...){
   
     moduleServer(id, function(input, output, session) {
     
@@ -464,19 +270,12 @@ listInputRow_server <- function(id, rowFields, formData=formData, ...){
       
     id
     ns <- session$ns
-    print(paste0("listInputRow_server ns(id): ", ns("")))
-    formData[[ns("ns_row")]] <- ns("")
-    
-    # print(ns(id))
+    # print(paste0("listInputRow_server ns(id): ", ns("")))
+    # formData[[ns("ns_row")]] <- ns("")
     fields_ns <- rowFields
-    # print(fields_ns)
-    # print(id)
-    # print(rowFieldsJson)
-    
-    # rowFields %>% map(fieldInput_server, formData=formData)
 
-    row_id <- id
-    list_id <- id
+    # row_id <- id
+    # list_id <- id
     observeEvent(input$DeleteRow, {
       # insertSelector = paste0("#", id)
       insertSelector = paste0("#", ns("div")) %>% print
@@ -484,26 +283,32 @@ listInputRow_server <- function(id, rowFields, formData=formData, ...){
       removeUI(
         selector = insertSelector#, session = session
       )
-      deleteRowFormData <- function(field, rv, ...){
-        input_id <- paste0(ns(field$id), "-Input")
-        # input_id <- paste0(field$id, "-Input")
-        input_id %>% print
-        removeReactiveValuesIndex(rv, input_id)
+
+      removeRowFromRV <- function(rv){
+        rv_list <- reactiveValuesToList(rv) 
+        rv_match <- rv_list %>% names %>%
+          str_starts(ns(""))
+        rv_row <- rv_list[rv_match] %>% names
+        if(length(rv_row)>0){
+          for(rv_item in rv_row){
+            rv[[rv_item]] <- "delete"
+            
+            removeReactiveValuesIndex(rv_item, rv)
+            # doesn't work from it's own call !?!? eg passing rv=input
+            removeReactiveValuesIndex(rv_item, input)
+          }
+        }
       }
-      # list_nrow <- paste0(parent_id, "-Nrow")
-      # fields_ns %>% pmap(deleteRowFormData, rv=formData)
-      # fields_ns %>% pmap(deleteRowFormData, rv=input)
-      # fields_ns %>% pmap(deleteRowFormData, rv=modData)
-      rowFields %>% map(deleteRowFormData, rv=formData)
-      rowFields %>% map(deleteRowFormData, rv=input)
-      # rowFields %>% map(deleteRowFormData, rv=modData)
-
+      
+      removeRowFromRV(formData) # do work
+      # removeRowFromRV(input) # no work
+      removeRowFromRV(modData) # don't know if work
+      
+      ## works:
       delete_id <- paste0(ns("DeleteRow"))
-
-      removeReactiveValuesIndex(formData, delete_id)
-      removeReactiveValuesIndex(input, delete_id)
-      # formData[[list_nrow]] <- formData[[list_nrow]] -1
-
+      removeReactiveValuesIndex(delete_id, formData)
+      removeReactiveValuesIndex(delete_id, input)
+      
     })
   })
 }
@@ -514,10 +319,10 @@ listInput_server <- function(listField, formData=formData, ...){
   
   moduleServer(id, function(input, output, session) {
     id
-    print(paste0("listInput_server id: ", id))
+    # print(paste0("listInput_server id: ", id))
     ns <- session$ns
-    formData[[ns("ns_list")]] <- ns("")
-    
+    # formData[[ns("ns_list")]] <- ns("")
+
     # attach info modal if provided
     if(isTruthy(listField$info)) {
       infoModal <- function(content){
@@ -531,8 +336,6 @@ listInput_server <- function(listField, formData=formData, ...){
       }
       observeEvent(input$Info, {
         showModal(infoModal(listField$info))
-        listField$id %>% print
-        listField$fields %>% length %>% print
       })
     }
     
@@ -564,12 +367,11 @@ listInput_server <- function(listField, formData=formData, ...){
             
             if(length(toInsert_rownames) > 0){
               toInsert_rowname <- toInsert_rownames %>% first
-              str_glue("Inserting {ns(toInsert_rowname)}") %>% print
+              # str_glue("Inserting {ns(toInsert_rowname)}") %>% print
               
               insertListRow(toInsert_rowname, rowFields)
               addListRow_rv(toInsert_rowname, modData)
-              str_glue("Inserted {ns(toInsert_rowname)}") %>% print
-              
+
             }
         })
       })
@@ -618,12 +420,10 @@ listInput_server <- function(listField, formData=formData, ...){
       }
     }
     
-    # insertListRow(1, rowFields)
-    # map(1:2, insertListRow, rowFields = rowFields)
     addListRow_rv <- function(row_num, target_rv){
       rowFields_ns <- rowFields %>% 
         map(pluck("id")) %>% 
-        {str_glue("{ns(row_num)}-{.}-Input")} %>% print
+        {str_glue("{ns(row_num)}-{.}-Input")}
       
       for(rowField in rowFields_ns){
         target_rv[[rowField]] <- ""
@@ -631,205 +431,17 @@ listInput_server <- function(listField, formData=formData, ...){
     }
     
     observeEvent(input$addRow, {
-      # rowDif() %>% print
       print("add row")
-      # print(formData_rownames)
-      
       addRow_num <- findFreeNumber(formData_rownames)
       str_glue("Adding row {addRow_num} to formData") %>% print
       
-      # row_id <- findFreeNumber(formData_rownames)
-      
       addListRow_rv(addRow_num, formData)
-      
-        # map(str_glue, "{ns(row_id)}-{.}-input")
-        # str_glue("{ns(row_id)}-{.}-input") %>% print
-      
-      
-      # free_num <- reactiveValuesToList(formData) %>% names %>%
-      #   str_subset(paste0(id, "-\\d+-")) %>%
-      #   str_extract(paste0(id, "-\\d+-")) %>%
-      #   unique %>%
-      #   str_extract("(?<=-)\\d+(?=-)") %>%
-      #   as.numeric %>%
-      #   findFreeNumber
-      # 
-      # # formData[[ns("Nrow")]] <- formData[[ns("Nrow")]] + 1
-      # new_rows <- rep("", nrow(rowFields))  %>%
-      #   as.list %>% set_names(paste0(
-      #     ns(free_num),
-      #     "-",
-      #     rowFields$id,
-      #     "-Input"))
-      # for(x in 1:length(new_rows)){
-      #   x <- new_rows[x]
-      #   x_name <- names(x)
-      #   # x_name %>% print
-      #   formData[[x_name]] <- x[[x_name]]
-      # }
     })
     
     addListRow_rv(1, formData)
     
   })
 }
-
- # listInput_server <- function(id, formData=formData, info=NULL, rowFields, rowFieldsJson, ...){
- #  moduleServer(id, function(input, output, session) {
- #    id
- #    ns <- session$ns
- # 
- #    if(isTruthy(info)) {
- #      infoModal <- function(content){
- #        modalDialog(
- #          HTML(content),
- #          easyClose = TRUE,
- #          footer = tagList(
- #            modalButton("OK")
- #          )
- #        )
- #      }
- #      observeEvent(input$Info, {
- #        showModal(infoModal(info))
- #      })
- #    }
- # 
- #    insertSelector = paste0("#", ns("addRow"))
- # 
- #    # like formData, but only for this listInput
- #    modData <- reactiveValues()
- # 
- #    observe({
- #      formData_rows <- reactiveValuesToList(formData)
- #      isolate({
- # 
- #        # get rownames in formData (may not be rendered yet)
- #        formData_rownames <- formData_rows %>% names %>%
- #          str_subset(paste0("^", id, "-\\d+-")) %>%
- #          str_extract(paste0("^", id, "-\\d+-")) %>%
- #          unique
- # 
- #        # get rownames in modData (currently rendered)
- #        modData_rownames <- reactiveValuesToList(modData) %>% names %>%
- #          str_subset(paste0("^", id, "-\\d+-")) %>%
- #          str_extract(paste0("^", id, "-\\d+-")) %>%
- #          unique
- # 
- #        # get list of rownames to be inserted
- #        if(length(modData_rownames) > 0) {
- #          toInsert_rownames <- formData_rownames[!formData_rownames %in% modData_rownames]
- #        } else {
- #          toInsert_rownames <- formData_rownames
- #        }
- # 
- #        toInsert_rownames %>% print()
- # 
- #        # if any formData rows missing from modData, insert them
- #        if(length(toInsert_rownames) > 0){
- #          # sort by rownumber
- #          toInsert_rownames <- toInsert_rownames %>% str_sort
- # 
- #          # loop through rows to insert
- #          for(toInsert_rowindex in 1:length(toInsert_rownames)){
- #            toInsert_rowname <- toInsert_rownames[[toInsert_rowindex]]
- #            print(paste("toInsert_rowindex = ", toInsert_rowindex))
- #            print(paste("toInsert_rowname = ", toInsert_rowname))
- # 
- #            # get toInsert_fields values from formData
- #            toInsert_fields <- formData_rows[formData_rows %>% names %>% str_detect(paste0("^", toInsert_rowname))]
- #            # row field defs from json
- #            toInsert_fields_template <- rowFields
- #            # toInsert_fields_template <- rowFieldsJson
- # 
- #            for(new_field in 1:length(toInsert_fields)){
- #              print(paste0("field: ", new_field, ". ", names(toInsert_fields[new_field])))
- #              new_field <- toInsert_fields[new_field]
- #              new_field_name <- names(new_field)
- #              modData[[new_field_name]] <- new_field[[new_field_name]]
- #              new_field_id <- new_field_name %>% str_extract("[a-z]+(?=-Input)")
- #              paste0("new field name: ", new_field_name) %>% print
- #              paste0("new field id: ", new_field_id) %>% print
- #              toInsert_fields_template[str_detect(toInsert_fields_template$id, new_field_id), "value"] <- new_field[[new_field_name]]
- #            }
- # 
- #            toInsert_rownumber <- toInsert_rowname %>%
- #              str_extract("(?<=-)\\d+(?=-)") %>%
- #              as.numeric
- # 
- #            insertUI(
- #              selector = insertSelector,
- #              where = "beforeBegin",
- #              ui = listInputRow_ui(
- #                ns(toInsert_rownumber),
- #                rowFields = toInsert_fields_template,
- #                rowFieldsJson = rowFieldsJson,
- #                modData = modData)
- #            )
- #            # print(id)
- #            listInputRow_server(toInsert_rownumber, rowFields = toInsert_fields_template, formData = formData, modData = modData, parent_id = id, rowFieldsJson = rowFieldsJson)
- #          }
- #        }
- #      })
- #    })
- # 
- #    init_rows <- rep("", nrow(rowFields))  %>%
- #      as.list %>% set_names(paste0(
- #        ns("1"),
- #        "-",
- #        rowFields$id,
- #        "-Input"))
- #    for(x in 1:length(init_rows)){
- #      x <- init_rows[x]
- #      x_name <- names(x)
- #      formData[[x_name]] <- x[[x_name]]
- #    }
- # 
- #    findFreeNumber <- function(current_numbers) {
- #      x <- current_numbers
- #      print(paste0("length is ", length(x)))
- #      if(length(x) >= 1) {
- #        free_nums <- {min(x):max(x)} %>% .[!. %in% x] %>% first
- #        if(!is.na(free_nums)) {
- #          print("found free num")
- #          return(free_nums)
- #        } else {
- #          print("add num")
- #          return(max(x) + 1)
- #        }
- #      } else {
- #        print("length !>= 1")
- #        return(1)
- #      }
- #    }
- # 
- #    observeEvent(input$addRow, {
- #      # rowDif() %>% print
- #      print("add row")
- #      free_num <- reactiveValuesToList(formData) %>% names %>%
- #        str_subset(paste0(id, "-\\d+-")) %>%
- #        str_extract(paste0(id, "-\\d+-")) %>%
- #        unique %>%
- #        str_extract("(?<=-)\\d+(?=-)") %>%
- #        as.numeric %>%
- #        findFreeNumber
- # 
- #      # formData[[ns("Nrow")]] <- formData[[ns("Nrow")]] + 1
- #      new_rows <- rep("", nrow(rowFields))  %>%
- #        as.list %>% set_names(paste0(
- #          ns(free_num),
- #          "-",
- #          rowFields$id,
- #          "-Input"))
- #      for(x in 1:length(new_rows)){
- #        x <- new_rows[x]
- #        x_name <- names(x)
- #        # x_name %>% print
- #        formData[[x_name]] <- x[[x_name]]
- #      }
- #    })
- # 
- #  })
-# }
 
 panel_server <- function(id, formData, info, condition, ...){
   moduleServer(id, function(input, output, session){
@@ -868,33 +480,15 @@ panel_server <- function(id, formData, info, condition, ...){
 
 # build_server ------------------------------------------------------------
 
-buildInput_server <- function(input, formData){
-  
-}
-
-# buildField_server <- function(field, formData){
-#   # print(field$type)
-#   if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
-#     fieldInput_server(id = field$id, info=field$info, type=field$type, formData=formData)
-#   }
-#   if(field$type == "listInput"){
-#     listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble), rowFieldsJson = field$fields)
-#     # field$fields %>% map_dfr(as_tibble) %>% print
-#   }
-# }
-
-
 buildField_server <- function(field, formData){
-  # print(field$type)
-  if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
+
+    if(field$type %in% c("textInput", "textAreaInput", "dateInput", "selectInput", "selectizeInput", "checkboxGroupInput")){
     fieldInput_server(field, formData=formData)
   }
   if(field$type == "listInput"){
     listInput_server(id = field$id, formData = formData, info = field$info, rowFields = field$fields %>% map_dfr(as_tibble), rowFieldsJson = field$fields)
-    # field$fields %>% map_dfr(as_tibble) %>% print
   }
 }
-
 
 buildSection_server <- function(section, formData){
   # print(section$id)
@@ -902,9 +496,6 @@ buildSection_server <- function(section, formData){
   section$fields %>% map(fieldInput_server, formData=formData)
 }
 
-
-
-  
 buildPanel_server <- function(panel, formData){
   # print(panel$id)
   panel$sections %>% map(buildSection_server, formData = formData)
@@ -918,43 +509,3 @@ buildMetaQuest_server <- function(form_json,
   form_json$panels %>% map(buildPanel_server, formData = formData)
 }
 
-# testFun <- function(id, title){
-#   print(id)
-#   print(title)
-# }
-
-
-# demo --------------------------------------------------------------------
-
-# test_fields <- read_json("metaquest_fields.json")
-# test_fields$panels %>% map(~ testFun(.x$id, .x$title))
-
-# test_fields %>% buildMetaQuest_server
-
-# test_fields %>% buildMetaQuest_ui
-
-# testListFun <- function(dfrowlist){
-#   print(dfrowlist$id)
-# }
-
-# listInput originally designed to accept tibble of rowFields, rework has lists. 
-# tried converting to tibble then back for new ui builders 
-# something fucky
-# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% map(~testListFun(.x %>% as.list))
-# 
-# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% .[1,] %>% as.list
-# 
-# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% as.list
-# test_fields$panels[[1]]$sections[[2]]$fields[[7]]$fields %>% map_dfr(as_tibble) %>% transpose
-# 
-# buildMetaQuest_demo <- function() {
-#   ui <- fluidPage(
-#     test_fields %>% buildMetaQuest_ui()
-#   )
-#   server <- function(input, output, session) {
-#     formData <- reactiveValues(version = "0.0.1")
-#     test_fields %>% buildMetaQuest_server(formData = formData)
-#   }
-#   shinyApp(ui, server)
-# }
-# buildMetaQuest_demo()

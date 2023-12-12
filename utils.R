@@ -219,8 +219,14 @@ bs_append_noparent_toggle <- function(tag, title, content, override_id,
 
 # misc --------------------------------------------------------------------
 
-removeReactiveValuesIndex <- function(rv, ind) { 
+removeReactiveValuesIndex <- function(ind, rv) { 
   # str_glue("Attempting to remove {ind} from {rv}") %>% print()
-  .subset2(rv, "impl")$.values$remove(ind) 
+  # .subset2(rv, "impl")$.values$remove(ind) 
+  # req(ind)
+  # print(ind)
+  # https://github.com/rstudio/shiny/issues/2439#issuecomment-1781049999
+  rv_r6 = .subset2(rv, "impl")
+  rv_r6$.values$remove(ind)
+  rv_r6$.nameOrder = setdiff(rv_r6$.nameOrder, ind)
   }
 
