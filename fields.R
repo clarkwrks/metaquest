@@ -41,7 +41,7 @@ selectInput_ui <- function(inputId, label, choices, value = NULL,
               selectize, width, size)
 }
 
-selectizeInput_ui <- function(inputId, label, choices, value = NULL, multiple = FALSE, 
+selectizeInput_ui <- function(inputId, label, choices, value = "", multiple = FALSE, 
                               options = NULL, width = NULL){
   selectizeInput(inputId, label=label, choices=choices, selected = value,
                  multiple=multiple, options=c(options,dropdownParent = 'body'), width=width)

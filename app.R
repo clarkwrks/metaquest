@@ -11,6 +11,7 @@ library(shinyjs) # toggle css classes etc
 library(listviewer)
 # devtools::install_github('timelyportfolio/reactR')
 library(shinyWidgets) # dropdown button
+library(reactR)
 
 source("utils.R")
 # source("mods.R")

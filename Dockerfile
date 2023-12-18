@@ -1,4 +1,5 @@
-FROM openanalytics/r-ver:4.2.1
+#FROM openanalytics/r-ver:4.2.1
+FROM openanalytics/r-ver:4.3.2
 
 LABEL maintainer="John Clark <jclark@xylemgeo.com>"
 
@@ -24,8 +25,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
 # install dependencies of the euler app
-RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets'))"
-RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
+RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets', 'reactR'))"
+#RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
 
 
 # copy the app to the image
