@@ -208,9 +208,15 @@ body{
   background:lightgreen;
 }
 
+/*
 .fa-info-circle{margin-top:2px;}
 .fa-info-circle{margin-left:2px}
-
+.fa-info-circle{margin-left:2px}
+*/
+.fas.fa-circle-info {
+	font-size: 80%;
+	vertical-align: super;
+}
 
 .extra-wide textarea {flex-shrink:0; width:100%}
 

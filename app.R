@@ -93,94 +93,28 @@ menu_accord <- bs_accordion(id = "menuAccord") %>%
                             content = dev_panel, override_id = "devPanel", 
                             status = FALSE)
 
-
-
-menu_row <- fluidRow(
-
-  column(6, 
-         shinyWidgets::dropdownButton(
-    mgmt_panel,
-    icon = icon("save"),
-    right = TRUE,
-    inline = TRUE,
-    circle = FALSE,
-    # size = "lg",
-    inputId = "action_menu_test",
-    label = "File"
-  )
-  ),
-  column(6, 
-         shinyWidgets::dropdownButton(
-    help_panel,
-    icon = icon("circle-question"),
-    right = TRUE,
-    inline = TRUE,
-    circle = FALSE,
-    # size = "lg",
-    inputId = "action_menu_test2",
-    label = "Help"
-  )
-  )
-)
-# 
-# menu_group <-
-#   div(class = "btn-group", role = "group",
-#       shinyWidgets::dropdownButton(
-#         mgmt_panel,
-#         icon = icon("save"),
-#         right = TRUE,
-#         inline = TRUE,
-#         circle = FALSE,
-#         margin = "0",
-#         # size = "lg",
-#         inputId = "action_menu_test",
-#         label = "File"
-#       ),
-#       shinyWidgets::dropdownButton(
-#         help_panel,
-#         icon = icon("circle-question"),
-#         right = TRUE,
-#         inline = TRUE,
-#         circle = FALSE,
-#         margin = "0",
-#         # size = "lg",
-#         inputId = "action_menu_test2",
-#         label = "Help"
-#       )#,
-#       # shinyWidgets::dropdownButton(
-#       #   dev_panel,
-#       #   icon = icon("wrench"),
-#       #   right = TRUE,
-#       #   inline = TRUE,
-#       #   circle = FALSE,
-#       #   # size = "lg",
-#       #   inputId = "action_menu_dropdown",
-#       #   label = "Options"
-#       # )
-#       )
-
 menu_group <-
-  div(
+  div(class="btn-group",
       shinyWidgets::dropdownButton(
         mgmt_panel,
         icon = icon("save"),
         right = TRUE,
-        inline = FALSE,
+        inline = TRUE,
         circle = FALSE,
         # margin = "0",
         # size = "lg",
-        inputId = "action_menu_test",
+        # inputId = "action_menu_test",
         label = "File"
       ),
       shinyWidgets::dropdownButton(
         help_panel,
         icon = icon("circle-question"),
         right = TRUE,
-        inline = FALSE,
+        inline = TRUE,
         circle = FALSE,
         # margin = "0",
         # size = "lg",
-        inputId = "action_menu_test2",
+        # inputId = "action_menu_test2",
         label = "Help"
       )
   )
@@ -235,33 +169,17 @@ ui <- fluidPage(
   # theme = bs_theme("flatly", version = 5),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
   div(fixed_header),
-  div(id = "main-area", main_area),
-  div(style=("position:absolute; left:0; padding-left:5px;"), paste0("MetaQuest v", metaquest_version)#, 
-      # shinyWidgets::dropdownButton(
-      #   dev_panel,
-      #   icon = icon("wrench"),
-      #   right = TRUE,
-      #   up=TRUE,
-      #   inline = TRUE,
-      #   circle = FALSE,
-      #   # size = "lg",
-      #   inputId = "action_menu_dropdown"
-      #   # label = "Options"
-      # )
-      ),
-  div(style=("position:absolute; right:0; padding-right:5px;"),# paste0("MetaQuest v", metaquest_version), 
-      shinyWidgets::dropdownButton(
-        dev_panel,
-        icon = icon("wrench"),
-        right = TRUE,
-        up=TRUE,
-        inline = TRUE,
-        circle = FALSE,
-        # size = "lg",
-        inputId = "action_menu_dropdown"
-        # label = "Options"
-      )
-  )
+
+
+    div(id = "main-area",
+        main_area, 
+        div(
+          # class="d-flex flex-row float-end justify-content-end",
+            # style=("position:absolute; right:0; padding-right:15px;"),
+          align="center",
+            paste0("MetaQuest v", metaquest_version),
+            actionLink("showRVs", "", icon("wrench")))
+    )
 )
 
 # server ------------------------------------------------------------------
@@ -271,23 +189,7 @@ server <- function(input, output, session) {
 # build question hooks ----------------------------------------------------
   
   ## formData rvs -----------------------------------------------------------
-# 
-#   formData <- reactiveValues(version = "0.0.1")
-#   
-#   metaquests  %>% 
-#     # filter(section != "preparer") %>% 
-#     pmap(infoInput_server, formData=formData)
-# 
-#   section_server <- function(fields, formData){
-#     fields %>% pmap(infoInput_server, formData=formData)
-#   }
-# 
-#   # preparer_section_fields %>% section_server(formData)
-#   
-# 
-# 
-#   formList_server("contribList", formData=formData, rowFields = proj_contrib_row)
-#   formList_server("dataSourceList", formData=formData, rowFields = proj_contrib_row)
+
   formData <- reactiveValues(version = metaquest_version)
   buildMetaQuest_server(metaquest_fields, formData)
   
@@ -329,8 +231,7 @@ server <- function(input, output, session) {
         div(
           p("Whenever you make significant changes, save your work to your local computer. Do this frequently or you may lose your work unexpectedly!"),
           tags$ul(
-            tags$li("Open the `Menu` from the top right."),
-            tags$li("Expand `Manage File`."),
+            tags$li("Open the `File` menu from the top right."),
             tags$li("Click `Export`."),
             tags$li("Save the file to your local machine.")
           )
@@ -339,8 +240,7 @@ server <- function(input, output, session) {
         div(
           p("To resume working on a project, or switch to a different project, import the `.json` file you've previously exported."),
           tags$ul(
-            tags$li("Open the `Menu` from the top right."),
-            tags$li("Expand `Manage File`."),
+            tags$li("Open the `File` menu from the top right."),
             tags$li("Click `Import`."),
             tags$li("Navigate to the file you have saved to your local computer and select it."),
             tags$li("Click `Confirm`. Fields should now automatically fill with your previous responses.")
@@ -379,6 +279,61 @@ server <- function(input, output, session) {
   observeEvent(input$showTutorialModal, {
     showModal(tutorialModal())
   })
+  
+
+# rv modal ----------------------------------------------------------------
+
+  rvModal <- function(){
+    modalDialog(
+      div(class = "alert-danger", style = "text-align: center;",
+          "!!!",
+          div(
+              "This area is for testing only. 
+                      Improper use will crash the current session.",
+              br(),
+              "Unsaved changes will be lost."),
+          "!!!"
+          ),
+      navset_card_pill(
+        height = 450,
+        full_screen = TRUE,
+        # title = "HTML Widgets",
+        nav_panel(
+          # "Plotly",
+          card_title("Shiny Input"),
+          reactjsonOutput("input_peek")
+        ),
+        nav_panel(
+          card_title("FormData RV"),
+          reactjsonOutput("form_peek")
+        )
+      ),
+      size = "xl"#,
+      # easyClose = TRUE
+    )
+  }
+  
+  observeEvent(input$showRVs, {
+    showModal(rvModal())
+  })
+  
+  inputjson <- reactive({
+    reactiveValuesToList(input) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
+  })
+  
+  output$input_peek <- renderReactjson({
+    inputjson()
+  })
+  
+  
+  formjson <- reactive({
+    reactiveValuesToList(formData) %>% reactjson(sortKeys = TRUE)
+  })
+  
+  output$form_peek <- renderReactjson({
+    formjson()
+  })
+  
   
 # input env peek ----------------------------------------------------------
 
@@ -472,20 +427,20 @@ server <- function(input, output, session) {
             buttonLabel = "Browse...",
             placeholder = "No file selected"
           )), 
-          bs_panel(panel_type = "danger", body = 
-                     div(
-                       h4(style="color:red;",
-                          "Known Issue:", br(),
-              "If there are multiple rows for any fields (ie you clicked 
-              'Add Row' to enter data for an additonal item) you will need 
-              to import twice.", br(), 
-              tags$ol(tags$li("Click 'Confirm'."), 
-                      tags$li("Reopen this dialog."),
-                      tags$li("Click 'Confirm' once more."),
-                      tags$li("Your imported data should now display correctly.")
-                      ), 
-                      "This is a known issue with work in progress."
-              ))),
+          # bs_panel(panel_type = "danger", body = 
+          #            div(
+          #              h4(style="color:red;",
+          #     #             "Known Issue:", br(),
+          #     # "If there are multiple rows for any fields (ie you clicked 
+          #     # 'Add Row' to enter data for an additional item) you will need 
+          #     # to import twice.", br(), 
+          #     tags$ol(tags$li("Click 'Confirm'."), 
+          #             tags$li("Reopen this dialog."),
+          #             tags$li("Click 'Confirm' once more."),
+          #             tags$li("Your imported data should now display correctly.")
+          #             ), 
+          #             "This is a known issue with work in progress."
+          #     ))),
           bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
           import_compare
 

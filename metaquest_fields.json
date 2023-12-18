@@ -161,21 +161,20 @@
                 {
                     "id": "keywordSection",
                     "heading": "Project Keywords",
-                    "description": "<p>Please fill in as far as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. We want to be able to represent your work, but we also need some categories to give structure to all the data - for this we use a set of terms that might not totally comply with your understanding. For metadata collection here, we use 'ecosystem services' (ES) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system (--> 'aspects').</p><p>Each field also allows free-text, so you can supply additional project specific keywords.</p>",
+                    "description": "<p>Please fill in as much as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. We want to be able to represent your work, but we also need some categories to give structure to all the data - for this we use a set of terms that might not totally comply with your understanding. For metadata collection here, we use 'ecosystem services' (ES) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system (--> 'aspects').</p><p>Each field also allows free-text, so you can supply additional project-specific keywords.</p>",
                     "fields": [
                         {
                             "id":"proj_keywords",
-                            "label": "Keywords",
                             "type":"listInput",
                             "fields":[
                         {
                             "id": "proj_service",
                             "label": "Ecosystem Service(s)",
                             "type": "selectizeInput",
-                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
                                 "choices": [
-                                    "Crop provisioning", "Grazed biomass provisioning", "Timber provisioning", "Non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "Fish and other aquatic products provisioning", "Water supply (drinking, irrigation)", "Carbon storage (aboveground, belowground)", "Carbon sequestration", "Local (micro) climate regulation", "Air filtration services", "Soil erosion control services", "Water purification services", "Flood prevention/water retention services", "Riverine flood mitigation services (in-stream)", "Coastal flood protection", "Pollination services", "Pest control services", "Habitat maintenance services", "Recreation-related services", "Cultural aspects"
+                                    "crop provisioning", "grazed biomass provisioning", "timber provisioning", "non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products provisioning", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration services", "soil erosion control services", "water purification services", "flood prevention/water retention services", "riverine flood mitigation services (in-stream)", "coastal flood protection", "pollination services", "pest control services", "habitat maintenance services", "recreation-related services", "cultural aspects"
                                 ],
                                 "multiple": true,
                                 "options": {
@@ -187,7 +186,7 @@
                             "id": "proj_aspects",
                             "label": "Aspects",
                             "type": "selectizeInput",
-                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
                                 "choices": [
                                     "supply/capacity/potential", "benefit/actual flow (instrumental values)", "relational values", "human demand", "anthropogenic assets (incl. anthropogenic contribution)", "biodiversity/ecosystem condition", "ecosystem function", "drivers (direct/indirect, natural/anthropogenic)"
@@ -202,7 +201,7 @@
                             "id": "proj_temporalext",
                             "label": "Temporal Extent",
                             "type": "selectizeInput",
-                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                            "info": "<p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p>",
                             "input_options": {
                                 "choices": [
                                     "present",
@@ -220,7 +219,7 @@
                             "id": "proj_spatialext",
                             "label": "Spatial Extent",
                             "type": "selectizeInput",
-                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>ResNet intends to adopt a vocabulary reflecting shared terms and concepts across landscapes and themes. For now, enter keywords as free text. Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                            "info": "<p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p>",
                             "input_options": {
                                 "choices": [
                                     "local",
@@ -281,7 +280,7 @@
                                     "id":"dataset_spatial",
                                     "label":"Spatial",
                                     "type":"textInput",
-                                    "info":"Any information available about the spatial projection and resolution of the dataset (eg 'lat/long, 'WGS84', 'EPSG:4326', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')."
+                                    "info":"Any information available about the spatial projection and resolution of the dataset (eg 'lat/long', 'WGS84', 'EPSG:4326', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')."
                                 }
                             ]
                         }
