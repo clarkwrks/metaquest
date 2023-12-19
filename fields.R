@@ -51,7 +51,7 @@ textInput_ui <- function(inputId, label, value = "", width = NULL, placeholder =
   textInput(inputId, label, value, width, placeholder)
 }
 
-textAreaInput_ui <- function(inputId, label, value="", width="fit-content", height="8em", resize="both"){
+textAreaInput_ui <- function(inputId, label, value="", width=NULL, height="8em", resize="both"){
   textAreaInput(inputId, label, value, width, height, resize = resize)
 }
 
@@ -85,8 +85,9 @@ listInputRow_ui <- function(id, fields, ...){
       id = ns("div"),
       # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
       # fields_ns %>% transpose %>% map(buildField_ui), 
-      fields %>% map(buildField_ui),
-      deleteButton)
+      deleteButton,
+      fields %>% map(buildField_ui)
+      )
 }
 
 # build_ui ----------------------------------------------------------------

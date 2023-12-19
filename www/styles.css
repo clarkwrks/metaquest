@@ -181,7 +181,9 @@ body{
   flex-wrap: wrap;
 }
 */
-.inline .form-group {display: inline-flex;}
+
+
+.inline .form-group {display: inline-block;}
 
 .formListRow{
   margin:.5em;
