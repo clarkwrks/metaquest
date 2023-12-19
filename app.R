@@ -11,7 +11,7 @@ library(shinyjs) # toggle css classes etc
 library(listviewer)
 # devtools::install_github('timelyportfolio/reactR')
 library(shinyWidgets) # dropdown button
-library(reactR)
+# library(reactR)
 
 source("utils.R")
 # source("mods.R")
@@ -217,8 +217,8 @@ server <- function(input, output, session) {
         #   "See `Export` below."
         # ),
         # hr(),
-        h3("Workflow"),
-        h4("- Fill"),
+        h3("How to use this form:"),
+        h4("1- Fill"),
         div(
           p("Complete all relevant fields to the best of your knowledge and the information available."),
           tags$ul(
@@ -228,7 +228,7 @@ server <- function(input, output, session) {
             tags$li("You may prefer to write longer passages, such as the project abstract, outside of MetaQuest and then copy/paste the content into the field.")
           ),
           ),
-        h4("- Export"),
+        h4("2- Export"),
         div(
           p("Whenever you make significant changes, save your work to your local computer. Do this frequently or you may lose your work unexpectedly!"),
           tags$ul(
@@ -237,7 +237,7 @@ server <- function(input, output, session) {
             tags$li("Save the file to your local machine.")
           )
         ),
-        h4("- Import"),
+        h4("3- Import"),
         div(
           p("To resume working on a project, or switch to a different project, import the `.json` file you've previously exported."),
           tags$ul(
@@ -247,7 +247,7 @@ server <- function(input, output, session) {
             tags$li("Click `Confirm`. Fields should now automatically fill with your previous responses.")
           )
           ),
-        h4("- Submit"),
+        h4("4- Submit"),
         div(p("Once you've completed all applicable fields, email your saved/export file as an attachment to the Central Team."),
             tags$ul(
               tags$li("To: resnet.data@mcgill.ca"),

@@ -41,7 +41,7 @@ selectInput_ui <- function(inputId, label, choices, value = NULL,
               selectize, width, size)
 }
 
-selectizeInput_ui <- function(inputId, label, choices, value = "", multiple = FALSE, 
+selectizeInput_ui <- function(inputId, label, choices, value = NULL, multiple = FALSE, 
                               options = NULL, width = NULL){
   selectizeInput(inputId, label=label, choices=choices, selected = value,
                  multiple=multiple, options=c(options,dropdownParent = 'body'), width=width)
@@ -432,12 +432,20 @@ listInput_server <- function(listField, formData=formData, ...){
     
     observeEvent(input$addRow, {
       print("add row")
+      formData_rownames %>% print
+      current_rows <- reactiveValuesToList(formData) %>% 
+        names %>%
+        str_extract(paste0("(?<=\\b", id, "-)\\d+(?=-)")) %>%
+        discard(is.na) %>%
+        unique %>% as.numeric
+      # addRow_num <- findFreeNumber(current_rows)
       addRow_num <- findFreeNumber(formData_rownames)
       str_glue("Adding row {addRow_num} to formData") %>% print
       
       addListRow_rv(addRow_num, formData)
     })
     
+    # addListRow_rv(1, formData)
     addListRow_rv(1, formData)
     
   })

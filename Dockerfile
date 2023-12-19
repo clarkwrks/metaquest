@@ -1,4 +1,3 @@
-#FROM openanalytics/r-ver:4.2.1
 FROM openanalytics/r-ver:4.3.2
 
 LABEL maintainer="John Clark <jclark@xylemgeo.com>"
@@ -12,7 +11,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libxt-dev \
     libssl-dev \
     libssh2-1-dev \
-    libssl1.1 \
+    #libssl1.1 \
     libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
 

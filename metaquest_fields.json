@@ -13,7 +13,7 @@
                 {
                     "id": "preparerSection",
                     "heading": "About You",
-                    "description": "<p>Basic information about the individual preparing this metadata.</p>",
+                    "description": "<p>Basic information about who is preparing this metadata.</p>",
                     "fields": [
                         {
                             "id": "prep_name",
@@ -63,7 +63,7 @@
                 {
                     "id": "projectSection",
                     "heading": "About the Research Project",
-                    "description": "<p>Provide basic information about the research project.</p>",
+                    "description": "<p>Please describe the work that has been carried out within your project. Fill only what is relevant for your project.</p>",
                     "fields": [
                         {
                             "id": "proj_title",
@@ -233,7 +233,14 @@
                                     "create": true
                                 }
                             }
-                        }]
+                        },
+                        {
+                            "id": "proj_define",
+                            "label": "How did you define your ES? Please describe.",
+                            "type": "textAreaInput",
+                            "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p>"
+                        }
+                    ]
                     }
                     ]
                 }
