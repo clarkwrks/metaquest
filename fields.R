@@ -438,8 +438,8 @@ listInput_server <- function(listField, formData=formData, ...){
         str_extract(paste0("(?<=\\b", id, "-)\\d+(?=-)")) %>%
         discard(is.na) %>%
         unique %>% as.numeric
-      # addRow_num <- findFreeNumber(current_rows)
-      addRow_num <- findFreeNumber(formData_rownames)
+      addRow_num <- findFreeNumber(current_rows)
+      # addRow_num <- findFreeNumber(formData_rownames)
       str_glue("Adding row {addRow_num} to formData") %>% print
       
       addListRow_rv(addRow_num, formData)
