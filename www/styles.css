@@ -51,18 +51,6 @@ body{
   background:#ddd;
 }
 
-/*
-.panel-group .panel + .panel{
-  margin-top:0;
-  border-radius:0;
-}
-
-.panel-group .panel-heading{
-  border-radius:0;
-}
-
-*/
-
 .hidePanel { display: none !important; }
 
 .showPanel { display: block !important; }
@@ -75,7 +63,6 @@ body{
 
 .panel-group{
   margin-bottom:0;
-  background:darkseagreens;
 }
 .panel-section {
   padding:5px;
@@ -123,13 +110,14 @@ body{
   box-shadow: 0px .3em .3em #888;
 }
 .y-overflow-scroll{
-  max-height:14em;
+  max-height:30em;
   overflow-y:auto;
 }
 
 .control-label {
 	max-width: fit-content;
 	margin-left:5px;
+	height:25px;
 }
 
 /*
@@ -173,6 +161,7 @@ body{
   background-repeat: no-repeat;
   background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
   background-attachment: local, local, scroll, scroll;
+  border-width:medium;
 }
 
 /*
@@ -182,33 +171,67 @@ body{
 }
 */
 
-
+/*
 .inline .form-group {display: inline-block;}
+
 
 .formListRow{
   margin:.5em;
   padding:.5em;
+  display:flex;
+  flex-flow:row wrap;
 }
+*/
+.form-group {
+	margin-bottom: 15px;
+	align-items: start;
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.formGroup{	
+  align-items: start;
+	display: flex;
+	flex-flow: row wrap;
+  
+}
+/*
 .formListRow + .formListRow{
   border-top:#ddd medium solid;
 }
-
-.formListRow .form-group {margin-bottom: .5em}
-.formListRow label{
-  font-weight:normal;
-}
-
-
-.inline .form-group .control-label {min-width: fit-content; text-align: right; margin: 5px; vertical-align: middle;}
-.inline .form-group .form-control {min-width: 5em;}
-.inline label.control-label + div {width: 100%;}
-/* for some reason role=presentation comes and goes
-.inline label.control-label + div[role=presentation] {width: 100%;}
 */
-
-.selectize-control.multi .selectize-input > div{
-  background:lightgreen;
+.formListRow{
+  padding:5px;  
+  border-bottom:#ddd thin solid;
 }
+
+.formListDiv{
+  padding:0px;
+}
+
+.formListDiv .formListRow:nth-of-type(even) {
+  background: rgba(209, 225, 197, .3);
+}
+
+.formListRow .delete-row-btn{
+  float:right;
+  text-size: 75%;
+}
+
+.inline .form-group .control-label {min-width: fit-content; text-align: right; margin: 5px; vertical-align: middle; margin-bottom:0px;}
+
+/*
+no worky for selectize, so just leave them touching
+.inline .form-group .form-control {
+  min-width: 5em;
+  margin:0px 1px;
+}
+.inline .form-group .form-control .selectize-control{
+  padding:0px 1px;
+}
+*/
+.inline label.control-label + div {width: 100%;}
+
 
 /*
 .fa-info-circle{margin-top:2px;}
@@ -224,9 +247,9 @@ body{
 
 .panel-heading {display: flex}
 .panel-heading .shiny-input-radiogroup {display: inline-flex; height:0; padding-right: 3em}
-.panel-heading .shiny-input-radiogroup .control-label {font-weight:500; padding-right: .5em; padding-left: 3em; min-width: 17em;}
+.panel-heading .shiny-input-radiogroup .control-label {font-weight:500; margin-right: .5em; padding-left: 3em; min-width: 17em;}
 .panel-heading .shiny-input-radiogroup .radio-inline input[type="radio"]  {padding-left:5em; margin-top:3px}
-.panel-heading .panel-title {min-width:10em}
+.panel-heading .panel-title {min-width:10em;width:16em}
 .panel-status-text {margin-left: auto;}
 
 .btn.button-secondary{
@@ -237,7 +260,20 @@ body{
 #dropdown-menu-action_menu_dropdown {
 	padding: 0;
 }
+
+
+.dropdown-menu{
+  padding:0;
+}  
+
 .dropdown-menu li{
   margin:0 !important; 
 }
 
+blockquote{
+  font-size: revert;
+}
+
+code{
+  color: darkgreen;
+} 

@@ -1,5 +1,5 @@
 {
-    "version": "0.8.0",
+    "version": "0.8.4",
     "panels": [
         {
             "id": "generalPanel",
@@ -8,7 +8,7 @@
                 {
                     "id": "welcomeSection",
                     "heading": "Welcome!",
-                    "description": "<p><strong>Read the User Guide before proceeding.</strong> You can access the User Guide at any point from the Menu button in the top right. </p>"
+                    "description": "<p><strong>Please read the User Guide before proceeding.</strong> You can access the User Guide from the <code>Help</code> menu in the top right.</p><p>This tool was developed to assist with reporting and documenting research projects and data products, as required by the <a href=https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf target=_blank>NSERC ResNet Data Policy</a>.</p><p>While not all sections and fields may be applicable, please complete as much of the form as you are able.</p>"
                 },
                 {
                     "id": "preparerSection",
@@ -93,7 +93,7 @@
                             "id": "proj_abstract",
                             "label": "Abstract",
                             "type": "textAreaInput",
-                            "info": "<p>A brief abstract describing the project</p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>"
+                            "info": "<p>A brief abstract describing the project.</p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>"
                         }
                     ]
                 },
@@ -160,8 +160,7 @@
             "sections":[
                 {
                     "id": "keywordSection",
-                    "heading": "Project Keywords",
-                    "description": "<p>Please fill in as much as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. We want to be able to represent your work, but we also need some categories to give structure to all the data - for this we use a set of terms that might not totally comply with your understanding. For metadata collection here, we use 'ecosystem services' (ES) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system (--> 'aspects').</p><p>Each field also allows free-text, so you can supply additional project-specific keywords.</p>",
+                    "description": "<p>We want to be able to represent your work, but we also need some categories to give structure to all the data - for this we use a set of terms that might not totally comply with your understanding. For metadata collection here, we use 'ecosystem services' (ES) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system ('aspects'). </p><p>Please fill in as much as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. Each field has suggested keywords in a dropdown list, but you can also enter free-text to supply additional project-specific keywords. You can also provide multiple keywords in one field.</p>",
                     "fields": [
                         {
                             "id":"proj_keywords",
@@ -174,7 +173,7 @@
                             "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
                                 "choices": [
-                                    "crop provisioning", "grazed biomass provisioning", "timber provisioning", "non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products provisioning", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration services", "soil erosion control services", "water purification services", "flood prevention/water retention services", "riverine flood mitigation services (in-stream)", "coastal flood protection", "pollination services", "pest control services", "habitat maintenance services", "recreation-related services", "cultural aspects"
+                                    "crop", "grazed biomass", "timber", "non-timber forest products and other biomass (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration", "soil erosion control", "water purification", "flood prevention/water retention", "riverine flood mitigation (in-stream)", "coastal flood protection", "pollination", "pest control", "habitat maintenance", "recreation-related", "cultural"
                                 ],
                                 "multiple": true,
                                 "options": {
@@ -236,9 +235,12 @@
                         },
                         {
                             "id": "proj_define",
-                            "label": "How did you define your ES? Please describe.",
+                            "label": "How did you define your ES?",
                             "type": "textAreaInput",
-                            "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p>"
+                            "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p>",
+                            "input_options": {
+                                "placeholder":"What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?"
+                            }
                         }
                     ]
                     }
@@ -253,12 +255,16 @@
                 {
                     "id": "mainSection",
                     "heading": "",
+                    "description":"<p>A research project often produces one or multiple outputs. These output can take many forms, including tabular data (spreadsheets), model code, interview transcripts, multimedia, and spatial data.</p><p>We have a basis for how we share data within ResNet established by our <a href='https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf' target='_blank'>Data Policy and Network Agreement</a>:<blockquote><ul><li>Data will belong to the Landscapes and Themes which generated them.</li><li>Network members in these areas will have exclusive use for a maximum of six (6) months beginning from when the data is fully-acquired.</li><li>Data will be communicated to the Administrative center as rapidly as possible.</li><li>Network members will then have 12 months of privileged, password-protected access to the data.</li><li>Afterwards, data will be shared with the public on the Network website to be managed by the Network data manager.</li><ul></blockquote>The policy includes exceptions for cases that prohibit or limit access (e.g. restrictions inherited from data inputs, sensitivity of the data produced, or agreements with external parties.) These data sharing exceptions are addressed in the next section. Please list all data outputs here, regardless of exceptions. Essentially, <em><strong>you don't always have to share data, but we need to know it exists.</em></strong></p>",
                     "fields": [
                         {
                             "id":"datasets_summary",
                             "label":"Summary",
                             "type":"textAreaInput",
-                            "info":"A brief overview of the data products produced by this project."
+                            "info":"A brief overview of the data products produced by this project.",
+                            "input_options":{
+                                "placeholder":"Please provide a brief overview of project outputs. This is especially important if listing datasets below is inapplicable to the project."
+                            }
                         },
                         {
                             "id": "datasets",
@@ -274,20 +280,39 @@
                                 {
                                     "id": "dataset_format",
                                     "label": "Format",
+                                    "type": "selectizeInput",
+                                    "info": "<p>How is the data structured and/or stored?</p><p>Select from the dropdown list or type free text to create a custom option.</p>",
+                                    "input_options": {
+                                        "choices": [
+                                            "tabular (eg CSV, Excel spreadsheet)",
+                                            "interview (eg transcript, audio, video",
+                                            "model (eg code/script and parameters)",
+                                            "manuscript/document (eg PDF)",
+                                            "spatial raster (eg GeoTiff)",
+                                            "spatial points (eg shapefile, GeoJson, CSV WKT)",
+                                            "spatial lines (eg shapefile, GeoJson, CSV WKT)",
+                                            "spatial polygons (eg shapefile, GeoJson, CSV WKT)"
+                                        ],
+                                        "multiple": true,
+                                        "options": {
+                                            "create": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "id":"dataset_spatial",
+                                    "label":"Spatial",
                                     "type":"textInput",
-                                    "info":"selectInput with choices = Tabular, Spatial Points, Spatial Polygons, Spatial Raster, Other"
+                                    "info":"For spatial data, please provide the spatial projection (E.g. 'lat/long', 'WGS84', 'EPSG:4326', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs') and resolution (eg '300-m raster', 'census blocks').",
+                                    "input_options":{
+                                        "placeholder":"Where applicable."
+                                    }
                                 },
                                 {
                                     "id": "dataset_description",
                                     "label": "Description",
                                     "type": "textAreaInput",
                                     "info":"What does the dataset contain and represent? What is the purpose of the data, how can it be used? What are the units of measurement?"
-                                },
-                                {
-                                    "id":"dataset_spatial",
-                                    "label":"Spatial",
-                                    "type":"textInput",
-                                    "info":"Any information available about the spatial projection and resolution of the dataset (eg 'lat/long', 'WGS84', 'EPSG:4326', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')."
                                 }
                             ]
                         }
@@ -299,24 +324,25 @@
             "id": "exceptionsPanel",
             "title": "Data Sharing Exceptions",
             "condition":"Restrictions on publication?",
-            "info": "<p>Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this project?</p><p>Examples include studies involving Traditional Knowledge, human subjects, sensitive data, and data with existing license restrictions, among other considerations.</p><p>See ResNet Data Policy.</p>",
+            "info": "<p>Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this project?</p><p>Examples include studies involving Traditional Knowledge, human subjects, sensitive data, and data with existing license restrictions, among other considerations.</p><p>Please see the <a href='https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf' target='_blank'>ResNet Data Policy.</a></p>",
             "sections": [
                 {
                     "id": "mainSection",
                     "heading": "",
+                    "description":"<p>We have a basis for how we share data within the <a href='https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf' target='_blank'>ResNet Data Policy</a>, where we agreed upon data being “publically accessible after embargo”, acknowledging that there might be some considerations that prohibit or limit access (e.g. restrictions inherited from data inputs, sensitivity of the data produced, or agreements with external parties).</p><p>Here, we want to make sure all these considerations are taken into account. Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this project? Please describe them here.</p>",
                     "fields": [
                         {
                             "id": "exception_types",
                             "label": "Exception Types",
                             "type": "checkboxGroupInput",
-                            "info":"<p>Check all options that apply to project data products.</p><p>See ResNet Data Policy.</p>",
+                            "info":"<p>Check all options that apply to project data products.</p><p>Please see the <a href='https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf' target='_blank'>ResNet Data Policy.</a></p>",
                             "input_options": {
                                 "choices": [
                                     "Traditional Knowledge",
                                     "Human Subjects",
                                     "Sensitive Data",
                                     "Existing Restrictions",
-                                    "Other..."
+                                    "Other Exceptions"
                                 ]
                             }
                         },
@@ -324,7 +350,10 @@
                             "id": "exception_description",
                             "label": "Description",
                             "type": "textAreaInput",
-                            "info": "Detail the exceptions declared above. What are the specific conditions? Is a partial or anonymized release of project data feasible? Are there agreements in place with First Nations?"
+                            "info": "What are the specific conditions? Is a partial or anonymized release of data feasible? Are there agreements in place with First Nations?",
+                            "input_options":{
+                                "placeholder":"What are the specific conditions? Is a partial or anonymized release of data feasible? Are there agreements in place with First Nations?"
+                            }
                         }
                     ]
                 }
@@ -339,6 +368,7 @@
                 {
                     "id": "mainSection",
                     "heading": "",
+                    "description": "<p>Many research project incorporate existing data products as inputs. Properly attributing these sources and documenting how they were used is an important part of reproducible research.</p><p>Please provide a brief overview of the external data used in the <code>Summary</code> field, and list individual <code>Data Sources</code> as needed.</p>",
                     "fields": [
                         {
                             "id":"sources_summary",
@@ -348,7 +378,7 @@
                         },
                         {
                             "id": "sources",
-                            "label": "Sources",
+                            "label": "Data Sources",
                             "type": "listInput",
                             "fields": [
                                 {
@@ -358,34 +388,16 @@
                                     "info":"A succinct, descriptive title for this data source."
                                 },
                                 {
-                                    "id": "source_citation",
-                                    "label": "Citation",
-                                    "type":"textInput",
-                                    "info":"A formal citation for the dataset as provided by the creator or existing publications."
+                                    "id": "source_location",
+                                    "label": "Location",
+                                    "type": "textInput",
+                                    "info":"A URL or DOI that can be used to access this resource, or a description of how it was obtained."
                                 },
                                 {
                                     "id": "source_description",
                                     "label": "Description",
                                     "type": "textAreaInput",
                                     "info":"Briefly describe the dataset source, purpose, format, and relevance to the research project."
-                                },                                                 
-                                {
-                                    "id": "source_methods",
-                                    "label": "Methods",
-                                    "type": "textAreaInput",
-                                    "info": "Describe how the external data was incorporated into the research project."
-                                },                                
-                                {
-                                    "id": "source_location",
-                                    "label": "Location",
-                                    "type": "textInput",
-                                    "info":"A URL or DOI that can be used to access the dataset."
-                                },
-                                {
-                                    "id": "source_license",
-                                    "label": "License",
-                                    "type": "textInput",
-                                    "info":"Any licensing information provided by the dataset creator."
                                 }
                             ]
                         }
@@ -398,15 +410,25 @@
             "title":"Supplementary Information",
             "sections": [
                 {
-                    "id": "mainSection",
+                    "id": "commentsSection",
                     "heading": "",
+                    "description": "<p>Use this free space to record any additional comments or resources relevant to your project that were not covered by the previous sections.</p>",
                     "fields": [
                         {
                             "id":"supplementary_comments",
                             "label":"Comments",
                             "type":"textAreaInput",
-                            "info":"Free text area for additional comments and information relevant to this research project documentation."
-                        },
+                            "info":"Free text area for additional comments and information relevant to this research project documentation.",
+                            "input_options": {
+                                "placeholder":"Free text area for additional comments and information relevant to this research project documentation."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id":"externalSection",
+                    "description":"<p>External resources might include publications, conferences posters, technical documents describing established methodology, among others.</p>",
+                    "fields":[
                         {
                             "id": "external_resources",
                             "label": "External Resources",
@@ -423,13 +445,19 @@
                                     "id": "external_link",
                                     "label": "Location",
                                     "type":"textInput",
-                                    "info":"A URL or DOI that can be used to access this resource."
+                                    "info":"A URL or DOI that can be used to access this resource, or a description of how it was obtained.",
+                                    "input_options": {
+                                        "placeholder":"E.g. DOI, URL"
+                                    }
                                 },
                                 {
                                     "id": "external_description",
                                     "label": "Description",
                                     "type": "textAreaInput",
-                                    "info":"Describe the external resource and it's relevance to this research project documentation."
+                                    "info":"Describe the external resource and it's relevance to this research project.",
+                                    "input_options": {
+                                        "placeholder":"Describe the external resource and it's relevance to this research project documentation."
+                                    }
                                 }
                             ]
                         }

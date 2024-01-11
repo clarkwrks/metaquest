@@ -9,23 +9,17 @@ library(bsplus) # accordion
 library(shinyjs) # toggle css classes etc
 # library(reactR) # ?
 library(listviewer)
-# devtools::install_github('timelyportfolio/reactR')
 library(shinyWidgets) # dropdown button
-# library(reactR)
 
 source("utils.R")
-# source("mods.R")
-# source("quests.R")
 source("fields.R")
 
 # metaquest_fields <- read_json("metaquest_fields_tester_list.json")
 metaquest_fields <- read_json("metaquest_fields.json")
-# metaquest_fields <- read_json("metaquest_fields_tags.json")
-metaquest_version <- "0.8.0"
+metaquest_version <- "0.8.5"
 
 
 # main area ---------------------------------------------------------------
-
 
 main_area <- buildMetaQuest_ui(metaquest_fields)
 
@@ -44,58 +38,30 @@ help_panel <- div(
 )
 
 mgmt_panel <-    div(
-  downloadButton(
+  # downloadButton(
+  #   "exportMetaQuest",
+  #   label = "Save",
+  #   class = "fillWidth",
+  #   icon = shiny::icon("download")
+  # ),
+  actionButton(
     "exportMetaQuest",
-    label = "Export",
+    label = "Save",
     class = "fillWidth",
     icon = shiny::icon("download")
   ),
   actionButton(
     "importMetaQuest",
-    "Import",
+    "Load",
     class = "fillWidth",
     icon = shiny::icon("upload")
   )
 )
 
-## dev panel ----
-
-dev_panel <-  
-  bs_panel(
-    heading = div(class = "alert-danger", style = "text-align: center;",
-                  "!!!",
-                  div(style="font-size:x-small", 
-                      "This area is for testing only. 
-                      Improper use will crash the current session.",
-                      br(),
-                      "Unsaved changes will be lost."),
-                  "!!!"),
-    panel_type = "danger",
-    body = div(
-      actionButton("showInputButton", "Show Input", class ="fillWidth"),
-      actionButton("showFormDataButton", "Show Form Data", class = "fillWidth")
-      # hr(),
-      # numericInput("testNumeric", NULL, value = 1, width = "fit-content"),
-      # actionButton("testButton", "Go", class ="fillWidth")
-    )
-    )
-
-menu_accord <- bs_accordion(id = "menuAccord") %>% 
-  bs_set_opts(panel_type = "default", use_heading_link = FALSE
-  ) %>%
-  bs_append_noparent_toggle(title = "Help", 
-                            content = help_panel, override_id = "helpPanel", 
-                            status = FALSE) %>%
-  bs_append_noparent_toggle(title = "Manage File", 
-                            content = mgmt_panel, override_id = "mgmtPanel", 
-                            status = FALSE, 
-                            force_open = TRUE) %>%
-  bs_append_noparent_toggle(title = "Developer", 
-                            content = dev_panel, override_id = "devPanel", 
-                            status = FALSE)
 
 menu_group <-
-  div(class="btn-group",
+  div(
+    # class="btn-group",
       shinyWidgets::dropdownButton(
         mgmt_panel,
         icon = icon("save"),
@@ -104,7 +70,6 @@ menu_group <-
         circle = FALSE,
         # margin = "0",
         # size = "lg",
-        # inputId = "action_menu_test",
         label = "File"
       ),
       shinyWidgets::dropdownButton(
@@ -115,11 +80,12 @@ menu_group <-
         circle = FALSE,
         # margin = "0",
         # size = "lg",
-        # inputId = "action_menu_test2",
         label = "Help"
       )
   )
 
+
+# header ------------------------------------------------------------------
 
 
 fixed_header <- fixedPanel(
@@ -128,34 +94,21 @@ fixed_header <- fixedPanel(
   style = "background-color: white; border-bottom: solid; width:100%; z-index:9999",
   fluidRow(
     class = "fixed-header",
-    column(
-      3,
-      align = "right",
-      a(
-        img(src = "resnet-logo-4x-crop.png"),
-        href = "https://www.nsercresnet.ca/",
-        target = '_blank'
-      )
+    column(3,
+           align = "right",
+           a(
+             img(src = "ResNet-denser.png", height="60px"),
+             href = "https://www.nsercresnet.ca/",
+             target = '_blank'
+           )
     ),
-    column(
-      6,
-      align = "center",
-      h1("Metadata Questionnaire", style = "text-align: center;")
+    column(6, align = "center",
+           h2("Metadata Questionnaire", style = "text-align: center;")
     ),
-    # column(3, shinyWidgets::dropdownButton(
-    #   menu_accord,
-    #   icon = icon("bars"),
-    #   right = TRUE,
-    #   inline = TRUE,
-    #   circle = FALSE,
-    #   size = "lg",
-    #   inputId = "action_menu_dropdown",
-    #   label = "Menu"
-    # ))
     column(3,
            align = "left",
            menu_group
-          )
+    )
   )
 )
 
@@ -169,17 +122,16 @@ ui <- fluidPage(
   useShinyjs(),
   # theme = bs_theme("flatly", version = 5),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
+  
   div(fixed_header),
-
 
     div(id = "main-area",
         main_area, 
         div(
-          # class="d-flex flex-row float-end justify-content-end",
-            # style=("position:absolute; right:0; padding-right:15px;"),
-          align="center",
+            align="center",
             paste0("MetaQuest v", metaquest_version),
-            actionLink("showRVs", "", icon("wrench")))
+            actionLink("showRVs", "", icon("wrench"))
+          )
     )
 )
 
@@ -187,10 +139,8 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
-# build question hooks ----------------------------------------------------
+# build fields ----------------------------------------------------
   
-  ## formData rvs -----------------------------------------------------------
-
   formData <- reactiveValues(version = metaquest_version)
   buildMetaQuest_server(metaquest_fields, formData)
   
@@ -207,7 +157,7 @@ server <- function(input, output, session) {
           br(),
           strong("Save Early, Save Often! "),
           # em("See `Export` below.")
-          " - See `Export` below.",
+          " - See `Save` below.",
           hr()
           ),
       div(class="help-modal-body",
@@ -228,7 +178,7 @@ server <- function(input, output, session) {
             tags$li("You may prefer to write longer passages, such as the project abstract, outside of MetaQuest and then copy/paste the content into the field.")
           ),
           ),
-        h4("2- Export"),
+        h4("2- Save"),
         div(
           p("Whenever you make significant changes, save your work to your local computer. Do this frequently or you may lose your work unexpectedly!"),
           tags$ul(
@@ -237,9 +187,9 @@ server <- function(input, output, session) {
             tags$li("Save the file to your local machine.")
           )
         ),
-        h4("3- Import"),
+        h4("3- Load"),
         div(
-          p("To resume working on a project, or switch to a different project, import the `.json` file you've previously exported."),
+          p("To resume working on a project, or switch to a different project, import the `.json` file you've previously saved to your local computer."),
           tags$ul(
             tags$li("Open the `File` menu from the top right."),
             tags$li("Click `Import`."),
@@ -284,8 +234,10 @@ server <- function(input, output, session) {
 
 # rv modal ----------------------------------------------------------------
 
+  
   rvModal <- function(){
     modalDialog(
+      div(style = "min-height:60vh;overflow-y:auto",
       div(class = "alert-danger", style = "text-align: center;",
           "!!!",
           div(
@@ -295,19 +247,11 @@ server <- function(input, output, session) {
               "Unsaved changes will be lost."),
           "!!!"
           ),
-      navset_card_pill(
-        height = 450,
-        full_screen = TRUE,
-        # title = "HTML Widgets",
-        nav_panel(
-          # "Plotly",
-          card_title("Shiny Input"),
-          reactjsonOutput("input_peek")
-        ),
-        nav_panel(
-          card_title("FormData RV"),
-          reactjsonOutput("form_peek")
-        )
+      fillRow(flex = 1, 
+              bs_panel(heading = "Shiny Input", 
+                       body=reactjsonOutput("input_peek")),
+              bs_panel(heading = "FormData RV", 
+                       body=reactjsonOutput("form_peek")))
       ),
       size = "xl"#,
       # easyClose = TRUE
@@ -336,57 +280,7 @@ server <- function(input, output, session) {
   })
   
   
-# input env peek ----------------------------------------------------------
 
-  inputModal <- function(){
-    modalDialog(
-      title = "Shiny Input",
-      reactjsonOutput("input_peek"),
-      footer = tagList(
-        modalButton("Close")
-      ),
-      size = "l",
-      easyClose = TRUE
-    )
-  }
-  
-  observeEvent(input$showInputButton, {
-    showModal(inputModal())
-  })
-  
-  inputjson <- reactive({
-    reactiveValuesToList(input) %>% reactjson(sortKeys = TRUE)# %>% jsonlite::toJSON()
-  })
-  
-  output$input_peek <- renderReactjson({
-    inputjson()
-  })
-
-# form data peek ----------------------------------------------------------
-
-  formDataModal <- function(){
-    modalDialog(
-      title = "formData",
-      reactjsonOutput("form_peek"),
-      footer = tagList(
-        modalButton("Close")
-      ),
-      size = "l",
-      easyClose = TRUE
-    )
-  }
-  
-  observeEvent(input$showFormDataButton, {
-    showModal(formDataModal())
-  })
-  
-  formjson <- reactive({
-    reactiveValuesToList(formData) %>% reactjson(sortKeys = TRUE)
-  })
-  
-  output$form_peek <- renderReactjson({
-    formjson()
-  })
 
 #  json io ----------------------------------------------------------------
   
@@ -398,12 +292,41 @@ server <- function(input, output, session) {
       if(!(nchar(prep_name) > 1)) prep_name <- "unnamedPreparer"
     paste0(prep_name, "_metaquest_", prep_time, ".json")
   })
-  output$exportMetaQuest <- downloadHandler(
+
+  
+  exportModal <- function(){
+    modalDialog(
+      div(
+        p("Click 'Save' to download a copy of this form to your local computer."),
+        p("Please note: your work will not be saved within this website. You can upload this file later to resume working on the form."),
+        p("You will also need to email this file to ResNet to submit your work"),
+          ),
+      title = "Save File",
+      size = "l",
+      easyClose = FALSE,
+      footer = p("Filename: ", code(export_file_name()),
+                 downloadButton(
+                   "downloadJSON",
+                   label = "Save",
+                   class = "fillWidth, btn-success",
+                   icon = shiny::icon("download")
+                 ),
+                 modalButton("Dismiss")
+                 )
+    )
+  }
+  
+  output$downloadJSON <- downloadHandler(
     filename = export_file_name(),
     content = function(file) {
       formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
     }
   )
+  
+  observeEvent(input$exportMetaQuest, {
+    showModal(exportModal())
+  })
+  
 
 ## import ------------------------------------------------------------------
 
@@ -428,20 +351,6 @@ server <- function(input, output, session) {
             buttonLabel = "Browse...",
             placeholder = "No file selected"
           )), 
-          # bs_panel(panel_type = "danger", body = 
-          #            div(
-          #              h4(style="color:red;",
-          #     #             "Known Issue:", br(),
-          #     # "If there are multiple rows for any fields (ie you clicked 
-          #     # 'Add Row' to enter data for an additional item) you will need 
-          #     # to import twice.", br(), 
-          #     tags$ol(tags$li("Click 'Confirm'."), 
-          #             tags$li("Reopen this dialog."),
-          #             tags$li("Click 'Confirm' once more."),
-          #             tags$li("Your imported data should now display correctly.")
-          #             ), 
-          #             "This is a known issue with work in progress."
-          #     ))),
           bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
           import_compare
 
@@ -465,8 +374,7 @@ server <- function(input, output, session) {
   uploadjson <- reactive({
     file <- input$uploadMetaQuest
     ext <- tools::file_ext(file$datapath)
-    # uploadjson <- jsonlite::read_json(file$datapath) %>% unlist %>% reactjson(sortKeys = TRUE)
-    uploadjson <- jsonlite::read_json(file$datapath) %>% reactjson(sortKeys = TRUE)
+    uploadjson <- jsonlite::read_json(file$datapath, simplifyVector = TRUE) %>% reactjson(sortKeys = TRUE)
   })
   
   
@@ -478,11 +386,10 @@ server <- function(input, output, session) {
 observeEvent(input$importConfirmButton, {
   req(input$uploadMetaQuest)
   file <- input$uploadMetaQuest
-  import_data <- jsonlite::read_json(file$datapath) #%>% unlist
+  import_data <- jsonlite::read_json(file$datapath)
   
   valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
-  # print("valid inputs")
-  # print(valid_inputs)
+
   print("Importing")
   for(x in 1:length(valid_inputs)){
     input_name <- names(valid_inputs)[[x]]
@@ -490,22 +397,10 @@ observeEvent(input$importConfirmButton, {
     # freezeReactiveValue(input, input_name)
     formData[[input_name]] <- valid_inputs[[x]]
   }
-  # for(x in 1:length(valid_inputs)){
-  #   input_name <- names(valid_inputs)[[x]]
-  #   formData[[input_name]] <- valid_inputs[[x]]
-  # }
+
   removeModal()
 })
-  
-  # https://appsilon.com/how-to-safely-remove-a-dynamic-shiny-module/
-  # https://github.com/rstudio/shiny/issues/2374
-  # https://stackoverflow.com/questions/51515641/delete-corresponding-input-element-when-using-removeui
-  # https://stackoverflow.com/questions/60259473/shiny-reactive-input-add-and-delete
-  # https://gist.github.com/zappingseb/440691f109192be43eee239c5b2cee76
-  # https://community.rstudio.com/t/nested-server-modules-how-to-use-global-instead-of-local-namespace-inside-inner-module/103815/5
-  # https://stackoverflow.com/questions/63060605/r-shiny-insertui-and-observeevent-in-module
-  # https://github.com/rstudio/shiny/issues/2439
-  # https://www.r-bloggers.com/2020/02/shiny-add-removing-modules-dynamically/
+
 }
 
 # Run the application

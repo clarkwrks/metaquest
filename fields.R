@@ -51,8 +51,8 @@ textInput_ui <- function(inputId, label, value = "", width = NULL, placeholder =
   textInput(inputId, label, value, width, placeholder)
 }
 
-textAreaInput_ui <- function(inputId, label, value="", width=NULL, height="8em", resize="both"){
-  textAreaInput(inputId, label, value, width, height, resize = resize)
+textAreaInput_ui <- function(inputId, label, value="", placeholder=NULL, width="600px", height="8em", resize="both"){
+  textAreaInput(inputId, label, value, width, height, placeholder=placeholder, resize = resize)
 }
 
 listInput_ui <- function(inputId,  label, info,...){
@@ -63,9 +63,9 @@ listInput_ui <- function(inputId,  label, info,...){
     info_link <- div(class="pull-right", actionLink(ns("Info"), icon("info-circle")))
   }
   addRow <- actionButton(ns("addRow"), "Add Row", icon("plus"), class = "eightyWidth button-secondary")
-  div(
+  div(style="width:100%;",
     div(class = "control-label", tag("label", label), info_link),
-    div(class = "panel panel-default y-overflow-scroll scroll-shadows",
+    div(class = "panel panel-default y-overflow-scroll scroll-shadows formListDiv",
         addRow)
   )
 }
@@ -75,19 +75,26 @@ listInputRow_ui <- function(id, fields, ...){
   # fields_ns <- rowFields %>% mutate(id = ns(id))
   
   deleteButton <- actionButton(ns("DeleteRow"), "Delete", icon("trash"), 
-                               style="float:right; margin-right:.5em;", 
-                               class = "btn-danger")
+                               style="float:right; font-size:75%;", 
+                               class = "delete-row-btn btn-danger")
   # fields_ns %>% print
   # rowFieldsJson_ns <- rowFieldsJson %>% map(function(x) modify_at(x, "id", function(y) y=ns(y)))
   # rowFieldsJson_ns %>% print
   # fields_ns %>% transpose %>% print
-  div(class = "inline formGroup formListRow", 
-      id = ns("div"),
+  # div(class = "inline formGroup formListRow", 
+  #     id = ns("div"),
+  #     # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
+  #     # fields_ns %>% transpose %>% map(buildField_ui), 
+  #     deleteButton,
+  #     fields %>% map(buildField_ui)
+  #     )
+  div(
+      id = ns("div"), class=("formListRow"),
       # fields_ns %>% map(~buildField_ui(.x %>% as.list)), 
       # fields_ns %>% transpose %>% map(buildField_ui), 
       deleteButton,
-      fields %>% map(buildField_ui)
-      )
+      div(class = "inline formGroup", fields %>% map(buildField_ui))
+  )
 }
 
 # build_ui ----------------------------------------------------------------
