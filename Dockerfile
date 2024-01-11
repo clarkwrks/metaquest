@@ -15,15 +15,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# system library dependency for the euler app
-# RUN apt-get update && apt-get install -y \
-#     libmpfr-dev \
-#     && rm -rf /var/lib/apt/lists/*
-
 # basic shiny functionality
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
-# install dependencies of the euler app
+# req r packages
 RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets', 'reactR'))"
 #RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
 
@@ -33,9 +28,7 @@ RUN mkdir /root/metaquest
 RUN mkdir /root/metaquest/www
 COPY www /root/metaquest/www
 COPY app.R /root/metaquest
-COPY mods.R /root/metaquest
 COPY utils.R /root/metaquest
-COPY quests.R /root/metaquest
 COPY fields.R /root/metaquest
 COPY metaquest_fields.json /root/metaquest
 
