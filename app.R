@@ -7,7 +7,7 @@ library(tidyverse)
 library(bslib) # theme
 library(bsplus) # accordion
 library(shinyjs) # toggle css classes etc
-# library(reactR) # ?
+library(reactR) # json viewing
 library(listviewer)
 library(shinyWidgets) # dropdown button
 
@@ -319,6 +319,7 @@ server <- function(input, output, session) {
   output$downloadJSON <- downloadHandler(
     filename = export_file_name(),
     content = function(file) {
+      on.exit(removeModal())
       formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
     }
   )
