@@ -36,8 +36,4 @@ COPY Rprofile.site /usr/local/lib/R/etc/
 
 EXPOSE 3838
 
-# works local but not in shinyproxy docker
 CMD ["R", "-e", "shiny::runApp('/root/metaquest', host='0.0.0.0', port=3838)"]
-# does not work locally or in shinyproxy docker
-# CMD ["R", "-e", "shiny::runApp('/root/metaquest')"]
-# CMD ["R", "-q", "-e", "shiny::runApp('/root/metaquest')"]
