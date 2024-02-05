@@ -87,6 +87,7 @@ menu_group <-
 
 # header ------------------------------------------------------------------
 
+save_timer <- uiOutput("saveTimerPanel")
 
 fixed_header <- fixedPanel(
   left = 0,
@@ -109,11 +110,12 @@ fixed_header <- fixedPanel(
            align = "left",
            menu_group
     )
-  )
+  ),
+  save_timer
+  # textOutput("saveTimer")
 )
 
 # ui ----------------------------------------------------------------------
-
 
 ui <- fluidPage(
   bs_theme = "flatly",
@@ -124,7 +126,7 @@ ui <- fluidPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
   
   div(fixed_header),
-
+  
     div(id = "main-area",
         main_area, 
         div(
@@ -398,8 +400,37 @@ observeEvent(input$importConfirmButton, {
     # freezeReactiveValue(input, input_name)
     formData[[input_name]] <- valid_inputs[[x]]
   }
-
   removeModal()
+})
+
+
+# save timer ------------------------------------------------------------------
+
+
+
+saveTime <- reactiveVal()
+
+saveTime(now())
+
+observeEvent(input$exportMetaQuest, {
+  saveTime(now())
+})
+
+unsavedTime <- reactiveVal()
+
+output$saveTimerPanel <- renderUI({
+  
+  req(saveTime)
+  
+  unsavedTime <- difftime(now(), saveTime(), units="mins")
+  unsavedTime <- unsavedTime %>% round() %>% format()
+  invalidateLater(50000, session)
+  
+  div(style="position:fixed;width:100%;left:0;right:0;",
+      div(class="alert alert-danger", style = "min-width:25vw;max-width:75vw;margin-left:auto;margin-right:auto;", 
+          paste("Last saved:", unsavedTime))
+      
+      )
 })
 
 }

@@ -168,7 +168,7 @@
                             "fields":[
                         {
                             "id": "proj_service",
-                            "label": "Ecosystem Service(s)",
+                            "label": "Nature's Contributions to People",
                             "type": "selectizeInput",
                             "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
@@ -222,7 +222,7 @@
                             "input_options": {
                                 "choices": [
                                     "local",
-                                    "regiona/landscape",
+                                    "regional/landscape",
                                     "national",
                                     "global",
                                     "work is non-spatial"
@@ -235,7 +235,7 @@
                         },
                         {
                             "id": "proj_define",
-                            "label": "How did you define your ES?",
+                            "label": "How did you define your NCP?",
                             "type": "textAreaInput",
                             "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p>",
                             "input_options": {
