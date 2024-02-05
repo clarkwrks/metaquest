@@ -8,7 +8,7 @@ library(bslib) # theme
 library(bsplus) # accordion
 library(shinyjs) # toggle css classes etc
 library(reactR) # json viewing
-library(listviewer)
+library(listviewer) # also json viewing
 library(shinyWidgets) # dropdown button
 
 source("utils.R")
@@ -132,7 +132,8 @@ ui <- fluidPage(
         div(
             align="center",
             paste0("MetaQuest v", metaquest_version),
-            actionLink("showRVs", "", icon("wrench"))
+            actionLink("showRVs", "", icon("wrench")),
+            actionLink("plusMinutes", "", icon("plus"))
           )
     )
 )
@@ -185,7 +186,7 @@ server <- function(input, output, session) {
           p("Whenever you make significant changes, save your work to your local computer. Do this frequently or you may lose your work unexpectedly!"),
           tags$ul(
             tags$li("Open the `File` menu from the top right."),
-            tags$li("Click `Export`."),
+            tags$li("Click `Save`."),
             tags$li("Save the file to your local machine.")
           )
         ),
@@ -194,7 +195,7 @@ server <- function(input, output, session) {
           p("To resume working on a project, or switch to a different project, import the `.json` file you've previously saved to your local computer."),
           tags$ul(
             tags$li("Open the `File` menu from the top right."),
-            tags$li("Click `Import`."),
+            tags$li("Click `Load`."),
             tags$li("Navigate to the file you have saved to your local computer and select it."),
             tags$li("Click `Confirm`. Fields should now automatically fill with your previous responses.")
           )
@@ -416,7 +417,13 @@ observeEvent(input$exportMetaQuest, {
   saveTime(now())
 })
 
-unsavedTime <- reactiveVal()
+unsavedTime <- reactiveVal(
+  now()
+)
+
+observeEvent(input$plusMinutes, {
+  saveTime(saveTime() - minutes(3))
+})
 
 output$saveTimerPanel <- renderUI({
   
@@ -426,12 +433,14 @@ output$saveTimerPanel <- renderUI({
   unsavedTime <- unsavedTime %>% round() %>% format()
   invalidateLater(50000, session)
   
-  div(style="position:fixed;width:100%;left:0;right:0;",
-      div(class="alert alert-danger", style = "min-width:25vw;max-width:75vw;margin-left:auto;margin-right:auto;", 
-          paste("Last saved:", unsavedTime))
-      
-      )
+  if(unsavedTime > minutes(5)){
+  div(style="position:fixed;width:100%;left:0;right:0;margin-top:5px",
+      div(class="alert alert-danger", style = "min-width:25vw;max-width:35vw;margin-left:auto;margin-right:auto;", 
+          paste0("Last saved: ", unsavedTime, ". Unsaved work will be lost. No data is stored in this app. Please read the User Guide."))
+      )}
 })
+
+
 
 }
 
