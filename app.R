@@ -10,6 +10,9 @@ library(shinyjs) # toggle css classes etc
 library(reactR) # json viewing
 library(listviewer) # also json viewing
 library(shinyWidgets) # dropdown button
+install.packages("remotes")
+remotes::install_github("dreamRs/capture")
+library(capture)
 
 source("utils.R")
 source("fields.R")
@@ -134,7 +137,13 @@ ui <- fluidPage(
             paste0("MetaQuest v", metaquest_version),
             actionLink("showRVs", "", icon("wrench")),
             actionLink("plusMinutes", "", icon("plus"))
-          )
+          ),
+        capture_pdf(
+          selector = "body",
+          filename = "all-page",
+          icon("camera"), "Take screenshot of all page",
+          loading = loading()
+        )
     )
 )
 
