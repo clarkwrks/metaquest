@@ -10,9 +10,6 @@ library(shinyjs) # toggle css classes etc
 library(reactR) # json viewing
 library(listviewer) # also json viewing
 library(shinyWidgets) # dropdown button
-install.packages("remotes")
-remotes::install_github("dreamRs/capture")
-library(capture)
 
 source("utils.R")
 source("fields.R")
@@ -137,13 +134,7 @@ ui <- fluidPage(
             paste0("MetaQuest v", metaquest_version),
             actionLink("showRVs", "", icon("wrench")),
             actionLink("plusMinutes", "", icon("plus"))
-          ),
-        capture_pdf(
-          selector = "body",
-          filename = "all-page",
-          icon("camera"), "Take screenshot of all page",
-          loading = loading()
-        )
+          )
     )
 )
 
@@ -242,6 +233,9 @@ server <- function(input, output, session) {
   observeEvent(input$showTutorialModal, {
     showModal(tutorialModal())
   })
+  observeEvent(input$showTutorialModalTimer, {
+    showModal(tutorialModal())
+  })
   
 
 # rv modal ----------------------------------------------------------------
@@ -294,124 +288,6 @@ server <- function(input, output, session) {
   
 
 
-#  json io ----------------------------------------------------------------
-  
-## export ------------------------------------------------------------------
-
-  export_file_name <- reactive({
-      prep_name <- (formData$`prep_name-Input`) %>% str_remove_all("[^[:alnum:]]")
-      prep_time <- as.POSIXlt(Sys.time(), tz = "UTC") %>% format("%Y-%m-%d_%H-%M-%S")
-      if(!(nchar(prep_name) > 1)) prep_name <- "unnamedPreparer"
-    paste0(prep_name, "_metaquest_", prep_time, ".json")
-  })
-
-  
-  exportModal <- function(){
-    modalDialog(
-      div(
-        p("Click 'Save' to download a copy of this form to your local computer."),
-        p("Please note: your work will not be saved within this website. You can upload this file later to resume working on the form."),
-        p("You will also need to email this file to ResNet to submit your work"),
-          ),
-      title = "Save File",
-      size = "l",
-      easyClose = FALSE,
-      footer = p("Filename: ", code(export_file_name()),
-                 downloadButton(
-                   "downloadJSON",
-                   label = "Save",
-                   class = "fillWidth, btn-success",
-                   icon = shiny::icon("download")
-                 ),
-                 modalButton("Dismiss")
-                 )
-    )
-  }
-  
-  output$downloadJSON <- downloadHandler(
-    filename = export_file_name(),
-    content = function(file) {
-      on.exit(removeModal())
-      formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
-    }
-  )
-  
-  observeEvent(input$exportMetaQuest, {
-    showModal(exportModal())
-  })
-  
-
-## import ------------------------------------------------------------------
-
-  importModal <- function(){
-    import_compare <- bs_collapse(id = "import_compare", content = 
-                                    (fillRow(flex = 1, 
-                              bs_panel(heading = "Current File", 
-                                       body=reactjsonOutput("current_file_json")),
-                              bs_panel(heading = "Import File", 
-                                       body=reactjsonOutput("view_upload_json")))
-                      )
-    )
-    modalDialog(
-      div(style = "min-height:60vh;overflow-y:auto",
-          bs_panel(heading = "Select File to Import", 
-                   body = fileInput(
-            "uploadMetaQuest",
-            label = NULL,
-            multiple = FALSE,
-            accept = ".json",
-            width = NULL,
-            buttonLabel = "Browse...",
-            placeholder = "No file selected"
-          )), 
-          bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
-          import_compare
-
-      ),
-      title = "Import File",
-      size = "l",
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("importConfirmButton", "Confirm")
-    )
-    )
-  }
-  observeEvent(input$importMetaQuest, {
-    showModal(importModal())
-  })
-  
-  output$view_upload_json <- renderReactjson({
-    uploadjson()
-  })
-  
-  uploadjson <- reactive({
-    file <- input$uploadMetaQuest
-    ext <- tools::file_ext(file$datapath)
-    uploadjson <- jsonlite::read_json(file$datapath, simplifyVector = TRUE) %>% reactjson(sortKeys = TRUE)
-  })
-  
-  
-  output$current_file_json <- renderReactjson({
-    formjson()
-  })
-  
-
-observeEvent(input$importConfirmButton, {
-  req(input$uploadMetaQuest)
-  file <- input$uploadMetaQuest
-  import_data <- jsonlite::read_json(file$datapath)
-  
-  valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
-
-  print("Importing")
-  for(x in 1:length(valid_inputs)){
-    input_name <- names(valid_inputs)[[x]]
-    # print(input_name)
-    # freezeReactiveValue(input, input_name)
-    formData[[input_name]] <- valid_inputs[[x]]
-  }
-  removeModal()
-})
 
 
 # save timer ------------------------------------------------------------------
@@ -419,10 +295,9 @@ observeEvent(input$importConfirmButton, {
 
 
 saveTime <- reactiveVal()
-
 saveTime(now())
 
-observeEvent(input$exportMetaQuest, {
+observeEvent(input$downloadJSON, {
   saveTime(now())
 })
 
@@ -438,15 +313,150 @@ output$saveTimerPanel <- renderUI({
   
   req(saveTime)
   
-  unsavedTime <- difftime(now(), saveTime(), units="mins")
-  unsavedTime <- unsavedTime %>% round() %>% format()
-  invalidateLater(50000, session)
+  unsavedTime <- difftime(now(), saveTime(), units="mins") %>% 
+    round() %>% 
+    format()
+  # unsavedTime <- unsavedTime %>% round() %>% format()
   
-  if(unsavedTime > minutes(5)){
+  invalidateLater(10000, session)
+  
+  guideLink <- actionLink("showTutorialModalTimer", 
+               label= "User Guide.")
+  
+  if(unsavedTime > minutes(8)){
   div(style="position:fixed;width:100%;left:0;right:0;margin-top:5px",
-      div(class="alert alert-danger", style = "min-width:25vw;max-width:35vw;margin-left:auto;margin-right:auto;", 
-          paste0("Last saved: ", unsavedTime, ". Unsaved work will be lost. No data is stored in this app. Please read the User Guide."))
+      div(class="alert alert-danger text-center", 
+          style = "min-width:10vw;max-width:30vw;margin-left:auto;margin-right:auto;padding:0;", 
+          p(style="font-weight:bold;",
+            paste0("Last saved: ", unsavedTime, ".")
+            ),
+          p(style="font-size:x-small;",
+            "Unsaved work will be lost. No data is stored in this app. Please read the ", 
+            guideLink)
+          )
       )}
+})
+
+#  json io ----------------------------------------------------------------
+
+## export ------------------------------------------------------------------
+
+export_file_name <- reactive({
+  prep_name <- (formData$`prep_name-Input`) %>% str_remove_all("[^[:alnum:]]")
+  prep_time <- as.POSIXlt(Sys.time(), tz = "UTC") %>% format("%Y-%m-%d_%H-%M-%S")
+  if(!(nchar(prep_name) > 1)) prep_name <- "unnamedPreparer"
+  paste0(prep_name, "_metaquest_", prep_time, ".json")
+})
+
+
+exportModal <- function(){
+  modalDialog(
+    div(
+      p("Click 'Save' to download a copy of this form to your local computer."),
+      p("Please note: your work will not be saved within this website. You can upload this file later to resume working on the form."),
+      p("You will also need to email this file to ResNet to submit your work"),
+    ),
+    title = "Save File",
+    size = "l",
+    easyClose = FALSE,
+    footer = p("Filename: ", code(export_file_name()),
+               downloadButton(
+                 "downloadJSON",
+                 label = "Save",
+                 class = "fillWidth, btn-success",
+                 icon = shiny::icon("download")
+               ),
+               modalButton("Dismiss")
+    )
+  )
+}
+
+output$downloadJSON <- downloadHandler(
+  filename = export_file_name(),
+  content = function(file) {
+    on.exit({
+      saveTime(now())
+      removeModal()
+      })
+    formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
+  }
+)
+
+observeEvent(input$exportMetaQuest, {
+  showModal(exportModal())
+})
+
+
+## import ------------------------------------------------------------------
+
+importModal <- function(){
+  import_compare <- bs_collapse(id = "import_compare", content = 
+                                  (fillRow(flex = 1, 
+                                           bs_panel(heading = "Current File", 
+                                                    body=reactjsonOutput("current_file_json")),
+                                           bs_panel(heading = "Import File", 
+                                                    body=reactjsonOutput("view_upload_json")))
+                                  )
+  )
+  modalDialog(
+    div(style = "min-height:60vh;overflow-y:auto",
+        bs_panel(heading = "Select File to Import", 
+                 body = fileInput(
+                   "uploadMetaQuest",
+                   label = NULL,
+                   multiple = FALSE,
+                   accept = ".json",
+                   width = NULL,
+                   buttonLabel = "Browse...",
+                   placeholder = "No file selected"
+                 )), 
+        bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
+        import_compare
+        
+    ),
+    title = "Import File",
+    size = "l",
+    footer = tagList(
+      modalButton("Cancel"),
+      actionButton("importConfirmButton", "Confirm")
+    )
+  )
+}
+observeEvent(input$importMetaQuest, {
+  showModal(importModal())
+})
+
+output$view_upload_json <- renderReactjson({
+  uploadjson()
+})
+
+uploadjson <- reactive({
+  file <- input$uploadMetaQuest
+  ext <- tools::file_ext(file$datapath)
+  uploadjson <- jsonlite::read_json(file$datapath, simplifyVector = TRUE) %>% reactjson(sortKeys = TRUE)
+})
+
+
+output$current_file_json <- renderReactjson({
+  formjson()
+})
+
+
+observeEvent(input$importConfirmButton, {
+  req(input$uploadMetaQuest)
+  file <- input$uploadMetaQuest
+  import_data <- jsonlite::read_json(file$datapath)
+  
+  valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
+  
+  print("Importing")
+  for(x in 1:length(valid_inputs)){
+    input_name <- names(valid_inputs)[[x]]
+    # print(input_name)
+    # freezeReactiveValue(input, input_name)
+    formData[[input_name]] <- valid_inputs[[x]]
+  }
+  removeModal()
 })
 
 
