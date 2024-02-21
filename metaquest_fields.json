@@ -22,7 +22,7 @@
                         },
                         {
                             "id": "prep_affiliation",
-                            "label": "Affiliation",
+                            "label": "Association",
                             "type": "selectInput",
                             "info": "Your research group within ResNet. You can select multiple choices.",
                             "input_options": {
@@ -75,7 +75,7 @@
                             "id": "proj_location",
                             "label": "Location",
                             "type": "textInput",
-                            "info": "In general terms, the extent within research was conducted (eg 'Manitoba', 'Landscape 6', 'Canada')."
+                            "info": "In general terms, the extent within research was conducted (eg 'Manitoba', 'Landscape 6', 'Canada', 'Conceptual')."
                         },
                         {
                             "id": "proj_start",
@@ -100,7 +100,7 @@
                 {
                     "id": "contributorSection",
                     "heading": "Project Contributors",
-                    "description": "List individuals that contributed to this research project.",
+                    "description": "List individuals that contributed to this research project, including yourself.",
                     "fields": [
                         {
                             "id": "proj_contributors",
@@ -125,7 +125,7 @@
                                 },
                                 {
                                     "id": "affiliation",
-                                    "label": "Affiliation",
+                                    "label": "Association",
                                     "type": "selectizeInput",
                                     "info": "Contributor's research group within ResNet or relationship to the network. You can select multiple choices.",
                                     "input_options": {
@@ -147,6 +147,34 @@
                                         "options": {
                                         }
                                     }
+                                },
+                                {
+                                    "id": "contribution",
+                                    "label": "Contribution",
+                                    "type": "selectizeInput",
+                                    "input_options": {
+                                        "choices": [
+                                            "Equal", 
+                                            "Conceptualization",
+                                            "Data curation",
+                                            "Formal analysis",
+                                            "Funding acquisition",
+                                            "Investigation",
+                                            "Methodology",
+                                            "Project administration",
+                                            "Resources",
+                                            "Software",
+                                            "Supervision",
+                                            "Validation",
+                                            "Visualization",
+                                            "Writing - original draft",
+                                            "Writing - review & editing"
+                                        ],
+                                        "multiple": true,
+                                        "options": {
+                                            "create": true
+                                        }
+                                    }
                                 }
                             ]
                         }
@@ -160,7 +188,7 @@
             "sections":[
                 {
                     "id": "keywordSection",
-                    "description": "<p>We want to be able to represent your work, but we also need some categories to give structure to all the data - for this we use a set of terms that might not totally comply with your understanding. For metadata collection here, we use 'ecosystem services' (ES) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system ('aspects'). </p><p>Please fill in as much as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. Each field has suggested keywords in a dropdown list, but you can also enter free-text to supply additional project-specific keywords. You can also provide multiple keywords in one field.</p>",
+                    "description": "<p>We want to be able to represent your work, but we also need some categories to give structure to all the data and align/match similar pieces across ResNet. For this we use a set of terms that may differ from your own. We use 'Nature's Contributions to People' (NCP) for all that people receive from nature. We also ask you to assign a place that represents your work best within a broad social-ecological system ('aspects').</p><p>Please fill in as much as you can, and leave blank all that does not apply to your work, or you don't feel is relevant. Each field has suggested keywords in a dropdown list, but you can also enter free-text to supply additional project-specific keywords. You can also provide multiple keywords in one field.</p>",
                     "fields": [
                         {
                             "id":"proj_keywords",
@@ -173,7 +201,21 @@
                             "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
                                 "choices": [
-                                    "crop", "grazed biomass", "timber", "non-timber forest products and other biomass (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration", "soil erosion control", "water purification", "flood prevention/water retention", "riverine flood mitigation (in-stream)", "coastal flood protection", "pollination", "pest control", "habitat maintenance", "recreation-related", "cultural"
+                                    "crop", "grazed biomass", "timber", "non-timber forest products and other biomass (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration", "soil erosion control", "water purification", "flood prevention/water retention", "riverine flood mitigation (in-stream)", "coastal flood protection", "pollination", "pest control", "habitat maintenance", "recreation-related", "cultural", "peat", "aesthetic"
+                                ],
+                                "multiple": true,
+                                "options": {
+                                    "create": true
+                                }
+                            }
+                        },                        {
+                            "id": "proj_ecosystem",
+                            "label": "Ecosystem",
+                            "type": "selectizeInput",
+                            "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
+                            "input_options": {
+                                "choices": [
+                                    ""
                                 ],
                                 "multiple": true,
                                 "options": {
@@ -188,7 +230,7 @@
                             "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
                                 "choices": [
-                                    "supply/capacity/potential", "benefit/actual flow (instrumental values)", "relational values", "human demand", "anthropogenic assets (incl. anthropogenic contribution)", "biodiversity/ecosystem condition", "ecosystem function", "drivers (direct/indirect, natural/anthropogenic)"
+                                    "all", "supply/capacity/potential", "benefit/actual flow (instrumental values)", "relational values", "human demand", "anthropogenic assets (incl. anthropogenic contribution)", "biodiversity/ecosystem condition/structure", "ecosystem function", "drivers (direct/indirect, natural/anthropogenic)"
                                 ],
                                 "multiple": true,
                                 "options": {
@@ -237,7 +279,7 @@
                             "id": "proj_define",
                             "label": "How did you define your NCP?",
                             "type": "textAreaInput",
-                            "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p>",
+                            "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p><p>Inlcude units of measurement, if applicable.</p>",
                             "input_options": {
                                 "placeholder":"What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?"
                             }
@@ -263,7 +305,7 @@
                             "type":"textAreaInput",
                             "info":"A brief overview of the data products produced by this project.",
                             "input_options":{
-                                "placeholder":"Please provide a brief overview of project outputs. This is especially important if listing datasets below is inapplicable to the project."
+                                "placeholder":"A brief overview of the project outputs, i.e. what would be in the Results section of a paper. Your outputs could be field measurements, tables from a literature review, coded interview data, etc. This is especially important if listing datasets below is inapplicable to the project."
                             }
                         },
                         {
@@ -309,10 +351,30 @@
                                     }
                                 },
                                 {
+                                    "id": "data_exception_types",
+                                    "label": "Exception Types",
+                                    "type": "selectizeInput",
+                                    "info":"<p>Check all options that apply to project data products.</p><p>Please see the <a href='https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf' target='_blank'>ResNet Data Policy.</a></p>",
+                                    "input_options": {
+                                        "choices": [
+                                            "Traditional Knowledge",
+                                            "Human Subjects",
+                                            "Sensitive Data",
+                                            "Existing Restrictions",
+                                            "Other Exceptions"
+                                        ],
+                                        "multiple": true,
+                                        "options": {
+                                            "create": true
+                                        }
+                                    }
+                                },
+                                {
                                     "id": "dataset_description",
                                     "label": "Description",
                                     "type": "textAreaInput",
-                                    "info":"What does the dataset contain and represent? What is the purpose of the data, how can it be used? What are the units of measurement?"
+                                    "info":"What does the dataset contain and represent? What is the purpose of the data, how was it created, how can it be used? What are the units of measurement?",
+                                    "placeholder":"What does the dataset contain and represent? What is the purpose of the data, how was it created, how can it be used? What are the units of measurement?"
                                 }
                             ]
                         }
@@ -323,7 +385,6 @@
         {
             "id": "exceptionsPanel",
             "title": "Data Sharing Exceptions",
-            "condition":"Restrictions on publication?",
             "info": "<p>Are there any circumstances that limit or preclude the publication (open access) of datasets produced by this project?</p><p>Examples include studies involving Traditional Knowledge, human subjects, sensitive data, and data with existing license restrictions, among other considerations.</p><p>Please see the <a href='https://docs.nsercresnet.ca/pdfs/ResNet%20Data%20Policy.pdf' target='_blank'>ResNet Data Policy.</a></p>",
             "sections": [
                 {
@@ -362,13 +423,12 @@
         {
             "id":"sourcesPanel",
             "title":"External Data Sources",
-            "condition":"Incorporates external data?",
             "info":"Many research project incorporate existing data products as inputs. Properly attributing these sources and documenting how they were used is an important part of reproducible research.",
             "sections": [
                 {
                     "id": "mainSection",
                     "heading": "",
-                    "description": "<p>Many research project incorporate existing data products as inputs. Properly attributing these sources and documenting how they were used is an important part of reproducible research.</p><p>Please provide a brief overview of the external data used in the <code>Summary</code> field, and list individual <code>Data Sources</code> as needed.</p>",
+                    "description": "<p>Many research project incorporate existing data products as inputs. Properly attributing these sources and documenting how they were used is an important part of reproducible research.</p><p>External data sources might be any pre-existing data layer that you used for your work (e.g. a Digital Elevation Model, a land use/land cover map, or a spatial layer from another working group). It might be freely accessible, but need a citation, or come with some restrictions. </p><p>Please provide a brief overview of the external data used in the <code>Summary</code> field, and list individual <code>Data Sources</code> as needed.</p>",
                     "fields": [
                         {
                             "id":"sources_summary",
@@ -392,6 +452,12 @@
                                     "label": "Location",
                                     "type": "textInput",
                                     "info":"A URL or DOI that can be used to access this resource, or a description of how it was obtained."
+                                },
+                                {
+                                    "id": "source_date",
+                                    "label": "Date Accessed",
+                                    "type": "dateInput",
+                                    "info": "When was the external resources last accessed? Resources often change over time (e.g., Google Earth Engine layers)."
                                 },
                                 {
                                     "id": "source_description",

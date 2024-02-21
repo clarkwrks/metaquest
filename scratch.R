@@ -306,3 +306,18 @@ for(test in tester){
 x <- c("Crop provisioning", "Grazed biomass provisioning", "Timber provisioning", "Non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "Fish and other aquatic products provisioning", "Water supply (drinking, irrigation)", "Carbon storage (aboveground, belowground)", "Carbon sequestration", "Local (micro) climate regulation", "Air filtration services", "Soil erosion control services", "Water purification services", "Flood prevention/water retention services", "Riverine flood mitigation services (in-stream)", "Coastal flood protection", "Pollination services", "Pest control services", "Habitat maintenance services", "Recreation-related services", "Cultural aspects") %>% tolower()
 
 c("crop provisioning", "grazed biomass provisioning", "timber provisioning", "non-timber forest products and other biomass provisioning (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products provisioning", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration services", "soil erosion control services", "water purification services", "flood prevention/water retention services", "riverine flood mitigation services (in-stream)", "coastal flood protection", "pollination services", "pest control services", "habitat maintenance services", "recreation-related services", "cultural aspects")
+c("Equal",
+  "Conceptualization",
+  "Data curation",
+  "Formal analysis",
+  "Funding acquisition",
+  "Investigation",
+  "Methodology",
+  "Project administration",
+  "Resources",
+  "Software",
+  "Supervision",
+  "Validation",
+  "Visualization",
+  "Writing – original draft",
+  "Writing – review & editing")
