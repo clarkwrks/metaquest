@@ -321,3 +321,20 @@ c("Equal",
   "Visualization",
   "Writing – original draft",
   "Writing – review & editing")
+
+
+x <- jsonlite::read_json("/home/jclark/Downloads/unnamedPreparer_metaquest_2024-02-05_21-49-20.json")
+
+x1 <- x
+x1$test <- "whatever"
+
+x1[!(x1 %>% names)]
+
+keep(x1, str_detect(names(x1), names(x))) 
+str_detect(names(x1), names(x))
+
+x1[!(x1 %>% names)]
+
+x1[!names(x1) %in% names(x)]
+
+

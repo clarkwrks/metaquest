@@ -133,7 +133,8 @@ ui <- fluidPage(
             align="center",
             paste0("MetaQuest v", metaquest_version),
             actionLink("showRVs", "", icon("wrench")),
-            actionLink("plusMinutes", "", icon("plus"))
+            actionLink("plusMinutes", "", icon("plus")),
+            actionLink("mismatchInput", "", icon("table"))
           )
     )
 )
@@ -278,11 +279,11 @@ server <- function(input, output, session) {
   
   
   formjson <- reactive({
-    reactiveValuesToList(formData) %>% reactjson(sortKeys = TRUE)
+    reactiveValuesToList(formData)
   })
   
   output$form_peek <- renderReactjson({
-    formjson()
+    formjson() %>% reactjson(sortKeys = TRUE)
   })
   
   
@@ -399,8 +400,9 @@ importModal <- function(){
                                   )
   )
   modalDialog(
-    div(style = "min-height:60vh;overflow-y:auto",
-        bs_panel(heading = "Select File to Import", 
+    # div(#style = "overflow-y:auto",
+        div(style = "min-height:40vh;height:fit-content;max-height:60vh;overflow-y:auto",
+            bs_panel(heading = "Select File to Import", 
                  body = fileInput(
                    "uploadMetaQuest",
                    label = NULL,
@@ -427,18 +429,19 @@ observeEvent(input$importMetaQuest, {
 })
 
 output$view_upload_json <- renderReactjson({
-  uploadjson()
+  uploadjson() %>% reactjson(sortKeys = TRUE)
 })
 
 uploadjson <- reactive({
   file <- input$uploadMetaQuest
   ext <- tools::file_ext(file$datapath)
-  uploadjson <- jsonlite::read_json(file$datapath, simplifyVector = TRUE) %>% reactjson(sortKeys = TRUE)
+  # uploadjson <- jsonlite::read_json(file$datapath, simplifyVector = TRUE) %>% reactjson(sortKeys = TRUE)
+  uploadjson <- jsonlite::read_json(file$datapath)
 })
 
 
 output$current_file_json <- renderReactjson({
-  formjson()
+  formjson() %>% reactjson(sortKeys = TRUE)
 })
 
 
@@ -458,6 +461,49 @@ observeEvent(input$importConfirmButton, {
   }
   removeModal()
 })
+
+observeEvent(input$mismatchInput, {
+  # req(input$uploadMetaQuest)
+  
+  showModal(mismatchModal())
+  
+})
+
+mismatchjson <- reactive({
+  upload_input <- uploadjson()
+  upload_input$import_time <- now()
+  form_input <- formjson()
+  mismatch_inputs <- upload_input[!names(upload_input) %in% names(form_input)]
+  mismatch_inputs %>% print
+})
+
+
+output$mismatch_json <- renderReactjson({
+  mismatchjson() %>% reactjson(sortKeys = TRUE)
+})
+
+mismatchModal <- function(){
+
+  
+  modalDialog(
+    div(#style = "min-height:60vh;overflow-y:auto",
+        textOutput("import_mismatch"),
+        verbatimTextOutput("import_mismatch_verbatim"),
+        reactjsonOutput("mismatch_json"),
+      fillRow(flex = 1,
+              bs_panel(heading = "Current File",
+                       body=reactjsonOutput("current_file_json")),
+              bs_panel(heading = "Import File",
+                       body=reactjsonOutput("view_upload_json"))
+      )
+    ),
+    title = "Mismatch",
+    size = "l",
+    footer = tagList(
+      modalButton("Close")
+    )
+  )
+}
 
 
 
