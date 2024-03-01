@@ -201,7 +201,7 @@
                             "info": "<p>A list of keywords describing the research project to assist with searching and discovery.</p> <p>Keywords can be short phrases including spaces. Press enter to add the current text to the list, and begin typing to start another keyword. </p><p> <a href=https://www.springer.com/gp/authors-editors/authorandreviewertutorials/writing-a-journal-manuscript/title-abstract-and-keywords/10285522 target=_blank> Springer Guide: Titles, Abstracts, and Keywords </a></p>",
                             "input_options": {
                                 "choices": [
-                                    "crop", "grazed biomass", "timber", "non-timber forest products and other biomass (e.g. maple syrup tapping, caribou hunting)", "fish and other aquatic products", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration", "soil erosion control", "water purification", "flood prevention/water retention", "riverine flood mitigation (in-stream)", "coastal flood protection", "pollination", "pest control", "habitat maintenance", "recreation-related", "cultural", "peat", "aesthetic"
+                                    "crop", "grazed biomass", "timber/firewood", "wild food (e.g. maple syrup tapping, caribou hunting, mushrooms)", "fish and other aquatic products", "water supply (drinking, irrigation)", "carbon storage (aboveground, belowground)", "carbon sequestration", "local (micro) climate regulation", "air filtration", "soil erosion control", "water purification", "flood prevention/water retention", "riverine flood mitigation (in-stream)", "coastal flood protection", "pollination", "pest control", "habitat maintenance", "recreation-related", "cultural", "peat", "aesthetic"
                                 ],
                                 "multiple": true,
                                 "options": {
@@ -246,7 +246,7 @@
                             "input_options": {
                                 "choices": [
                                     "present",
-                                    "future (e.g. scenarios, management comparison)",
+                                    "future/scenario",
                                     "past",
                                     "work is not time dependant"
                                 ],
@@ -279,9 +279,9 @@
                             "id": "proj_define",
                             "label": "How did you define your NCP?",
                             "type": "textAreaInput",
-                            "info": "<p>What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?</p><p>Inlcude units of measurement, if applicable.</p>",
+                            "info": "<p>What did you include in it, what not? E.g. for wild food: what is being harvested? For water purification: which pollutant(s)?</p><p>Inlcude units of measurement, if applicable.</p>",
                             "input_options": {
-                                "placeholder":"What did you include in it, what not? E.g. for non-timber forest products: what exactly? For water purification: purification from what pollutant(s)?"
+                                "placeholder":"What did you include in it, what not? E.g. for wild food: what is being harvested? For water purification: which pollutant(s)?"
                             }
                         }
                     ]
@@ -327,7 +327,7 @@
                                     "input_options": {
                                         "choices": [
                                             "tabular (eg CSV, Excel spreadsheet)",
-                                            "interview (eg transcript, audio, video",
+                                            "interview (eg transcript, audio, video)",
                                             "model (eg code/script and parameters)",
                                             "manuscript/document (eg PDF)",
                                             "spatial raster (eg GeoTiff)",
@@ -373,8 +373,18 @@
                                     "id": "dataset_description",
                                     "label": "Description",
                                     "type": "textAreaInput",
-                                    "info":"What does the dataset contain and represent? What is the purpose of the data, how was it created, how can it be used? What are the units of measurement?",
-                                    "placeholder":"What does the dataset contain and represent? What is the purpose of the data, how was it created, how can it be used? What are the units of measurement?"
+                                    "info": "What does the dataset contain and represent? What is the purpose of the data, how was it created, how can it be used? What are the units of measurement?",
+                                    "input_options":{
+                                        "placeholder":"What does the dataset contain and represent? What are the units of measurement?"
+                                    }
+                                },
+                                {
+                                    "id": "dataset_methods",
+                                    "label": "Methods",
+                                    "type": "textAreaInput",
+                                    "input_options":{
+                                        "placeholder":"How was it created?"
+                                    }
                                 }
                             ]
                         }
