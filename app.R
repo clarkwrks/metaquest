@@ -10,14 +10,13 @@ library(shinyjs) # toggle css classes etc
 library(reactR) # json viewing
 library(listviewer) # also json viewing
 library(shinyWidgets) # dropdown button
+library(pagedown) # render to pdf on localhost with chrome
 
 source("utils.R")
 source("fields.R")
 
-# metaquest_fields <- read_json("metaquest_fields_tester_list.json")
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.8.6"
-
+metaquest_version <- "0.8.7"
 
 # main area ---------------------------------------------------------------
 
@@ -38,12 +37,6 @@ help_panel <- div(
 )
 
 mgmt_panel <-    div(
-  # downloadButton(
-  #   "exportMetaQuest",
-  #   label = "Save",
-  #   class = "fillWidth",
-  #   icon = shiny::icon("download")
-  # ),
   actionButton(
     "exportMetaQuest",
     label = "Save",
@@ -61,15 +54,12 @@ mgmt_panel <-    div(
 
 menu_group <-
   div(
-    # class="btn-group",
       shinyWidgets::dropdownButton(
         mgmt_panel,
         icon = icon("save"),
         right = TRUE,
         inline = TRUE,
         circle = FALSE,
-        # margin = "0",
-        # size = "lg",
         label = "File"
       ),
       shinyWidgets::dropdownButton(
@@ -78,8 +68,6 @@ menu_group <-
         right = TRUE,
         inline = TRUE,
         circle = FALSE,
-        # margin = "0",
-        # size = "lg",
         label = "Help"
       )
   )
@@ -87,7 +75,6 @@ menu_group <-
 
 # header ------------------------------------------------------------------
 
-save_timer <- uiOutput("saveTimerPanel")
 
 fixed_header <- fixedPanel(
   left = 0,
@@ -111,8 +98,7 @@ fixed_header <- fixedPanel(
            menu_group
     )
   ),
-  save_timer
-  # textOutput("saveTimer")
+  uiOutput("saveTimerPanel")
 )
 
 # ui ----------------------------------------------------------------------
@@ -132,6 +118,7 @@ ui <- fluidPage(
         div(
             align="center",
             paste0("MetaQuest v", metaquest_version),
+            br(),
             actionLink("showRVs", "", icon("wrench")),
             actionLink("plusMinutes", "", icon("plus")),
             actionLink("mismatchInput", "", icon("table"))
@@ -504,6 +491,54 @@ mismatchModal <- function(){
     )
   )
 }
+
+
+observeEvent(input$buildPDF, {
+  output$downloadBtn <- renderUI({
+    # add a spinner which blocks the UI
+    show_modal_spinner()
+    # launch the PDF file generation
+    pagedown::chrome_print(
+      # template_file(input$template),
+      input ="http://127.0.0.1:6786/",
+      output = tempfile(fileext = ".pdf"),
+      extra_args = chrome_extra_args(),
+      selector="#main-area",
+      verbose = 1,
+      async = TRUE # returns a promise
+    )$then(
+      onFulfilled = function(value) {
+        showNotification(
+          paste("PDF file succesfully generated"),
+          type = "message"
+        )
+        output$downloadPDF <- downloadHandler(
+          filename = function() {
+            paste0(input$template, ".pdf")
+          },
+          content = function(file) {
+            file.copy(value, file)
+          },
+          contentType = "application/pdf"
+        )
+        # return a download button
+        downloadButton("downloadPDF", paste("Download", input$template))
+      },
+      onRejected = function(error) {
+        showNotification(
+          error$message,
+          duration = NULL,
+          type = "error"
+        )
+        HTML("")
+      }
+    )$finally(remove_modal_spinner)
+  })
+})
+
+observeEvent(input$template, {
+  output$downloadBtn <- renderUI(HTML(""))
+})
 
 
 

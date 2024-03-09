@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
 # req r packages
-RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets', 'reactR'))"
+RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets', 'reactR', 'pagedown'))"
 #RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
 
 
