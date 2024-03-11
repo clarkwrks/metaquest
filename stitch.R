@@ -3,7 +3,6 @@
 # Need to capture deprecated/unmatched user input
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.8.6"
 input_fields <- read_json("test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
 
 
@@ -105,7 +104,7 @@ buildUnmatched <- function(metaquest_json, input_json){
 
 # stitch report -----------------------------------------------------------
 
-stitchMetaquest <- function(metaquest_json, input_json_path, exportToPDF=FALSE){
+stitchMetaquest <- function(input_json_path, metaquest_json, exportToPDF=FALSE){
   
   out_filename <- input_json_path %>% basename %>% tools::file_path_sans_ext()
   input_json <- read_json(input_json_path)
@@ -132,6 +131,11 @@ stitchMetaquest <- function(metaquest_json, input_json_path, exportToPDF=FALSE){
   
 }
 
-stitchMetaquest(metaquest_fields, "test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
-stitchMetaquest(metaquest_fields, "test_data/AgnesVari_metaquest_2024-01-30_16-34-10.json", exportToPDF=TRUE)
+metaquest_fields <- read_json("metaquest_fields.json")
+input_fields <- read_json("test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
+
+list.files("to_convert", full.names = TRUE) %>% map(stitchMetaquest, metaquest_fields, exportToPDF = TRUE)
+
+# stitchMetaquest(metaquest_fields, "test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
+# stitchMetaquest(metaquest_fields, "test_data/AgnesVari_metaquest_2024-01-30_16-34-10.json", exportToPDF=TRUE)
 
