@@ -13,13 +13,21 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libssh2-1-dev \
     #libssl1.1 \
     libxml2-dev \
+    libpoppler-cpp-dev \
     && rm -rf /var/lib/apt/lists/*
+
+
+RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update -qq && \
+    apt-get -y install \
+    ./google-chrome-stable_current_amd64.deb && \ 
+    rm google-chrome-stable_current_amd64.deb
 
 # basic shiny functionality
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"
 
 # req r packages
-RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets', 'reactR', 'pagedown'))"
+RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shinyjs', 'jsonlite', 'listviewer', 'shinyWidgets', 'reactR', 'pagedown', 'shinybusy', 'promises', 'future'))"
 #RUN R -q -e "devtools::install_github('timelyportfolio/reactR')"
 
 

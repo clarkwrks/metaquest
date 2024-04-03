@@ -2,9 +2,6 @@
 # Match field ID's to user generated JSON to pull values
 # Need to capture deprecated/unmatched user input
 
-metaquest_fields <- read_json("metaquest_fields.json")
-input_fields <- read_json("test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
-
 
 # parse input -------------------------------------------------------------
 
@@ -104,7 +101,7 @@ buildUnmatched <- function(metaquest_json, input_json){
 
 # stitch report -----------------------------------------------------------
 
-stitchMetaquest <- function(input_json_path, metaquest_json, exportToPDF=FALSE){
+stitchMetaquestFromJSON <- function(input_json_path, metaquest_json){
   
   out_filename <- input_json_path %>% basename %>% tools::file_path_sans_ext()
   input_json <- read_json(input_json_path)
@@ -115,27 +112,95 @@ stitchMetaquest <- function(input_json_path, metaquest_json, exportToPDF=FALSE){
     div(h3("Unmatched Input"),
         buildUnmatched(metaquest_json, input_json)
     )
-  )
+    )
   
   report_html_path <- paste0("temp/", out_filename, ".html")
+  report_json_path <- paste0("temp/", out_filename, ".json")
+  report_pdf_path <- paste0("temp/", out_filename, ".pdf")
   
-  report_out <- report_html %>% htmltools::save_html(report_html_path)
-  
-  if(exportToPDF == TRUE){
-    report_out <- chrome_print(report_html_path, paste0("temp/", out_filename, ".pdf"))
-    print("HTML report created and converted to PDF")
-  } else {
-    report_out
-    print("HTML report created")
+  if (file.exists(report_pdf_path)) {
+    # delete file if it exists
+    file.remove(report_pdf_path)
   }
   
+  # write json
+  write_json(input_json, report_json_path)
+  
+  # stitch html
+  htmltools::save_html(report_html, report_html_path)
+  
+  # print html to pdf
+  chrome_print(report_html_path, "temp/temp.pdf")
+
+  # attach json to pdf
+  system(
+    str_glue("pdfattach -replace 'temp/temp.pdf' '{report_json_path}' '{report_pdf_path}'")
+  )
+
 }
 
-metaquest_fields <- read_json("metaquest_fields.json")
-input_fields <- read_json("test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
+stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
 
-list.files("to_convert", full.names = TRUE) %>% map(stitchMetaquest, metaquest_fields, exportToPDF = TRUE)
+  report_html_path <- tempfile(fileext=".html")
+  report_json_path <- tempfile(fileext=".json")
+  report_pdf_path <- tempfile(fileext=".pdf")
+  report_pdfattach_path <- tempfile(fileext=".pdf")
+  
+  jsonlite::write_json(shiny_input, report_json_path, pretty = TRUE)
+  input_json <- read_json(report_json_path)
+  
+  
+  report_html <- div(
+    includeCSS("report.css"),
+    metaquest_json$panels %>% map(buildPanel, input_json = input_json),
+    div(h3("Unmatched Input"),
+        buildUnmatched(metaquest_json, input_json)
+    )
+  )
 
-# stitchMetaquest(metaquest_fields, "test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
-# stitchMetaquest(metaquest_fields, "test_data/AgnesVari_metaquest_2024-01-30_16-34-10.json", exportToPDF=TRUE)
+  # write json
+  print("Saving JSON")
+  write_json(input_json, report_json_path)
+  
+  # stitch html
+  print("Stitching HTML")
+  htmltools::save_html(report_html, report_html_path)
+  
+  # print html to pdf
+  print("Printing HTML to PDF")
+  chrome_print(report_html_path, report_pdf_path,
+               extra_args = chrome_extra_args(),
+               verbose = 1,
+               async = TRUE # returns a promise
+  ) %>% then(~{
+    system(
+      str_glue("pdfattach -replace '{report_pdf_path}' '{report_json_path}' '{report_pdfattach_path}'")
+    )
+    # return(report_pdfattach_path)
+  }) %>%
+    then(~{
+      report_pdfattach_path
+    })
+}
 
+# metaquest_fields <- read_json("metaquest_fields.json")
+# stitchMetaquestFromShiny(test_json, metaquest_fields)
+# tjs <- stitchMetaquestFromShiny(test_json, metaquest_fields)
+
+# input_fields <- read_json("test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
+
+# list.files("to_convert", full.names = TRUE) %>% map(stitchMetaquestFromJSON, metaquest_fields)
+# 
+# test_json <- "to_convert/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json"
+# 
+# stitchMetaquestFromJSON(test_json, metaquest_fields)
+# 
+
+# tjson <- tempfile(tmpdir="temp", fileext=".json")
+# system(
+#   str_glue("pdfdetach 'pdf_test/test.pdf' -save 1 -o '{tjson}'")
+# )
+# read_json(tjson)
+
+
+# test <- system("pdfattach -replace 'pdf_test/test.pdf' 'to_convert/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json' 'pdf_test/test1.pdf'", intern=TRUE)

@@ -11,9 +11,13 @@ library(reactR) # json viewing
 library(listviewer) # also json viewing
 library(shinyWidgets) # dropdown button
 library(pagedown) # render to pdf on localhost with chrome
+library(shinybusy)
+library(promises)
+library(future)
 
 source("utils.R")
 source("fields.R")
+source("stitch.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
 metaquest_version <- "0.8.7"
@@ -21,6 +25,18 @@ metaquest_version <- "0.8.7"
 # main area ---------------------------------------------------------------
 
 main_area <- buildMetaQuest_ui(metaquest_fields)
+
+# for printing html -> pdf
+chrome_extra_args <- function(default_args = c("--disable-gpu")) {
+  args <- default_args
+  # Test whether we are in a shinyapps container
+  if (identical(Sys.getenv("R_CONFIG_ACTIVE"), "shinyapps")) {
+    args <- c(args,
+              "--no-sandbox", # required because we are in a container
+              "--disable-dev-shm-usage") # in case of low available memory
+  }
+  args
+}
 
 # menu --------------------------------------------------------------------
 
@@ -329,11 +345,52 @@ output$saveTimerPanel <- renderUI({
 
 ## export ------------------------------------------------------------------
 
+# export_file_name <- reactive({
+#   prep_name <- (formData$`prep_name-Input`) %>% str_remove_all("[^[:alnum:]]")
+#   prep_time <- as.POSIXlt(Sys.time(), tz = "UTC") %>% format("%Y-%m-%d_%H-%M-%S")
+#   if(!(nchar(prep_name) > 1)) prep_name <- "unnamedPreparer"
+#   paste0(prep_name, "_metaquest_", prep_time, ".json")
+# })
+# 
+# 
+# exportModal <- function(){
+#   modalDialog(
+#     div(
+#       p("Click 'Save' to download a copy of this form to your local computer."),
+#       p("Please note: your work will not be saved within this website. You can upload this file later to resume working on the form."),
+#       p("You will also need to email this file to ResNet to submit your work"),
+#     ),
+#     title = "Save File",
+#     size = "l",
+#     easyClose = FALSE,
+#     footer = p("Filename: ", code(export_file_name()),
+#                downloadButton(
+#                  "downloadJSON",
+#                  label = "Save",
+#                  class = "fillWidth, btn-success",
+#                  icon = shiny::icon("download")
+#                ),
+#                modalButton("Dismiss")
+#     )
+#   )
+# }
+# 
+# output$downloadJSON <- downloadHandler(
+#   filename = export_file_name(),
+#   content = function(file) {
+#     on.exit({
+#       saveTime(now())
+#       removeModal()
+#       })
+#     formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
+#   }
+# )
+
 export_file_name <- reactive({
   prep_name <- (formData$`prep_name-Input`) %>% str_remove_all("[^[:alnum:]]")
   prep_time <- as.POSIXlt(Sys.time(), tz = "UTC") %>% format("%Y-%m-%d_%H-%M-%S")
   if(!(nchar(prep_name) > 1)) prep_name <- "unnamedPreparer"
-  paste0(prep_name, "_metaquest_", prep_time, ".json")
+  paste0(prep_name, "_metaquest_", prep_time, ".pdf")
 })
 
 
@@ -349,7 +406,7 @@ exportModal <- function(){
     easyClose = FALSE,
     footer = p("Filename: ", code(export_file_name()),
                downloadButton(
-                 "downloadJSON",
+                 "downloaPDF",
                  label = "Save",
                  class = "fillWidth, btn-success",
                  icon = shiny::icon("download")
@@ -359,16 +416,84 @@ exportModal <- function(){
   )
 }
 
-output$downloadJSON <- downloadHandler(
-  filename = export_file_name(),
+output$downloaPDF <- downloadHandler(
+  filename = function() {export_file_name()},
   content = function(file) {
-    on.exit({
-      saveTime(now())
-      removeModal()
-      })
-    formData %>% reactiveValuesToList() %>% jsonlite::write_json(., file, pretty = TRUE)
+    
+        on.exit({
+          saveTime(now())
+          removeModal()
+          })
+    
+    show_modal_spinner(text="Rendering report...")
+    
+    shiny_input <- isolate(formData %>% reactiveValuesToList())
+    
+    # launch the PDF file generation
+    future_promise(stitchMetaquestFromShiny(
+      shiny_input = shiny_input,
+      metaquest_json = metaquest_fields
+    ))$then(
+      onFulfilled = function(value) {
+        showNotification(
+          paste("PDF file succesfully generated"),
+          type = "message"
+        )
+        
+        file.copy(value, file)
+        
+      },
+      onRejected = function(error) {
+        showNotification(
+          error$message,
+          duration = NULL,
+          type = "error"
+        )
+        HTML("")
+      }
+    )$finally({
+      # Sys.sleep(5)
+      remove_modal_spinner
+    })
   }
 )
+
+output$testDLbutton <- downloadHandler(
+  filename="test.pdf",
+  content=function(file){
+    show_modal_spinner(text="Rendering report...")
+    
+    shiny_input <- isolate(formData %>% reactiveValuesToList())
+    
+    # launch the PDF file generation
+    future_promise(stitchMetaquestFromShiny(
+      shiny_input = shiny_input,
+      metaquest_json = metaquest_fields
+    ))$then(
+      onFulfilled = function(value) {
+        showNotification(
+          paste("PDF file succesfully generated"),
+          type = "message"
+        )
+
+            file.copy(value, file)
+
+      },
+      onRejected = function(error) {
+        showNotification(
+          error$message,
+          duration = NULL,
+          type = "error"
+        )
+        HTML("")
+      }
+    )$finally({
+      # Sys.sleep(5)
+      remove_modal_spinner
+    })
+  }
+)
+
 
 observeEvent(input$exportMetaQuest, {
   showModal(exportModal())
@@ -394,7 +519,7 @@ importModal <- function(){
                    "uploadMetaQuest",
                    label = NULL,
                    multiple = FALSE,
-                   accept = ".json",
+                   accept = c(".json", ".pdf"),
                    width = NULL,
                    buttonLabel = "Browse...",
                    placeholder = "No file selected"
@@ -416,14 +541,25 @@ observeEvent(input$importMetaQuest, {
 })
 
 output$view_upload_json <- renderReactjson({
-  uploadjson() %>% reactjson(sortKeys = TRUE)
+  uploadjson()# %>% reactjson(sortKeys = TRUE)
 })
 
 uploadjson <- reactive({
   file <- input$uploadMetaQuest
   ext <- tools::file_ext(file$datapath)
-  # uploadjson <- jsonlite::read_json(file$datapath, simplifyVector = TRUE) %>% reactjson(sortKeys = TRUE)
-  uploadjson <- jsonlite::read_json(file$datapath)
+  if(ext == "json") {
+    print("Loading from JSON")
+    uploadjson <- jsonlite::read_json(file$datapath)
+  }
+  if(ext == "pdf") {
+    print("Loading from PDF")
+    tjson <- tempfile(tmpdir="temp", fileext=".json")
+    print(tjson)
+    system(
+      str_glue("pdfdetach '{file$datapath}' -save 1 -o '{tjson}'")
+    )
+    uploadjson <- jsonlite::read_json(tjson)
+  }
 })
 
 
@@ -434,8 +570,28 @@ output$current_file_json <- renderReactjson({
 
 observeEvent(input$importConfirmButton, {
   req(input$uploadMetaQuest)
+  
   file <- input$uploadMetaQuest
-  import_data <- jsonlite::read_json(file$datapath)
+  # # import_data <- jsonlite::read_json(file$datapath)
+  
+  # # works for pdf but not json... stuck in reactive
+  # import_data <- uploadjson()
+  
+  file <- input$uploadMetaQuest
+  ext <- tools::file_ext(file$datapath)
+  if(ext == "json") {
+    print("Loading from JSON")
+    import_data <- jsonlite::read_json(file$datapath)
+  }
+  if(ext == "pdf") {
+    print("Loading from PDF")
+    tjson <- tempfile(tmpdir="temp", fileext=".json")
+    print(tjson)
+    system(
+      str_glue("pdfdetach '{file$datapath}' -save 1 -o '{tjson}'")
+    )
+    import_data <- jsonlite::read_json(tjson)
+  }
   
   valid_inputs <- import_data[str_detect(names(import_data), "-Input")]
   
@@ -448,93 +604,51 @@ observeEvent(input$importConfirmButton, {
   }
   removeModal()
 })
+# 
+# observeEvent(input$mismatchInput, {
+#   # req(input$uploadMetaQuest)
+#   
+#   showModal(mismatchModal())
+#   
+# })
+# 
+# mismatchjson <- reactive({
+#   upload_input <- uploadjson()
+#   upload_input$import_time <- now()
+#   form_input <- formjson()
+#   mismatch_inputs <- upload_input[!names(upload_input) %in% names(form_input)]
+#   mismatch_inputs %>% print
+# })
+# 
+# 
+# output$mismatch_json <- renderReactjson({
+#   mismatchjson() %>% reactjson(sortKeys = TRUE)
+# })
+# 
+# mismatchModal <- function(){
+# 
+#   
+#   modalDialog(
+#     div(#style = "min-height:60vh;overflow-y:auto",
+#         textOutput("import_mismatch"),
+#         verbatimTextOutput("import_mismatch_verbatim"),
+#         reactjsonOutput("mismatch_json"),
+#       fillRow(flex = 1,
+#               bs_panel(heading = "Current File",
+#                        body=reactjsonOutput("current_file_json")),
+#               bs_panel(heading = "Import File",
+#                        body=reactjsonOutput("view_upload_json"))
+#       )
+#     ),
+#     title = "Mismatch",
+#     size = "l",
+#     footer = tagList(
+#       modalButton("Close")
+#     )
+#   )
+# }
 
-observeEvent(input$mismatchInput, {
-  # req(input$uploadMetaQuest)
-  
-  showModal(mismatchModal())
-  
-})
 
-mismatchjson <- reactive({
-  upload_input <- uploadjson()
-  upload_input$import_time <- now()
-  form_input <- formjson()
-  mismatch_inputs <- upload_input[!names(upload_input) %in% names(form_input)]
-  mismatch_inputs %>% print
-})
-
-
-output$mismatch_json <- renderReactjson({
-  mismatchjson() %>% reactjson(sortKeys = TRUE)
-})
-
-mismatchModal <- function(){
-
-  
-  modalDialog(
-    div(#style = "min-height:60vh;overflow-y:auto",
-        textOutput("import_mismatch"),
-        verbatimTextOutput("import_mismatch_verbatim"),
-        reactjsonOutput("mismatch_json"),
-      fillRow(flex = 1,
-              bs_panel(heading = "Current File",
-                       body=reactjsonOutput("current_file_json")),
-              bs_panel(heading = "Import File",
-                       body=reactjsonOutput("view_upload_json"))
-      )
-    ),
-    title = "Mismatch",
-    size = "l",
-    footer = tagList(
-      modalButton("Close")
-    )
-  )
-}
-
-
-observeEvent(input$buildPDF, {
-  output$downloadBtn <- renderUI({
-    # add a spinner which blocks the UI
-    show_modal_spinner()
-    # launch the PDF file generation
-    pagedown::chrome_print(
-      # template_file(input$template),
-      input ="http://127.0.0.1:6786/",
-      output = tempfile(fileext = ".pdf"),
-      extra_args = chrome_extra_args(),
-      selector="#main-area",
-      verbose = 1,
-      async = TRUE # returns a promise
-    )$then(
-      onFulfilled = function(value) {
-        showNotification(
-          paste("PDF file succesfully generated"),
-          type = "message"
-        )
-        output$downloadPDF <- downloadHandler(
-          filename = function() {
-            paste0(input$template, ".pdf")
-          },
-          content = function(file) {
-            file.copy(value, file)
-          },
-          contentType = "application/pdf"
-        )
-        # return a download button
-        downloadButton("downloadPDF", paste("Download", input$template))
-      },
-      onRejected = function(error) {
-        showNotification(
-          error$message,
-          duration = NULL,
-          type = "error"
-        )
-        HTML("")
-      }
-    )$finally(remove_modal_spinner)
-  })
-})
 
 observeEvent(input$template, {
   output$downloadBtn <- renderUI(HTML(""))
