@@ -210,10 +210,10 @@ fieldInput_server <- function(field, formData = formData, ...){
       observeEvent(formData[[ns("Input")]], {
         freezeReactiveValue(input, ns("Input"))
 
-        print(paste0(
-          "Updating ", type, " field: ",
-          ns("Input"), " = ", formData[[ns("Input")]]
-          ))
+        # print(paste0(
+        #   "Updating ", type, " field: ",
+        #   ns("Input"), " = ", formData[[ns("Input")]]
+        #   ))
 
         switch(type,
                textInput =
