@@ -553,7 +553,7 @@ uploadjson <- reactive({
   }
   if(ext == "pdf") {
     print("Loading from PDF")
-    tjson <- tempfile(tmpdir="temp", fileext=".json")
+    tjson <- tempfile(fileext=".json")
     print(tjson)
     system(
       str_glue("pdfdetach '{file$datapath}' -save 1 -o '{tjson}'")
