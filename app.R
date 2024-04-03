@@ -20,7 +20,7 @@ source("fields.R")
 source("stitch.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.8.7"
+metaquest_version <- "0.8.8"
 
 # main area ---------------------------------------------------------------
 
