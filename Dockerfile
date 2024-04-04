@@ -15,8 +15,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libxml2-dev \
     libpoppler-cpp-dev \
     poppler-utils \
-    chromium-browser \
+    curl \
+    #chromium-browser \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update -qq && \
+    apt-get -y install \
+    ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
 
 # basic shiny functionality
 RUN R -q -e "install.packages(c('shiny', 'rmarkdown'))"

@@ -174,10 +174,10 @@ stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
                verbose = 1,
                async = TRUE # returns a promise
   ) %>% then(~{
+    print("Attaching JSON to PDF")
     system(
       str_glue("pdfattach -replace '{report_pdf_path}' '{report_json_path}' '{report_pdfattach_path}'")
     )
-    # return(report_pdfattach_path)
   }) %>%
     then(~{
       report_pdfattach_path
@@ -202,6 +202,3 @@ stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
 #   str_glue("pdfdetach 'pdf_test/test.pdf' -save 1 -o '{tjson}'")
 # )
 # read_json(tjson)
-
-
-# test <- system("pdfattach -replace 'pdf_test/test.pdf' 'to_convert/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json' 'pdf_test/test1.pdf'", intern=TRUE)
