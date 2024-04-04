@@ -170,6 +170,7 @@ stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
   print("Printing HTML to PDF")
   chrome_print(report_html_path, report_pdf_path,
                extra_args = c(chrome_extra_args(), "--no-sandbox"),
+               timeout = 180,
                verbose = 1,
                async = TRUE # returns a promise
   ) %>% then(~{
