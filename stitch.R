@@ -141,10 +141,10 @@ stitchMetaquestFromJSON <- function(input_json_path, metaquest_json){
 
 stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
 
-  report_html_path <- tempfile(fileext=".html")
-  report_json_path <- tempfile(fileext=".json")
-  report_pdf_path <- tempfile(fileext=".pdf")
-  report_pdfattach_path <- tempfile(fileext=".pdf")
+  report_html_path <- tempfile(tmpdir = "temp", fileext=".html")
+  report_json_path <- tempfile(tmpdir = "temp", fileext=".json")
+  report_pdf_path <- tempfile(tmpdir = "temp", fileext=".pdf")
+  report_pdfattach_path <- tempfile(tmpdir = "temp", fileext=".pdf")
   
   jsonlite::write_json(shiny_input, report_json_path, pretty = TRUE)
   input_json <- read_json(report_json_path)

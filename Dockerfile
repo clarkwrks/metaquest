@@ -26,6 +26,7 @@ RUN R -q -e "install.packages(c('devtools', 'tidyverse', 'bslib', 'bsplus', 'shi
 # copy the app to the image
 RUN mkdir /root/metaquest
 RUN mkdir /root/metaquest/www
+RUN mkdir /root/metaquest/temp
 COPY www /root/metaquest/www
 COPY app.R /root/metaquest
 COPY utils.R /root/metaquest

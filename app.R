@@ -585,7 +585,7 @@ observeEvent(input$importConfirmButton, {
   }
   if(ext == "pdf") {
     print("Loading from PDF")
-    tjson <- tempfile(fileext=".json")
+    tjson <- tempfile(tmpdir = "temp", fileext=".json")
     print(tjson)
     system(
       str_glue("pdfdetach '{file$datapath}' -save 1 -o '{tjson}'")
@@ -650,9 +650,7 @@ observeEvent(input$importConfirmButton, {
 
 
 
-observeEvent(input$template, {
-  output$downloadBtn <- renderUI(HTML(""))
-})
+
 
 
 
