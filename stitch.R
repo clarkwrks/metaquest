@@ -14,9 +14,10 @@ buildPanel <- function(panel_json, input_json){
 }
 
 buildSection <- function(section_json, input_json){
+  if(section_json$id != "welcomeSection")
   div(
     h3(section_json$heading),
-    HTML(section_json$description),    
+    div(class = "mq-description", HTML(section_json$description)),    
     section_json$fields %>% map(buildField, input_json)
   )
 }
@@ -31,8 +32,6 @@ buildField <- function(field_json, input_json){
       buildListField(field_json, input_json)
       )
   } else {
-    
-    
     buildFieldValue(
       field_label = field_json$label,
       field_value = input_json %>% pluck(field_input_id)
@@ -47,10 +46,11 @@ buildListField <- function(field_json, input_json){
   listfield_rownumbers <- listfield_inputs %>% names %>% str_extract("\\d+") %>% 
     unique() %>% na.omit() %>% as.vector
 
-  listfield_html <- listfield_rownumbers %>% map(buildListFieldRow, field_json, listfield_inputs, listfield_id)
+  listfield_html <- listfield_rownumbers %>% 
+    map(buildListFieldRow, field_json, listfield_inputs, listfield_id)
 
   div(
-  listfield_html
+    listfield_html
   )
   
 }
@@ -101,6 +101,24 @@ buildUnmatched <- function(metaquest_json, input_json){
 
 # stitch report -----------------------------------------------------------
 
+buildReport <- function(metaquest_json, input_json){
+  div(
+    includeCSS("report.css"),
+    div(style="display:flex;justify-content:center;",
+      img(src=
+            base64enc::dataURI(file="www/ResNet-denser.png", mime="image/png"),
+          style="height:5em;"
+            ),
+      h1("Metadata Questionnaire", style="padding-left:1em;margin-right:5em;")
+      ),
+    hr(),
+    metaquest_json$panels %>% map(buildPanel, input_json = input_json),
+    div(h3("Unmatched Input"),
+        buildUnmatched(metaquest_json, input_json)
+    )
+  )
+}
+
 stitchMetaquestFromJSON <- function(input_json_path, metaquest_json){
   
   out_filename <- input_json_path %>% basename %>% tools::file_path_sans_ext()
@@ -149,14 +167,7 @@ stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
   jsonlite::write_json(shiny_input, report_json_path, pretty = TRUE)
   input_json <- read_json(report_json_path)
   
-  
-  report_html <- div(
-    includeCSS("report.css"),
-    metaquest_json$panels %>% map(buildPanel, input_json = input_json),
-    div(h3("Unmatched Input"),
-        buildUnmatched(metaquest_json, input_json)
-    )
-  )
+  report_html <- buildReport(metaquest_json, input_json)
 
   # write json
   print("Saving JSON")
@@ -184,18 +195,19 @@ stitchMetaquestFromShiny <- function(shiny_input, metaquest_json){
     })
 }
 
-# metaquest_fields <- read_json("metaquest_fields.json")
-# stitchMetaquestFromShiny(test_json, metaquest_fields)
-# tjs <- stitchMetaquestFromShiny(test_json, metaquest_fields)
+# for printing html -> pdf
+chrome_extra_args <- function(default_args = c("--disable-gpu")) {
+  args <- default_args
+  # Test whether we are in a shinyapps container
+  if (identical(Sys.getenv("R_CONFIG_ACTIVE"), "shinyapps")) {
+    args <- c(args,
+              "--no-sandbox", # required because we are in a container
+              "--disable-dev-shm-usage") # in case of low available memory
+  }
+  args
+}
 
-# input_fields <- read_json("test_data/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json")
-
-# list.files("to_convert", full.names = TRUE) %>% map(stitchMetaquestFromJSON, metaquest_fields)
-# 
-# test_json <- "to_convert/CatherineDestrempes_metaquest_2024-01-30_15-41-00 (6).json"
-# 
-# stitchMetaquestFromJSON(test_json, metaquest_fields)
-# 
+# read_json("temp/testjson.json") %>% stitchMetaquestFromShiny(metaquest_fields)
 
 # tjson <- tempfile(tmpdir="temp", fileext=".json")
 # system(

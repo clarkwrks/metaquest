@@ -26,18 +26,6 @@ metaquest_version <- "0.8.8"
 
 main_area <- buildMetaQuest_ui(metaquest_fields)
 
-# for printing html -> pdf
-chrome_extra_args <- function(default_args = c("--disable-gpu")) {
-  args <- default_args
-  # Test whether we are in a shinyapps container
-  if (identical(Sys.getenv("R_CONFIG_ACTIVE"), "shinyapps")) {
-    args <- c(args,
-              "--no-sandbox", # required because we are in a container
-              "--disable-dev-shm-usage") # in case of low available memory
-  }
-  args
-}
-
 # menu --------------------------------------------------------------------
 
 
@@ -135,9 +123,9 @@ ui <- fluidPage(
             align="center",
             paste0("MetaQuest v", metaquest_version),
             br(),
-            actionLink("showRVs", "", icon("wrench")),
-            actionLink("plusMinutes", "", icon("plus")),
-            actionLink("mismatchInput", "", icon("table"))
+            actionLink("showRVs", "", icon("wrench"))#,
+            # actionLink("plusMinutes", "", icon("plus")),
+            # actionLink("mismatchInput", "", icon("table"))
           )
     )
 )
@@ -398,15 +386,17 @@ exportModal <- function(){
   modalDialog(
     div(
       p("Click 'Save' to download a copy of this form to your local computer."),
-      p("Please note: your work will not be saved within this website. You can upload this file later to resume working on the form."),
-      p("You will also need to email this file to ResNet to submit your work"),
+      p("Please note: your work will not be saved within this application. You can upload this file later to resume working on the form."),
+      p("You will also need to email this file to ResNet to submit your work."),
     ),
     title = "Save File",
-    size = "l",
+    size = "m",
     easyClose = FALSE,
-    footer = p("Filename: ", code(export_file_name()),
+    footer = p(
+      p(style="text-align:left", "Filename: ", code(export_file_name())),
+               # br(),
                downloadButton(
-                 "downloaPDF",
+                 "downloadPDF",
                  label = "Save",
                  class = "fillWidth, btn-success",
                  icon = shiny::icon("download")
@@ -416,7 +406,7 @@ exportModal <- function(){
   )
 }
 
-output$downloaPDF <- downloadHandler(
+output$downloadPDF <- downloadHandler(
   filename = function() {export_file_name()},
   content = function(file) {
     
@@ -458,42 +448,6 @@ output$downloaPDF <- downloadHandler(
   }
 )
 
-output$testDLbutton <- downloadHandler(
-  filename="test.pdf",
-  content=function(file){
-    show_modal_spinner(text="Rendering report...")
-    
-    shiny_input <- isolate(formData %>% reactiveValuesToList())
-    
-    # launch the PDF file generation
-    future_promise(stitchMetaquestFromShiny(
-      shiny_input = shiny_input,
-      metaquest_json = metaquest_fields
-    ))$then(
-      onFulfilled = function(value) {
-        showNotification(
-          paste("PDF file succesfully generated"),
-          type = "message"
-        )
-
-            file.copy(value, file)
-
-      },
-      onRejected = function(error) {
-        showNotification(
-          error$message,
-          duration = NULL,
-          type = "error"
-        )
-        HTML("")
-      }
-    )$finally({
-      # Sys.sleep(5)
-      remove_modal_spinner
-    })
-  }
-)
-
 
 observeEvent(input$exportMetaQuest, {
   showModal(exportModal())
@@ -503,33 +457,44 @@ observeEvent(input$exportMetaQuest, {
 ## import ------------------------------------------------------------------
 
 importModal <- function(){
-  import_compare <- bs_collapse(id = "import_compare", content = 
-                                  (fillRow(flex = 1, 
-                                           bs_panel(heading = "Current File", 
-                                                    body=reactjsonOutput("current_file_json")),
-                                           bs_panel(heading = "Import File", 
-                                                    body=reactjsonOutput("view_upload_json")))
-                                  )
-  )
+  # import_compare <- bs_collapse(id = "import_compare", content = 
+  #                                 (fillRow(flex = 1, 
+  #                                          bs_panel(heading = "Current File", 
+  #                                                   body=reactjsonOutput("current_file_json")),
+  #                                          bs_panel(heading = "Import File", 
+  #                                                   body=reactjsonOutput("view_upload_json")))
+  #                                 )
+  # )
   modalDialog(
     # div(#style = "overflow-y:auto",
-        div(style = "min-height:40vh;height:fit-content;max-height:60vh;overflow-y:auto",
-            bs_panel(heading = "Select File to Import", 
-                 body = fileInput(
-                   "uploadMetaQuest",
-                   label = NULL,
-                   multiple = FALSE,
-                   accept = c(".json", ".pdf"),
-                   width = NULL,
-                   buttonLabel = "Browse...",
-                   placeholder = "No file selected"
-                 )), 
-        bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
-        import_compare
+        div(
+          p("Select a file previously saved from this application to resume working on it."),
+          fileInput(
+            "uploadMetaQuest",
+            label = NULL,
+            multiple = FALSE,
+            accept = c(".json", ".pdf"),
+            width = NULL,
+            buttonLabel = "Browse...",
+            placeholder = "No file selected"
+          )
+          #style = "min-height:40vh;height:fit-content;max-height:60vh;overflow-y:auto",
+            # bs_panel(heading = "Select a file previously saved from this application.", 
+            #      body = fileInput(
+            #        "uploadMetaQuest",
+            #        label = NULL,
+            #        multiple = FALSE,
+            #        accept = c(".json", ".pdf"),
+            #        width = NULL,
+            #        buttonLabel = "Browse...",
+            #        placeholder = "No file selected"
+            #      ))#, 
+        # bs_button("Show Comparison") %>% bs_attach_collapse("import_compare"), 
+        # import_compare
         
     ),
     title = "Import File",
-    size = "l",
+    size = "m",
     footer = tagList(
       modalButton("Cancel"),
       actionButton("importConfirmButton", "Confirm")

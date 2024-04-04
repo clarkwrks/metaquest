@@ -5,5 +5,9 @@
 
 .mq-value{
   font-family: monospace;
-  font-size: larger;
+/*  font-size: larger;*/
+}
+
+.mq-description{
+  font-size:smaller;
 }
