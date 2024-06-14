@@ -20,7 +20,7 @@ source("fields.R")
 source("stitch.R")
 
 metaquest_fields <- read_json("metaquest_fields.json")
-metaquest_version <- "0.8.8"
+metaquest_version <- "1.0.0"
 
 # main area ---------------------------------------------------------------
 
@@ -184,7 +184,7 @@ server <- function(input, output, session) {
         ),
         h4("3- Load"),
         div(
-          p("To resume working on a project, or switch to a different project, import the `.json` file you've previously saved to your local computer."),
+          p("To resume working on a project, or switch to a different project, import the `.pdf` file you've previously saved to your local computer."),
           tags$ul(
             tags$li("Open the `File` menu from the top right."),
             tags$li("Click `Load`."),
@@ -193,27 +193,26 @@ server <- function(input, output, session) {
           )
           ),
         h4("4- Submit"),
-        div(p("Once you've completed all applicable fields, email your saved/export file as an attachment to the Central Team."),
+        div(p("Once you've completed all applicable fields, you will need to submit your saved/exported file to the ", 
+              a("ResNet Data Portal", href = "https://data.nsercresnet.ca/",target = '_blank'), "."),
             tags$ul(
-              tags$li("To: resnet.data@mcgill.ca"),
-              tags$li("Subject: MetaQuest - ", em("`your project title`")),
-              tags$li("Attached: Exported .json file of the version you're submitting.")
+              tags$li("Follow the ", a("Data Portal User Guide", href = "https://docs.nsercresnet.ca/data-portal-guide/",target = '_blank'), " for step by step instructions.")
             )
             ),
         hr(),
         h3("Report Issues"),
-        div(p("MetaQuest is under active development and there will be problems and bugs. It's critical to provide a detailed description to the developers so that they can replicate, troubleshoot, and resolve the issue."),
+        div(p("If you experience problems and/or bugs, please provide a detailed description to the developers so that they can replicate, troubleshoot, and resolve the issue."),
             p("Important information to provide includes:",
               tags$ul(
-                tags$li("Data and time of incident"),
+                tags$li("Date and time of incident"),
                 tags$li("Description of the issue"),
                 tags$li("Preceding actions"),
                 tags$li("Your computer's operating system and web browser"),
-                tags$li("The .json export file you're working on"),
+                tags$li("The pdf export file you're working on"),
                 tags$li("Screenshot(s) of the issue")
                 )
               ),
-            p("Please email issue reports to john.clark3@affiliate.mcgill.ca")
+            p("Please email issue reports to resnet.data.portal@gmail.com")
             )
       )),
       title = "MetaQuest User Guide",
@@ -612,12 +611,6 @@ observeEvent(input$importConfirmButton, {
 #     )
 #   )
 # }
-
-
-
-
-
-
 
 }
 
